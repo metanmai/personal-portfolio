@@ -4,7 +4,7 @@ function App() {
 
   return (
     <>
-      Hello World!
+      I am Tanmai and this is my Portfolio.
     </>
   )
 }
