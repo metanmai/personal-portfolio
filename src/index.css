@@ -3,3 +3,7 @@ body {
   padding: 0;
   background-color: #000000; /* Change this color */
 }
+
+html.hovered, body.hovered {
+  overflow-y: auto;
+}

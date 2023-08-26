@@ -4,8 +4,9 @@ import Contact from "./components/Contact.jsx";
 import Who from "./components/Who.jsx";
 import Works from "./components/Works.jsx";
 import {loadFull} from "tsparticles";
-import {useCallback} from "react";
+import {useCallback, useRef} from "react";
 import Particles from "react-particles";
+import Navbar from "./components/Navbar.jsx";
 
 function App() {
   const options = {
@@ -14,11 +15,11 @@ function App() {
         value: 80,
         density: {
           enable: true,
-          area: 800
+          area: 400
         }
       },
       color: {
-        value: ["#090909", "#535353", "#a0a0a0", "#ffffff"]
+        value: ["#282828", "#535353", "#ababab", "#ffffff"]
       },
       shape: {
         type: "circle"
@@ -27,11 +28,11 @@ function App() {
         value: 2
       },
       size: {
-        value: { min: 1, max: 12 }
+        value: { min: 1, max: 8 }
       },
       move: {
         enable: true,
-        speed: 2.5,
+        speed: 2,
         direction: "none",
         random: true,
         straight: false,
@@ -47,9 +48,9 @@ function App() {
       },
       modes: {
         grab: {
-          distance: 140,
+          distance: 150,
           links: {
-            opacity: 1
+            opacity: 0.5
           }
         },
       }
@@ -60,9 +61,13 @@ function App() {
     await loadFull(engine);
   }, []);
 
+  const navbarRef = useRef(null);
+
   return (
       <div className="app-container">
+        {/*<Navbar ref={navbarRef}/>*/}
         <Particles options={options} init={particlesInit} className="particle-background"/>
+
         <div className="components-container">
           <Hero/>
           <Who/>
