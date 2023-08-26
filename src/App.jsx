@@ -4,7 +4,7 @@ import Contact from "./components/Contact.jsx";
 import Who from "./components/Who.jsx";
 import Works from "./components/Works.jsx";
 import {loadFull} from "tsparticles";
-import {useCallback, useRef} from "react";
+import {useCallback} from "react";
 import Particles from "react-particles";
 // import Navbar from "./components/Navbar.jsx";
 
@@ -15,11 +15,11 @@ function App() {
         value: 80,
         density: {
           enable: true,
-          area: 100
+          area: 200
         }
       },
       color: {
-        value: ["#282828", "#535353", "#ababab", "#ffffff"]
+        value: ["#00d1ff", "#2fef32", "#fdcd00", "#ff3939"]
       },
       shape: {
         type: "circle"
@@ -28,11 +28,11 @@ function App() {
         value: 2
       },
       size: {
-        value: { min: 1, max: 3 }
+        value: { min: 1, max: 5 }
       },
       move: {
         enable: true,
-        speed: 2,
+        speed: 1,
         direction: "none",
         random: true,
         straight: false,
@@ -45,7 +45,7 @@ function App() {
     await loadFull(engine);
   }, []);
 
-  const navbarRef = useRef(null);
+  // const navbarRef = useRef(null);
 
   return (
       <div className="app-container">

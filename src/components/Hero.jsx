@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import styled, {keyframes} from 'styled-components'
+import {useEffect, useState} from 'react';
+import styled from 'styled-components'
 
 const HeroContainer = styled.div`
     height: 100vh;
@@ -26,12 +26,12 @@ const HeroContainer = styled.div`
 `
 
 const Container1 = styled.div`
-    background-color: aqua;
+    //background-color: aqua;
     order: ${props => props.order};
 `
 
 const Container2 = styled.div`
-    background-color: blueviolet;
+    //background-color: blueviolet;
     order: ${props => props.order};
     justify-content: center;
     align-items: center;
