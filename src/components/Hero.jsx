@@ -1,22 +1,26 @@
 import {useEffect, useState} from 'react';
 import styled from 'styled-components'
+import Typing from "./Typing.jsx";
 
 const HeroContainer = styled.div`
     height: 100vh;
     scroll-snap-align: center;
     display: grid;
-    flex-direction: ${({ aspectRatio }) => (aspectRatio <= 1 ? 'row' : 'column')};
+    flex-direction: ${({ aspectRatio }) => aspectRatio <=1 ? "column" : "row"};
   
-     ${({ aspectRatio }) =>
+    ${({ aspectRatio }) =>
     aspectRatio <= 1
-      ? `
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
-  `
-      : `
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-  `}
+        ? 
+        `
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+        `
+        : 
+        `
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+        `
+    }
 
   /* Additional styling for grid items */
   .grid-item {
@@ -27,7 +31,11 @@ const HeroContainer = styled.div`
 
 const Container1 = styled.div`
     //background-color: aqua;
+    justify-content: center;
+    align-items: center;
     order: ${props => props.order};
+    display: flex;
+    box-sizing: border-box;
 `
 
 const Container2 = styled.div`
@@ -36,28 +44,39 @@ const Container2 = styled.div`
     justify-content: center;
     align-items: center;
     display: flex;
+    box-sizing: border-box;
 `
 
 const FloatImage = styled.img`
     max-width: 100%;
     height: auto;
-    animation: moveUpDown 6s infinite linear;
+    animation: fadeIn 2s ease forwards, moveUpDown 6s infinite linear;
+    
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        
+        100% {
+        opacity: 1;
+        }
+    }
   
     @keyframes moveUpDown {
-      0%, 100% {
+        0%, 100% {
           transform: translateY(0);
-      }
-      25% {
+        }
+        25% {
           transform: translateY(-20px);
-      }
-      
-      50% {
+        }
+        
+        50% {
           transform: translateY(0);
-      }
-      
-      75% {
+        }
+        
+        75% {
           transform: translateY(20px);
-      }
+        }
     }
 `
 
@@ -82,7 +101,7 @@ const Hero = () => {
     return (
         <HeroContainer aspectRatio={aspectRatio}>
             <Container1 order={leftOrder}>
-                Container1
+                <Typing/>
             </Container1>
             <Container2 order={rightOrder}>
                 <FloatImage src={`img/programmer.png`} alt={`programmer`}/>
