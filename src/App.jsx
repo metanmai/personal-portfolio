@@ -6,7 +6,7 @@ import Works from "./components/Works.jsx";
 import {loadFull} from "tsparticles";
 import {useCallback, useRef} from "react";
 import Particles from "react-particles";
-import Navbar from "./components/Navbar.jsx";
+// import Navbar from "./components/Navbar.jsx";
 
 function App() {
   const options = {

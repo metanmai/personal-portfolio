@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import styled from 'styled-components'
+import styled, {keyframes} from 'styled-components'
 
 const HeroContainer = styled.div`
     height: 100vh;
@@ -26,13 +26,39 @@ const HeroContainer = styled.div`
 `
 
 const Container1 = styled.div`
-    //background-color: aqua;
+    background-color: aqua;
     order: ${props => props.order};
 `
 
 const Container2 = styled.div`
-    //background-color: blueviolet;
+    background-color: blueviolet;
     order: ${props => props.order};
+    justify-content: center;
+    align-items: center;
+    display: flex;
+`
+
+const FloatImage = styled.img`
+    max-width: 100%;
+    height: auto;
+    animation: moveUpDown 6s infinite linear;
+  
+    @keyframes moveUpDown {
+      0%, 100% {
+          transform: translateY(0);
+      }
+      25% {
+          transform: translateY(-20px);
+      }
+      
+      50% {
+          transform: translateY(0);
+      }
+      
+      75% {
+          transform: translateY(20px);
+      }
+    }
 `
 
 const Hero = () => {
@@ -59,7 +85,7 @@ const Hero = () => {
                 Container1
             </Container1>
             <Container2 order={rightOrder}>
-                Container2
+                <FloatImage src={`img/programmer.png`} alt={`programmer`}/>
             </Container2>
         </HeroContainer>
     );
