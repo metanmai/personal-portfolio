@@ -25,13 +25,13 @@ const HeroContainer = styled.div`
   }
 `
 
-const Left = styled.div`
-    background-color: aqua;
+const Container1 = styled.div`
+    //background-color: aqua;
     order: ${props => props.order};
 `
 
-const Right = styled.div`
-    background-color: blueviolet;
+const Container2 = styled.div`
+    //background-color: blueviolet;
     order: ${props => props.order};
 `
 
@@ -55,12 +55,12 @@ const Hero = () => {
 
     return (
         <HeroContainer aspectRatio={aspectRatio}>
-            <Left order={leftOrder}>
-                Left Container
-            </Left>
-            <Right order={rightOrder}>
-                Right Container
-            </Right>
+            <Container1 order={leftOrder}>
+                Container1
+            </Container1>
+            <Container2 order={rightOrder}>
+                Container2
+            </Container2>
         </HeroContainer>
     );
 };

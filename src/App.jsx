@@ -15,7 +15,7 @@ function App() {
         value: 80,
         density: {
           enable: true,
-          area: 400
+          area: 100
         }
       },
       color: {
@@ -28,7 +28,7 @@ function App() {
         value: 2
       },
       size: {
-        value: { min: 1, max: 8 }
+        value: { min: 1, max: 3 }
       },
       move: {
         enable: true,
@@ -37,22 +37,6 @@ function App() {
         random: true,
         straight: false,
         outModes: "out"
-      }
-    },
-    interactivity: {
-      events: {
-        onHover: {
-          enable: true,
-          mode: "grab"
-        },
-      },
-      modes: {
-        grab: {
-          distance: 150,
-          links: {
-            opacity: 0.5
-          }
-        },
       }
     }
   };
