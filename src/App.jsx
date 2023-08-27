@@ -28,7 +28,7 @@ function App() {
         value: 2
       },
       size: {
-        value: { min: 1, max: 5 }
+        value: { min: 1, max: 7 }
       },
       move: {
         enable: true,

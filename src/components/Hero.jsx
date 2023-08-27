@@ -2,14 +2,15 @@ import {useEffect, useState} from 'react';
 import styled from 'styled-components'
 import Typing from "./Typing.jsx";
 
+
 const HeroContainer = styled.div`
     height: 100vh;
     scroll-snap-align: center;
     display: grid;
-    flex-direction: ${({ aspectRatio }) => aspectRatio <=1 ? "column" : "row"};
+    flex-direction: ${props => props.aspectRatio < 1 ? "column" : "row"};
   
-    ${({ aspectRatio }) =>
-    aspectRatio <= 1
+    ${props =>
+    props.aspectRatio < 1
         ? 
         `
         grid-template-columns: 1fr;
@@ -48,7 +49,18 @@ const Container2 = styled.div`
 `
 
 const FloatImage = styled.img`
-    max-width: 100%;
+    ${props =>
+    props.aspectRatio < 1
+        ? 
+        `
+            max-height: 10%
+        `
+        : 
+        `
+            max-width: 80%;
+        `
+    }
+    
     height: auto;
     animation: fadeIn 2s ease forwards, moveUpDown 6s infinite linear;
     
@@ -104,7 +116,7 @@ const Hero = () => {
                 <Typing/>
             </Container1>
             <Container2 order={rightOrder}>
-                <FloatImage src={`img/programmer.png`} alt={`programmer`}/>
+                <FloatImage src={`img/boy-computer.png`} alt={`programmer`}/>
             </Container2>
         </HeroContainer>
     );
