@@ -89,7 +89,7 @@ const FloatImage = styled.img`
     }
 `
 
-const FormContainer = styled.div`
+const FormContainer = styled.form`
     
 `
 
@@ -116,7 +116,7 @@ const Contact = () => {
         e.preventDefault();
         console.log(name, email, subject, message);
         try {
-            const response = await axios.post('/send_email', {
+            const response = await axios.post('http://localhost:3000/send-email', {
                 name,
                 email,
                 subject,

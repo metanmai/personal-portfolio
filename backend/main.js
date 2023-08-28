@@ -1,28 +1,33 @@
 import bodyParser from "body-parser";
 import express from "express";
 import nodemailer from "nodemailer";
+import 'dotenv/config';
+import cors from "cors";
 
 const app = express();
 
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.post('/send_email', (req, res) => {
+app.post('/send-email', (req, res) => {
     const { name, email, subject, message } = req.body;
 
     const transporter = nodemailer.createTransport({
-        service: 'gmail', // Example: 'Gmail'
+        host: 'smtp.elasticemail.com',
+        port: 2525,
+        secure: false,
         auth: {
-            user: 'tanmaiemailclient@gmail.com', // Replace with your email address
-            pass: 'email123_' // Replace with your email password
+            user: process.env.EMAIL_USERNAME,
+            pass: process.env.EMAIL_PASSWORD
         }
     });
 
     const mailOptions = {
-        from: email,
-        to: email, // Replace with the recipient's email address
+        from: "tanmaiemailclient@gmail.com",
+        to: "tanmaiemailclient@protonmail.com",
         subject: subject,
-        text: `Name: ${name} \n\n ${message}`
+        text: `Name: ${name} \n\n\n Email: ${email} \n\n\n ${message} \n\n\n`
     };
 
     transporter.sendMail(mailOptions, (error, info) => {

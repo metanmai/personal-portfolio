@@ -1,0 +1,8 @@
+[build]
+  functions = "backend"
+
+[build.environment]
+  NODE_VERSION = "20.5.1"
+
+[[plugins]]
+  package = "netlify-plugin-inline-functions-env"
