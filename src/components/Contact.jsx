@@ -50,15 +50,16 @@ const FloatImage = styled.img`
     aspectRatio < 1
         ? 
         `
-            max-height: 10%
+            
         `
         : 
         `
-            max-width: 80%;
+            
         `
     }
-    
-    height: auto;
+    max-width: 250px;
+    max-height: 50vh;
+    //background-color: brown;
     animation: fadeIn 2s ease forwards, moveUpDown 6s infinite linear;
     
     @keyframes fadeIn {
@@ -89,17 +90,70 @@ const FloatImage = styled.img`
     }
 `
 
-const FormContainer = styled.form`
-    
-`
+const FormContainer = styled.div`
+    max-width: 70%;
+    max-height: 50vh;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    //background-color: crimson;
+    width: 100%;
+    margin: 0;
+    //padding: 20px;
+`;
 
-const Title = styled.div`
-    
+const Form = styled.form`
+    max-width: 600px;
+    max-height: 50vh;
+    margin: 0;
+    position: relative;
+    width: 80%;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    //background-color: #109b26;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 `
 
 const Input = styled.input`
+    font-family: 'Abyssinica SIL', serif;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+`;
+
+const TextArea = styled.textarea`
+    font-family: 'Abyssinica SIL', serif;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    resize: vertical;
+    max-height: 40vh;
+`;
+
+const Button = styled.button`
+    font-family: 'Abyssinica SIL', serif;
+    color: white;
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
     
-`
+    &:hover {
+    background-color: #0056b3;
+    }
+`;
 
 const Contact = () => {
     const [aspectRatio, setAspectRatio] = useState(window.innerWidth / window.innerHeight);
@@ -143,28 +197,35 @@ const Contact = () => {
                 <FloatImage src={`img/mailbox.png`} alt={`mailbox`}/>
             </Container1>
             <Container2>
-                <FormContainer onSubmit={handleSubmit}>
-                    <Title> HMU.</Title>
-                    <Input
-                        type={`text`}
-                        placeholder={`Name`}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                    <Input
-                        type={`email`}
-                        placeholder={`Email`}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <Input
-                        type={`text`}
-                        placeholder={`Subject`}
-                        onChange={(e) => setSubject(e.target.value)}
-                    />
-                    <textarea
-                        placeholder={`Enter your message here`}
-                        onChange={(e) => setMessage(e.target.value)}
-                    />
-                    <button type={`submit`}> Submit </button>
+                <FormContainer>
+                    <Form onSubmit={handleSubmit}>
+                        <span> HMU.</span>
+                        <Input
+                            required
+                            type={`text`}
+                            placeholder={`Name`}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <Input
+                            required
+                            type={`email`}
+                            placeholder={`Email`}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <Input
+                            required
+                            type={`text`}
+                            placeholder={`Subject`}
+                            onChange={(e) => setSubject(e.target.value)}
+                        />
+                        <TextArea
+                            rows={`10`}
+                            wrap="soft"
+                            placeholder={`Enter your message here`}
+                            onChange={(e) => setMessage(e.target.value)}
+                        />
+                        <Button type={`submit`}> Submit </Button>
+                    </Form>
                 </FormContainer>
             </Container2>
         </ContactContainer>
