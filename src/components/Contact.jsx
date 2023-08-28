@@ -116,7 +116,7 @@ const Contact = () => {
         e.preventDefault();
         console.log(name, email, subject, message);
         try {
-            const response = await axios.post('http://localhost:3000/send-email', {
+            const response = await axios.post(import.meta.env.VITE_EMAIL_ENDPOINT, {
                 name,
                 email,
                 subject,
