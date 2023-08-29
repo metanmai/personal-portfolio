@@ -170,7 +170,7 @@ const Contact = () => {
         e.preventDefault();
         console.log(name, email, subject, message);
         try {
-            const response = await axios.post(import.meta.env.VITE_EMAIL_ENDPOINT, {
+            const response = await axios.post('.netlify/functions/send-email', {
                 name,
                 email,
                 subject,
@@ -221,7 +221,7 @@ const Contact = () => {
                         <TextArea
                             rows={`10`}
                             wrap="soft"
-                            placeholder={`Enter your message here`}
+                            placeholder={`Message`}
                             onChange={(e) => setMessage(e.target.value)}
                         />
                         <Button type={`submit`}> Submit </Button>
