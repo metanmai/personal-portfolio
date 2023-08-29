@@ -4,7 +4,7 @@ import 'dotenv/config';
 exports.handler = async (event) => {
     const { name, email, subject, message } = JSON.parse(event.body);
 
-    console.log(name, email, subject, message)
+    console.log(name, '\n', email, '\n', subject, '\n', message)
 
     const transporter = nodemailer.createTransport({
         host: 'smtp.elasticemail.com',

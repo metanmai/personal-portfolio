@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import styled from 'styled-components'
 import axios from "axios";
+import FormSubmitPopup from "../FormSubmitPopup.jsx";
 
 const ContactContainer = styled.div`
     height: 100vh;
@@ -99,7 +100,7 @@ const FormContainer = styled.div`
     //background-color: crimson;
     width: 100%;
     margin: 0;
-    //padding: 20px;
+    gap: 10px;
 `;
 
 const Form = styled.form`
@@ -155,12 +156,29 @@ const Button = styled.button`
     }
 `;
 
+const Loading = styled.img`
+    max-width: 11px;
+    animation: rotation 1s infinite linear;
+    
+    @keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+`;
+
 const Contact = () => {
     const [aspectRatio, setAspectRatio] = useState(window.innerWidth / window.innerHeight);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [subject, setSubject] = useState('');
     const [message, setMessage] = useState('');
+    const [showPopup, setShowPopup] = useState(false);
+    const [showLoading, setShowLoading] = useState(false)
+    const [status, setStatus] = useState(false)
 
     const handleResize = () => {
         setAspectRatio(window.innerWidth / window.innerHeight);
@@ -169,6 +187,8 @@ const Contact = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log(name, email, subject, message);
+        setShowLoading(true)
+
         try {
             const response = await axios.post('/.netlify/functions/send-email', {
                 name,
@@ -178,8 +198,28 @@ const Contact = () => {
             });
             console.log(response.data.message);
 
+            setShowLoading(false)
+            setShowPopup(true);
+            setStatus(true)
+
+            const form = document.getElementById("form");
+            const inputs = form.querySelectorAll("input, textarea");
+
+            inputs.forEach((input) => {
+                input.value = "";
+            });
+
         } catch(error) {
             console.error('Error sending email:', error);
+
+            setShowLoading(false);
+            setShowPopup(true);
+            setStatus(false)
+
+        } finally {
+            setTimeout(() => {
+                setShowPopup(false);
+            }, 5000);
         }
     };
 
@@ -194,11 +234,11 @@ const Contact = () => {
     return (
         <ContactContainer aspectRatio={aspectRatio}>
             <Container1>
-                <FloatImage src={`img/mailbox.png`} alt={`mailbox`}/>
+                <FloatImage src={`img/mailbox.png`} alt={`mailbox`} />
             </Container1>
             <Container2>
                 <FormContainer>
-                    <Form onSubmit={handleSubmit}>
+                    <Form id={`form`} onSubmit={handleSubmit}>
                         <span> HMU.</span>
                         <Input
                             required
@@ -224,8 +264,9 @@ const Contact = () => {
                             placeholder={`Message`}
                             onChange={(e) => setMessage(e.target.value)}
                         />
-                        <Button type={`submit`}> Submit </Button>
+                        <Button type={`submit`}> Send {showLoading && <Loading src={`img/loading.png`}/>} </Button>
                     </Form>
+                    {showPopup && <FormSubmitPopup status={status}/>}
                 </FormContainer>
             </Container2>
         </ContactContainer>
