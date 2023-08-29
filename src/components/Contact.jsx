@@ -170,7 +170,7 @@ const Contact = () => {
         e.preventDefault();
         console.log(name, email, subject, message);
         try {
-            const response = await axios.post('.netlify/functions/send-email', {
+            const response = await axios.post('/.netlify/functions/send-email', {
                 name,
                 email,
                 subject,
