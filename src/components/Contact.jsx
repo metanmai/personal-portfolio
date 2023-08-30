@@ -186,7 +186,7 @@ const Contact = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(name, email, subject, message);
+        console.log("Sending Email...");
         setShowLoading(true)
 
         try {
