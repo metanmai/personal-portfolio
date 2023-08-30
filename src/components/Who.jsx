@@ -50,8 +50,7 @@ const Container2 = styled.div`
 `
 
 const BallContainer = styled.div`
-    height: 150px;
-    width: 150px;
+    max-width: 100%;
 `
 
 const Who = () => {
