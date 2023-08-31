@@ -6,7 +6,6 @@ const SkillsContainer = styled.div`
     height: calc(100vh - 50px);
     scroll-snap-align: center;
     display: grid;
-    backdrop-filter: blur(3px);
     flex-direction: ${({ aspectRatio }) => aspectRatio < 1 ? "column" : "row"};
     
     ${({ aspectRatio }) =>
@@ -31,8 +30,8 @@ const SkillsContainer = styled.div`
 `
 
 const Container1 = styled.div`
-    //padding: 5px;
-    background-color: brown;
+    padding: 12px;
+    //background-color: brown;
     justify-content: center;
     align-items: center;
     display: grid;
@@ -52,6 +51,7 @@ const Container2 = styled.div`
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
     margin: 15px;
     animation: fadeIn 4s ease forwards;
+    backdrop-filter: blur(12px);
 `
 
 const BallContainer = styled.div`
@@ -75,7 +75,6 @@ const Paragraph = styled.p`
 const Skills = () => {
     return (
         <SkillsContainer>
-
             <Container1>
                 {technologies.map((technology) => (
                     <BallContainer key={technology.name}>

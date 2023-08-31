@@ -4,7 +4,7 @@ import axios from "axios";
 import FormSubmitPopup from "../FormSubmitPopup.jsx";
 
 const ContactContainer = styled.div`
-    height: 100vh;
+    height: calc(100vh - 60px);
     scroll-snap-align: center;
     display: grid;
     flex-direction: ${({ aspectRatio }) => aspectRatio < 1 ? "column" : "row"};

@@ -28,32 +28,43 @@ const HeroContainer = styled.div`
     padding: 20px;
     border: 1px solid #ddd;
   }
-`
+`;
 
 const Container1 = styled.div`
-    background-color: sienna;
+    padding: 15px;
+    //background-color: sienna;
+    order: ${props => props.order};
     justify-content: center;
     align-items: center;
-    order: ${props => props.order};
     display: grid;
     box-sizing: border-box;
-    animation: fadeIn 4s ease forwards;
     margin: 15px;
-    border: 2px solid #ff5555;
+    border: 2px solid #9eff88;
     border-radius: 15px;
-`
+    backdrop-filter: blur(12px);
+    animation: fadeIn 4s ease forwards;
+    
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        
+        100% {
+            opacity: 1;
+        }
+    }
+`;
 
 const Container2 = styled.div`
-    background-color: blueviolet;
+    //background-color: blueviolet;
     order: ${props => props.order};
     justify-content: center;
     align-items: center;
     display: flex;
-    box-sizing: border-box;
-    border: 2px solid #ff5555;
     border-radius: 15px;
     margin: 15px;
-`
+    animation: fadeIn 4s ease forwards;
+`;
 
 const TypingContainer = styled.div`
 `;
@@ -75,17 +86,7 @@ const FloatImage = styled.img`
     }
     
     //max-width: 30vw;
-    animation: fadeIn 2s ease forwards, moveUpDown 6s infinite linear;
-    
-    @keyframes fadeIn {
-        0% {
-            opacity: 0;
-        }
-        
-        100% {
-        opacity: 1;
-        }
-    }
+    animation: moveUpDown 6s infinite linear;
   
     @keyframes moveUpDown {
         0%, 100% {
@@ -103,7 +104,7 @@ const FloatImage = styled.img`
           transform: translateY(20px);
         }
     }
-`
+`;
 
 const Paragraph = styled.p`
     font-family: 'PT Sans', sans-serif;
