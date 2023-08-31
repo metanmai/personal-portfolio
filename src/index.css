@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #00154d; /* Change this color */
+  scrollbar-gutter: auto;
 }
 
 html.hovered, body.hovered {

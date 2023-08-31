@@ -4,7 +4,7 @@ import Typing from "./Typing.jsx";
 
 
 const HeroContainer = styled.div`
-    height: 100vh;
+    height: calc(100vh - 60px);
     scroll-snap-align: center;
     display: grid;
     flex-direction: ${({aspectRatio}) => aspectRatio < 1 ? "column" : "row"};
@@ -35,8 +35,10 @@ const Container1 = styled.div`
     justify-content: center;
     align-items: center;
     order: ${props => props.order};
-    display: flex;
+    display: grid;
     box-sizing: border-box;
+    animation: fadeIn 4s ease forwards;
+    margin: 15px;
 `
 
 const Container2 = styled.div`
@@ -48,20 +50,26 @@ const Container2 = styled.div`
     box-sizing: border-box;
 `
 
+const TypingContainer = styled.div`
+`;
+
+const ParagraphContainer = styled.div`
+`;
+
 const FloatImage = styled.img`
     ${({aspectRatio}) =>
     aspectRatio < 1
         ? 
         `
-            max-height: 40%;
+            max-width: 60vw;
         `
         : 
         `
-            max-width: 40%;
+            max-width: 35vw;
         `
     }
     
-    height: auto;
+    //max-width: 30vw;
     animation: fadeIn 2s ease forwards, moveUpDown 6s infinite linear;
     
     @keyframes fadeIn {
@@ -92,6 +100,13 @@ const FloatImage = styled.img`
     }
 `
 
+const Paragraph = styled.p`
+    font-family: 'PT Sans', sans-serif;
+    font-size: 21px;
+    line-height: 1.5;
+    //margin-bottom: 15px;
+`;
+
 const Hero = () => {
     const [aspectRatio, setAspectRatio] = useState(window.innerWidth / window.innerHeight);
 
@@ -113,7 +128,13 @@ const Hero = () => {
     return (
         <HeroContainer aspectRatio={aspectRatio}>
             <Container1 order={leftOrder}>
-                <Typing/>
+                <TypingContainer>
+                    <Typing/>
+                </TypingContainer>
+                <ParagraphContainer>
+                    <Paragraph>Hello! I&apos;m Tanmai Niranjan, a final year Computer Science student at PES University. I&apos;m passionate about coding, problem-solving, and learning new technologies.</Paragraph>
+                    <Paragraph>In my free time, I enjoy working on personal coding projects, exploring new programming languages, and playing video games.</Paragraph>
+                </ParagraphContainer>
             </Container1>
             <Container2 order={rightOrder}>
                 <FloatImage src={`img/boy-computer.png`} alt={`programmer`} aspectRatio={aspectRatio}/>

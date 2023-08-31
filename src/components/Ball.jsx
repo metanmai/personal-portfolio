@@ -13,26 +13,9 @@ import PropTypes from "prop-types";
 
 const Ball = ({imgUrl}) => {
 	const [decal] = useTexture([imgUrl]);
-	const groupRef = useRef();
-	const speed = 0.005; // Rotation speed (adjust as needed)
-
-	useEffect(() => {
-    const group = groupRef.current;
-    const axis = new THREE.Vector3(0.5, 0.5, 0);
-    let rad = 0;
-    const radIncrement = speed; // Radial increment based on speed
-
-    const animate = () => {
-		rad += speed;
-      	group.rotation.y = rad; // Rotate the group
-		// Render the scene and continue the animation loop
-		requestAnimationFrame(animate);
-    };
-    animate();
-	}, []);
 
 	return (
-		<Float speed={1.75} rotationIntensity={1} floatIntensity={2} ref={groupRef}>
+		<Float speed={1.75} rotationIntensity={1} floatIntensity={2}>
 			<ambientLight intensity={0.25} />
 			<directionalLight position={[0, 0, 0.05]} />
 			<mesh castShadow receiveShadow scale={2.75}>

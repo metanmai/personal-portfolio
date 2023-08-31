@@ -1,18 +1,21 @@
 .app-container {
     color: white;
-    height: 100vh;
+    position: absolute;
+    top: 50px;
+    height: calc(100vh - 50px);
+    width: 100%;
     scroll-snap-type: y mandatory;
     scroll-behavior: smooth;
     overflow-y: auto;
-    scrollbar-width: none;
+    scrollbar-width: auto;
     &::-webkit-scrollbar { /*This is for chrome.*/
-    display: none;
-    margin-top: 500px;
+    display: flex;
+    /*margin-top: 500px;*/
   }
 }
 
 .particle-background {
-    position: absolute; /* Position the particle animation behind other content */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;

@@ -120,7 +120,7 @@ const Form = styled.form`
 `
 
 const Input = styled.input`
-    font-family: 'Abyssinica SIL', serif;
+    font-family: 'PT Sans', sans-serif;
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -129,7 +129,7 @@ const Input = styled.input`
 `;
 
 const TextArea = styled.textarea`
-    font-family: 'Abyssinica SIL', serif;
+    font-family: 'PT Sans', sans-serif;
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;

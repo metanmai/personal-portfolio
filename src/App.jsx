@@ -1,12 +1,12 @@
 import './App.css'
 import Hero from "./components/Hero.jsx";
 import Contact from "./components/Contact.jsx";
-import Who from "./components/Who.jsx";
-import Works from "./components/Works.jsx";
+import Skills from "./components/Skills.jsx";
+import Projects from "./components/Projects.jsx";
 import {loadFull} from "tsparticles";
-import {useCallback} from "react";
+import {useCallback, useRef} from "react";
 import Particles from "react-particles";
-// import Navbar from "./components/Navbar.jsx";
+import Navbar from "./components/Navbar.jsx";
 
 function App() {
   const options = {
@@ -54,8 +54,8 @@ function App() {
 
         <div className="components-container">
           <Hero/>
-          <Who/>
-          <Works/>
+          <Skills/>
+          <Projects/>
           <Contact/>
         </div>
 
