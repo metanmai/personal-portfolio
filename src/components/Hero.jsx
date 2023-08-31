@@ -31,7 +31,7 @@ const HeroContainer = styled.div`
 `
 
 const Container1 = styled.div`
-    //background-color: aqua;
+    background-color: sienna;
     justify-content: center;
     align-items: center;
     order: ${props => props.order};
@@ -39,15 +39,20 @@ const Container1 = styled.div`
     box-sizing: border-box;
     animation: fadeIn 4s ease forwards;
     margin: 15px;
+    border: 2px solid #ff5555;
+    border-radius: 15px;
 `
 
 const Container2 = styled.div`
-    //background-color: blueviolet;
+    background-color: blueviolet;
     order: ${props => props.order};
     justify-content: center;
     align-items: center;
     display: flex;
     box-sizing: border-box;
+    border: 2px solid #ff5555;
+    border-radius: 15px;
+    margin: 15px;
 `
 
 const TypingContainer = styled.div`

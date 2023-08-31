@@ -32,6 +32,7 @@ const SkillsContainer = styled.div`
 
 const Container1 = styled.div`
     //padding: 5px;
+    background-color: brown;
     justify-content: center;
     align-items: center;
     display: grid;
@@ -44,9 +45,9 @@ const Container1 = styled.div`
 
 const Container2 = styled.div`
     //background-color: blueviolet;
-    height: 100%;
+    //height: 100%;
     padding: 20px;
-    //border: 2px solid #ff5555;
+    border: 2px solid #ff5555;
     border-radius: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
     margin: 15px;

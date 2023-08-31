@@ -8,10 +8,11 @@
     scroll-behavior: smooth;
     overflow-y: auto;
     scrollbar-width: auto;
-    &::-webkit-scrollbar { /*This is for chrome.*/
-    display: flex;
+    /*Actually don't use this. It's causing a bunch of problems.*!*/
+    /*&::-webkit-scrollbar { !*This is for chrome.*!*/
+    /*display: flex;*/
     /*margin-top: 500px;*/
-  }
+  /*}*/
 }
 
 .particle-background {
@@ -22,16 +23,6 @@
     height: 100%;
     z-index: -2;
     animation: fadeIn 8s ease forwards;
-
-    @keyframes fadeIn {
-        0% {
-            opacity: 0;
-        }
-
-        100% {
-        opacity: 1;
-        }
-    }
 }
 
 .component-container {
