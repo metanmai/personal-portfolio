@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const ProjectsContainer = styled.div`
+const TestimonialsContainer = styled.div`
   height: calc(100vh - 60px);
     scroll-snap-align: center;
     display: grid;
@@ -25,19 +25,9 @@ const ProjectsContainer = styled.div`
     padding: 20px;
     border: 1px solid #ddd;
   }
-`
-
-const Container1 = styled.div`
-    padding: 20px;
-    border: 2px solid #fdcd00;
-    border-radius: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
-    margin: 15px;
-    animation: fadeIn 4s ease forwards;
-    backdrop-filter: blur(12px);
 `;
 
-const Container2 = styled.div`
+const Container1 = styled.div`
     order: ${props => props.order};
     justify-content: center;
     align-items: center;
@@ -47,9 +37,19 @@ const Container2 = styled.div`
     animation: fadeIn 4s ease forwards;
 `;
 
+const Container2 = styled.div`
+  padding: 20px;
+  border: 2px solid #ff7af4;
+  border-radius: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
+  margin: 15px;
+  animation: fadeIn 4s ease forwards;
+  backdrop-filter: blur(12px);
+`;
+
 const Heading = styled.h2`
     font-family: 'Abyssinica SIL', serif;
-    color: #fdcd00;
+    color: #ff7af4;
     font-size: 75px;
     margin-bottom: 10px;
 `;
@@ -61,18 +61,16 @@ const Paragraph = styled.p`
     margin-bottom: 15px;
 `;
 
-const Projects = () => {
-    return (
-        <ProjectsContainer>
+export const Testimonials = () => {
+	return (
+		<TestimonialsContainer>
             <Container1>
-                <Heading>Projects 💡</Heading>
-                <Paragraph>Welcome to my projects showcase, where I have the pleasure of sharing some exciting work I&apos;ve been up to.</Paragraph>
-                <Paragraph> As a computer science enthusiast, I&apos;ve turned my curiosity into cool projects that I&apos;d like to share with you. These aren&apos;t just lines of code; they&apos;re a reflection of my passion and creativity.</Paragraph>
             </Container1>
             <Container2>
+				<Heading>Testimonials 🙌</Heading>
+                <Paragraph>Discover endorsements from professionals who have worked with me. These testimonials showcase my skills and contributions. See why they vouch for my work.</Paragraph>
+                <Paragraph> These endorsements are a testament to the quality of my contributions and the trust others have placed in me.</Paragraph>
             </Container2>
-        </ProjectsContainer>
-    );
-};
-
-export default Projects;
+        </TestimonialsContainer>
+	)
+}

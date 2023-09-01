@@ -28,91 +28,62 @@ const ContactContainer = styled.div`
     padding: 20px;
     border: 1px solid #ddd;
   }
-`
+`;
 
 const Container1 = styled.div`
-    //background-color: aqua;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    box-sizing: border-box;
-`
+    padding: 20px;
+    border: 2px solid #00d1ff;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
+    margin: 15px;
+    animation: fadeIn 4s ease forwards;
+    backdrop-filter: blur(12px);
+`;
 
 const Container2 = styled.div`
-    //background-color: blueviolet;
+    order: ${props => props.order};
     justify-content: center;
     align-items: center;
     display: flex;
-    box-sizing: border-box;
-`
+    border-radius: 15px;
+    margin: 15px;
+    animation: fadeIn 4s ease forwards;
+`;
 
-const FloatImage = styled.img`
-    ${({ aspectRatio }) =>
-    aspectRatio < 1
-        ? 
-        `
-            
-        `
-        : 
-        `
-            
-        `
-    }
-    max-width: 250px;
-    max-height: 50vh;
-    //background-color: brown;
-    animation: fadeIn 2s ease forwards, moveUpDown 6s infinite linear;
-    
-    @keyframes fadeIn {
-        0% {
-            opacity: 0;
-        }
-        
-        100% {
-        opacity: 1;
-        }
-    }
-  
-    @keyframes moveUpDown {
-        0%, 100% {
-          transform: translateY(0);
-        }
-        25% {
-          transform: translateY(-20px);
-        }
-        
-        50% {
-          transform: translateY(0);
-        }
-        
-        75% {
-          transform: translateY(20px);
-        }
-    }
-`
+const Heading = styled.h2`
+    font-family: 'Abyssinica SIL', serif;
+    color: #00d1ff;
+    font-size: 75px;
+    margin-bottom: 10px;
+`;
+
+const Paragraph = styled.p`
+    font-family: 'PT Sans', sans-serif;
+    font-size: 25px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+`;
 
 const FormContainer = styled.div`
-    max-width: 70%;
-    max-height: 50vh;
+    position: relative;
+    width: 100%;
+    border: 1px solid #ccc;
+    background-color: #9b0e0e;
+    display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 15px;
-    //background-color: crimson;
-    width: 100%;
-    margin: 0;
-    gap: 10px;
 `;
 
 const Form = styled.form`
-    max-width: 600px;
-    max-height: 50vh;
+    max-width: 800px;
+    //max-height: 50vh;
     margin: 0;
     position: relative;
     width: 80%;
     padding: 20px;
     justify-content: center;
     align-items: center;
-    //background-color: #109b26;
+    background-color: #109b26;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -234,12 +205,14 @@ const Contact = () => {
     return (
         <ContactContainer aspectRatio={aspectRatio}>
             <Container1>
-                <FloatImage src={`img/mailbox.png`} alt={`mailbox`} />
+                <Heading>Get in Touch ✉️</Heading>
+                <Paragraph>If you&apos;d like to get in touch with me or have any inquiries, please feel free to send me an email using the given form.</Paragraph>
+                <Paragraph>I look forward to hearing from you and will respond as soon as possible.</Paragraph>
             </Container1>
             <Container2>
                 <FormContainer>
+                    {/*<span> HMU.</span>*/}
                     <Form id={`form`} onSubmit={handleSubmit}>
-                        <span> HMU.</span>
                         <Input
                             required
                             type={`text`}

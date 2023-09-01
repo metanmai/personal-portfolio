@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const PopUp = styled.div`
 	position: relative;
 	top: 100%;
-	left: 50%;
+	//left: 50%;
 	transform: translateX(-50%);
 	background-color: ${({status}) => status ? "#3dca03" : "#ec2e2e"};
 	padding: 10px;

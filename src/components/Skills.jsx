@@ -31,7 +31,6 @@ const SkillsContainer = styled.div`
 
 const Container1 = styled.div`
     padding: 12px;
-    //background-color: brown;
     justify-content: center;
     align-items: center;
     display: grid;
@@ -43,8 +42,6 @@ const Container1 = styled.div`
 `
 
 const Container2 = styled.div`
-    //background-color: blueviolet;
-    //height: 100%;
     padding: 20px;
     border: 2px solid #ff5555;
     border-radius: 15px;
@@ -83,7 +80,7 @@ const Skills = () => {
                 ))}
             </Container1>
             <Container2>
-                <Heading>Skills</Heading>
+                <Heading>Skills 📝</Heading>
                 <Paragraph>Hello! I&apos;m Tanmai Niranjan, a final year Computer Science student at PES University. I&apos;m passionate about coding, problem-solving, and learning new technologies.</Paragraph>
                 <Paragraph>In my free time, I enjoy working on personal coding projects, exploring new programming languages, and playing video games.</Paragraph>
             </Container2>
