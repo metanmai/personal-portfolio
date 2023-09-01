@@ -9,7 +9,8 @@ import {ParticlesBg} from "./components/ParticlesBg.jsx";
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <NavBar/>
-            <App/>
+        <App/>
         <ParticlesBg/>
     </React.StrictMode>
+
 )
