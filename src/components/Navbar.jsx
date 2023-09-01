@@ -12,7 +12,8 @@ const Navbar = styled.div`
     justify-content: center;
     align-items: center;
     //border: 2px solid white;
-    backdrop-filter: blur(15px);
+    background-color: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(3px);
     animation: fadeIn 1s ease-in-out;
 `;
 

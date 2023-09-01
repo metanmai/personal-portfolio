@@ -34,7 +34,8 @@ const Container1 = styled.div`
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
     margin: 15px;
     animation: fadeIn 4s ease forwards;
-    backdrop-filter: blur(12px);
+    background-color: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(8px);
 `;
 
 const Container2 = styled.div`

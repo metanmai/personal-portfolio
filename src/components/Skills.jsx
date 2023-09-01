@@ -48,7 +48,8 @@ const Container2 = styled.div`
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
     margin: 15px;
     animation: fadeIn 4s ease forwards;
-    backdrop-filter: blur(12px);
+    background-color: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(8px);
 `
 
 const BallContainer = styled.div`
@@ -81,8 +82,8 @@ const Skills = () => {
             </Container1>
             <Container2>
                 <Heading>Skills 📝</Heading>
-                <Paragraph>Hello! I&apos;m Tanmai Niranjan, a final year Computer Science student at PES University. I&apos;m passionate about coding, problem-solving, and learning new technologies.</Paragraph>
-                <Paragraph>In my free time, I enjoy working on personal coding projects, exploring new programming languages, and playing video games.</Paragraph>
+                <Paragraph>I possess a diverse skill set that spans web development, AWS cloud services, Git version control, Docker containerization, Tensorflow for AI/ML, and proficiency in C++ and Python frameworks.</Paragraph>
+                <Paragraph>Beyond technology, I excel in leadership and cooperative workgroup positions. My practical experience facilitates open communication and ensures project success.</Paragraph>
             </Container2>
         </SkillsContainer>
     );

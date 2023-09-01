@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import styled from 'styled-components'
 import Typing from "./Typing.jsx";
+import {Testimonial} from "./Testimonial.jsx";
 
 
 const HeroContainer = styled.div`
@@ -32,7 +33,7 @@ const HeroContainer = styled.div`
 
 const Container1 = styled.div`
     padding: 15px;
-    //background-color: sienna;
+    background-color: rgba(0, 0, 0, 0.25);
     order: ${props => props.order};
     justify-content: center;
     align-items: center;
@@ -41,7 +42,7 @@ const Container1 = styled.div`
     margin: 15px;
     border: 2px solid #9eff88;
     border-radius: 15px;
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(8px);
     animation: fadeIn 4s ease forwards;
     
     @keyframes fadeIn {
@@ -64,12 +65,6 @@ const Container2 = styled.div`
     border-radius: 15px;
     margin: 15px;
     animation: fadeIn 4s ease forwards;
-`;
-
-const TypingContainer = styled.div`
-`;
-
-const ParagraphContainer = styled.div`
 `;
 
 const FloatImage = styled.img`
@@ -108,12 +103,12 @@ const FloatImage = styled.img`
 
 const Paragraph = styled.p`
     font-family: 'PT Sans', sans-serif;
-    font-size: 21px;
+    font-size: 25px;
     line-height: 1.5;
     //margin-bottom: 15px;
 `;
 
-const Hero = () => {
+const Home = () => {
     const [aspectRatio, setAspectRatio] = useState(window.innerWidth / window.innerHeight);
 
     const handleResize = () => {
@@ -134,13 +129,9 @@ const Hero = () => {
     return (
         <HeroContainer aspectRatio={aspectRatio}>
             <Container1 order={leftOrder}>
-                <TypingContainer>
-                    <Typing/>
-                </TypingContainer>
-                <ParagraphContainer>
-                    <Paragraph>Hello! I&apos;m Tanmai Niranjan, a final year Computer Science student at PES University. I&apos;m passionate about coding, problem-solving, and learning new technologies.</Paragraph>
-                    <Paragraph>In my free time, I enjoy working on personal coding projects, exploring new programming languages, and playing video games.</Paragraph>
-                </ParagraphContainer>
+                <Typing/>
+                <Paragraph>Hello! I&apos;m Tanmai Niranjan, a final year Computer Science student at PES University. I&apos;m passionate about coding, problem-solving, and learning new technologies.</Paragraph>
+                <Paragraph>In my free time, I enjoy working on personal coding projects, exploring new programming languages, and playing video games.</Paragraph>
             </Container1>
             <Container2 order={rightOrder}>
                 <FloatImage src={`img/boy-computer.png`} alt={`programmer`} aspectRatio={aspectRatio}/>
@@ -149,4 +140,4 @@ const Hero = () => {
     );
 };
 
-export default Hero;
+export default Home;
