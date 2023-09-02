@@ -1,5 +1,4 @@
-import {Suspense, useEffect, useRef} from "react";
-import * as THREE from 'three';
+import {Suspense} from "react";
 import { Canvas } from "@react-three/fiber";
 import {
   Decal,

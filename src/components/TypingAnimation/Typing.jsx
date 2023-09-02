@@ -1,5 +1,4 @@
 import './Typing.css'
-import './Typing.js'
 
 const Typing = () => {
     return (

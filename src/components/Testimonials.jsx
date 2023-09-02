@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import {TestimonialSlideshow} from "./TestimonialSlideshow.jsx";
-import {Testimonial} from "./Testimonial.jsx";
+import {TestimonialSlideshow} from "./Slideshow/TestimonialSlideshow.jsx";
 
 const TestimonialsContainer = styled.div`
   height: calc(100vh - 60px);
@@ -31,11 +30,12 @@ const TestimonialsContainer = styled.div`
 
 const Container1 = styled.div`
     order: ${props => props.order};
-    justify-content: center;
-    align-items: center;
     display: flex;
     border-radius: 15px;
+  	justify-content: center;
+  	align-items: center;
     margin: 15px;
+  	//background-color: darkorchid;
     animation: fadeIn 4s ease forwards;
 `;
 
@@ -68,7 +68,7 @@ export const Testimonials = () => {
 	return (
 		<TestimonialsContainer>
             <Container1>
-
+				<TestimonialSlideshow/>
             </Container1>
             <Container2>
 				<Heading>Testimonials 🙌</Heading>

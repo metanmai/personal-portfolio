@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import BallCanvas from "./Ball.jsx";
+import BallCanvas from "./Balls/Ball.jsx";
 import {technologies} from "../constants/index.js";
 
 const SkillsContainer = styled.div`

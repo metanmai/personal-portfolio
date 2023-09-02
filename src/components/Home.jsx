@@ -1,7 +1,6 @@
 import {useEffect, useState} from 'react';
 import styled from 'styled-components'
-import Typing from "./Typing.jsx";
-import {Testimonial} from "./Testimonial.jsx";
+import Typing from "./TypingAnimation/Typing.jsx";
 
 
 const HeroContainer = styled.div`

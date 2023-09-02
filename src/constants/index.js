@@ -67,6 +67,12 @@ const testimonials = [
 		person: "Person 3",
 		company: "Company 3",
 		role: "Role 3"
+	},
+	{
+		text: "Testimonial 4, lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		person: "Person 4",
+		company: "Company 4",
+		role: "Role 4"
 	}
 ]
 
