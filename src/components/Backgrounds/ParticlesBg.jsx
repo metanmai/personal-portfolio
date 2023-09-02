@@ -13,7 +13,7 @@ export const ParticlesBg = () => {
         }
       },
       color: {
-        value: ["#00d1ff", "#2fef32", "#fdcd00", "#ff3939", "ff7af4"]
+        value: ["#00d1ff", "#68fa47", "#fdcd00", "#ff3939", "ff7af4"]
       },
       shape: {
         type: "circle"

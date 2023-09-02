@@ -20,8 +20,7 @@ const TestimonialsContainer = styled.div`
         grid-template-rows: 1fr;
         `
     }
-
-  /* Additional styling for grid items */
+	
   .grid-item {
     padding: 20px;
     border: 1px solid #ddd;
@@ -35,13 +34,12 @@ const Container1 = styled.div`
   	justify-content: center;
   	align-items: center;
     margin: 15px;
-  	//background-color: darkorchid;
     animation: fadeIn 4s ease forwards;
 `;
 
 const Container2 = styled.div`
   padding: 20px;
-  border: 2px solid #ff7af4;
+  border: 4px solid #ff7af4;
   border-radius: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
   margin: 15px;

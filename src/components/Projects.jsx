@@ -1,26 +1,27 @@
 import styled from "styled-components";
+import {projects} from "../constants/index.js";
+import {Project} from "./Project.jsx";
 
 const ProjectsContainer = styled.div`
-  height: calc(100vh - 60px);
+    height: calc(100vh - 60px);
     scroll-snap-align: center;
     display: grid;
     flex-direction: ${({ aspectRatio }) => aspectRatio < 1 ? "column" : "row"};
-  
+    
     ${({ aspectRatio }) =>
     aspectRatio < 1
-        ? 
-        `
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
-        `
-        : 
-        `
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr;
-        `
+    ? 
+    `
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    `
+    : 
+    `
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    `
     }
-
-  /* Additional styling for grid items */
+    
   .grid-item {
     padding: 20px;
     border: 1px solid #ddd;
@@ -29,7 +30,7 @@ const ProjectsContainer = styled.div`
 
 const Container1 = styled.div`
     padding: 20px;
-    border: 2px solid #fdcd00;
+    border: 4px solid #fdcd00;
     border-radius: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
     margin: 15px;
@@ -39,13 +40,12 @@ const Container1 = styled.div`
 `;
 
 const Container2 = styled.div`
-    order: ${props => props.order};
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    border-radius: 15px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    //border: 5px solid #9eff88;
     margin: 15px;
-    animation: fadeIn 4s ease forwards;
 `;
 
 const Heading = styled.h2`
@@ -71,6 +71,9 @@ const Projects = () => {
                 <Paragraph> As a computer science enthusiast, I&apos;ve turned my curiosity into cool projects that I&apos;d like to share with you. These aren&apos;t just lines of code; they&apos;re a reflection of my passion and creativity.</Paragraph>
             </Container1>
             <Container2>
+                {projects.map((project, index) => (
+                    <Project key={project.id} index={index}/>
+                ))}
             </Container2>
         </ProjectsContainer>
     );

@@ -32,7 +32,7 @@ const ContactContainer = styled.div`
 
 const Container1 = styled.div`
     padding: 20px;
-    border: 2px solid #00d1ff;
+    border: 4px solid #00d1ff;
     border-radius: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
     margin: 15px;

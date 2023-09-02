@@ -43,7 +43,7 @@ const Container1 = styled.div`
 
 const Container2 = styled.div`
     padding: 20px;
-    border: 2px solid #ff5555;
+    border: 4px solid #ff3939;
     border-radius: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
     margin: 15px;
@@ -58,7 +58,7 @@ const BallContainer = styled.div`
 
 const Heading = styled.h2`
     font-family: 'Abyssinica SIL', serif;
-    color: #ff5555;
+    color: #ff3939;
     font-size: 100px;
     margin-bottom: 10px;
 `;

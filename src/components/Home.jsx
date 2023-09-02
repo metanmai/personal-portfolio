@@ -39,7 +39,7 @@ const Container1 = styled.div`
     display: grid;
     box-sizing: border-box;
     margin: 15px;
-    border: 2px solid #9eff88;
+    border: 4px solid #68fa47;
     border-radius: 15px;
     backdrop-filter: blur(8px);
     animation: fadeIn 4s ease forwards;

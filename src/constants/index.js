@@ -74,6 +74,37 @@ const testimonials = [
 		company: "Company 4",
 		role: "Role 4"
 	}
-]
+];
 
-export {technologies, testimonials};
+const projects = [
+	{
+		id: 1,
+		name: "Blocktopia",
+		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		thumbnail: "img/blocktopia.png",
+		link: "https://github.com/metanmai/blocktopia",
+	},
+	{
+		id: 2,
+		name: "Fake News Detection",
+		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		thumbnail: "img/fake-news-detection.jpeg",
+		link: "https://github.com/metanmai/fake-news-detection",
+	},
+	{
+		id: 3,
+		name: "Graph Functionalities",
+		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		thumbnail: "img/graph-functionalities.jpeg",
+		link: "https://github.com/metanmai/Graph_Functionalities",
+	},
+	{
+		id: 4,
+		name: "Chatterbox",
+		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		thumbnail: "img/chatterbox.png",
+		link: "https://github.com/metanmai/chatterbox",
+	}
+];
+
+export {technologies, testimonials, projects};

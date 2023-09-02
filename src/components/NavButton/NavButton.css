@@ -1,0 +1,25 @@
+.button {
+  display: flex;
+  width: 100px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  justify-content: center;
+  text-align: center;
+  font-size: 15px;
+  font-family: 'PT Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.button-1 {
+  background-color: transparent;
+  border: 1px solid white;
+  border-radius: 50px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  color: white;
+}
+.button-1:hover {
+  box-shadow: 0 0 10px 0 white inset, 0 0 20px 2px white;
+  border: 1px solid white;
+}
