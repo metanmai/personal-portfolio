@@ -13,6 +13,13 @@ const ProjectContainer = styled.div`
   	justify-content: center;
   	align-items: center;
   	text-align: center;
+  	cursor: pointer;
+  	overflow: hidden;
+  
+  	&:hover .slide {
+		transition: 1s;
+		right: 0;
+	}
 `;
 
 const ProjectName = styled.div`
@@ -20,33 +27,41 @@ const ProjectName = styled.div`
   	top: 0;
   	left: 0;
   	color: white;
-	width: 100%; /* Make the wrapper cover the entire container width */
-	height: 100%; /* Make the wrapper cover the entire container height */
+	width: 100%;
+	height: 100%;
 	display: flex;
-	justify-content: center; /* Center horizontally */
-	align-items: center; /* Center vertically */
+  	text-shadow: 10px 10px 16px rgba(0, 0, 0, 1);
+  	font-family: 'PT Sans', serif;
+  	font-weight: 600;
+  	font-size: 20px;
+	justify-content: center;
+	align-items: center;
 `;
 
-const HoverContainer = styled.div`
+const ProjectDescription = styled.div`
 	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%; /* Make the wrapper cover the entire container width */
-	height: 100%; /* Make the wrapper cover the entire container height */
-	display: flex;
-	justify-content: center; /* Center horizontally */
-	align-items: center; /* Center vertically */
+    right: 100%;
+    width: 100%;
+  	height: 100%;
+  	background-image: url("img/yellow-orange-gradient.jpeg");
+  	background-size: auto 100%; // width and height
+  	background-position: center;
+  	filter: brightness(0.9);
+  	justify-content: center;
+  	align-items: center;
+  	text-align: center;
+    transition: 1s;
 `;
 
 export const Project = ({index}) => {
-	const [brightness, setBrightness] = useState(0.5);
+	const [brightness, setBrightness] = useState(0.8);
 
 	const handleMouseEnter = () => {
 			setBrightness(0.8);
 	};
 
 	const handleMouseLeave = () => {
-		setBrightness(0.5);
+		setBrightness(0.8);
 	};
 
 	return (
@@ -59,9 +74,9 @@ export const Project = ({index}) => {
 			<ProjectName>
 				{projects[index].name}
 			</ProjectName>
-			<HoverContainer>
+			<ProjectDescription className={`slide`}>
 				{projects[index].description}
-			</HoverContainer>
+			</ProjectDescription>
 		</ProjectContainer>
 	)
 };

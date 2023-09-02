@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {TestimonialSlideshow} from "./Slideshow/TestimonialSlideshow.jsx";
+import {TestimonialSlideshow} from "./TestimonialSlider/TestimonialSlideshow.jsx";
 
 const TestimonialsContainer = styled.div`
   height: calc(100vh - 60px);

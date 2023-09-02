@@ -75,7 +75,7 @@ const Skills = () => {
         <SkillsContainer>
             <Container1>
                 {technologies.map((technology) => (
-                    <BallContainer key={technology.name}>
+                    <BallContainer key={technology.name} style={{cursor: "grab"}}>
                         <BallCanvas icon={technology.icon} />
                     </BallContainer>
                 ))}

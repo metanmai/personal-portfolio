@@ -95,7 +95,7 @@ const projects = [
 		id: 3,
 		name: "Graph Functionalities",
 		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-		thumbnail: "img/graph-functionalities.jpeg",
+		thumbnail: "img/graph-functionalities.webp",
 		link: "https://github.com/metanmai/Graph_Functionalities",
 	},
 	{

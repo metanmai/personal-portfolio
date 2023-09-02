@@ -12,9 +12,8 @@ const Navbar = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    //border: 2px solid white;
     background-color: rgba(0, 0, 0, 0.75);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(3px);
     animation: fadeIn 1s ease-in-out;
 `;
@@ -38,42 +37,42 @@ const List = styled.ul`
 `;
 
 const ListItem = styled.li`
-    margin: 0 15px; /* Adjust the spacing between list items */
+    margin: 0 12px; /* Adjust the spacing between list items */
+`;
+
+const Socials = styled.div`
+    position: absolute;
+    display: inline-block;
+    right: 0;
+    background-color: red;
 `;
 
 const NavBar = () => {
-      const handleMouseEnter = () => {
-          document.body.style.overflow = 'hidden'; // Prevent scrolling
-      };
+    const sections = ["Home", "Skills", "Projects", "Testimonials", "Contact"];
+    const handleMouseEnter = () => {
+      document.body.style.overflow = 'hidden';
+    };
 
-      const handleMouseLeave = () => {
-          document.body.style.overflow = 'auto'; // Enable scrolling
-      };
+    const handleMouseLeave = () => {
+      document.body.style.overflow = 'auto';
+    };
 
-      // const { scrollToSection } = useScrollContext();
 
     return (
         <Navbar onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
             <NavbarContainer>
                 <Links>
                     <List>
-                        <ListItem>
-                            <NavButton text={`Home`}/>
-                        </ListItem>
-                        <ListItem>
-                            <NavButton text={`Skills`}/>
-                        </ListItem>
-                        <ListItem>
-                            <NavButton text={`Projects`}/>
-                        </ListItem>
-                        <ListItem>
-                            <NavButton text={`Testimonials`}/>
-                        </ListItem>
-                        <ListItem>
-                            <NavButton text={`Contact`}/>
-                        </ListItem>
+                        {sections.map((section, index) => (
+                            <ListItem key={index}>
+                                <NavButton text={section}/>
+                            </ListItem>
+                        ))}
                     </List>
                 </Links>
+                <Socials>
+                    1
+                </Socials>
             </NavbarContainer>
         </Navbar>
     );
