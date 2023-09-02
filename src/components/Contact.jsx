@@ -66,65 +66,70 @@ const Paragraph = styled.p`
 `;
 
 const FormContainer = styled.div`
-    position: relative;
-    width: 100%;
-    border: 1px solid #ccc;
-    background-color: #9b0e0e;
-    display: flex;
+    width: 80%;
+    padding: 20px;
     justify-content: center;
     align-items: center;
 `;
 
 const Form = styled.form`
     max-width: 800px;
-    //max-height: 50vh;
-    margin: 0;
-    position: relative;
-    width: 80%;
-    padding: 20px;
     justify-content: center;
     align-items: center;
-    background-color: #109b26;
-    border-radius: 10px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    color: white;
 `
 
 const Input = styled.input`
     font-family: 'PT Sans', sans-serif;
+    font-size: 16px;
+    color: white;
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1.5px solid #00d1ff;
+    background-color: rgba(138, 207, 255, 0.25);
     border-radius: 5px;
     margin-bottom: 15px;
+
+    &::placeholder {
+        color: rgba(255, 255, 255, 0.55);
+    }
 `;
 
 const TextArea = styled.textarea`
     font-family: 'PT Sans', sans-serif;
+    font-size: 16px;
+    color: white;
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1.5px solid #00d1ff;
+    background-color: rgba(138, 207, 255, 0.25);
     border-radius: 5px;
     margin-bottom: 15px;
     resize: vertical;
-    max-height: 40vh;
+    max-height: 200px;
+
+    &::placeholder {
+        color: rgba(255, 255, 255, 0.55);
+    }
 `;
 
 const Button = styled.button`
-    font-family: 'Abyssinica SIL', serif;
+    font-family: 'PT Sans', serif;
     color: white;
     display: block;
-    width: 100%;
+    width: 20%;
     padding: 10px;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
+
+    background-color: rgba(0, 94, 237, 0.5);
+    border: 1.5px solid #00d1ff;
+    border-radius: 30px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    
+
     &:hover {
-    background-color: #0056b3;
+        background-color: #0056b3;
     }
 `;
 
@@ -212,7 +217,6 @@ const Contact = () => {
             </Container1>
             <Container2>
                 <FormContainer>
-                    {/*<span> HMU.</span>*/}
                     <Form id={`form`} onSubmit={handleSubmit}>
                         <Input
                             required
@@ -240,7 +244,8 @@ const Contact = () => {
                         />
                         <Button type={`submit`}> Send {showLoading && <Loading src={`img/loading.png`}/>} </Button>
                     </Form>
-                    {showPopup && <FormSubmitPopup status={status}/>}
+                    <br/>
+                    <FormSubmitPopup status={status} show={showPopup}/>
                 </FormContainer>
             </Container2>
         </ContactContainer>

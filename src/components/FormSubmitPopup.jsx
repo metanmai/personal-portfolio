@@ -4,25 +4,25 @@ import PropTypes from 'prop-types';
 const PopUp = styled.div`
 	position: relative;
 	top: 100%;
-	//left: 50%;
-	transform: translateX(-50%);
+  	font-family: "PT Sans", sans-serif;
 	background-color: ${({status}) => status ? "#3dca03" : "#ec2e2e"};
 	padding: 10px;
 	border-radius: 5px;
 	text-align: center;
-	z-index: 1000;
+  	opacity: ${({show}) => show ? 1 : 0};
 `;
 
-const FormSubmitPopup = ({status}) => {
+const FormSubmitPopup = ({status, show}) => {
 	return (
-		<PopUp status={status}>
+		<PopUp status={status} show={show}>
 			{status ? "Email Sent Successfully!" : "The email could not be sent."}
 		</PopUp>
 	);
 };
 
 FormSubmitPopup.propTypes = {
-	status: PropTypes.bool
+	status: PropTypes.bool,
+	show: PropTypes.bool
 }
 
 export default FormSubmitPopup;
