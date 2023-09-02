@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 
 const PopUp = styled.div`
 	position: relative;
-	top: 100%;
   	font-family: "PT Sans", sans-serif;
 	background-color: ${({status}) => status ? "#3dca03" : "#ec2e2e"};
 	padding: 10px;
-	border-radius: 5px;
+	border-radius: 10px;
 	text-align: center;
   	opacity: ${({show}) => show ? 1 : 0};
 `;

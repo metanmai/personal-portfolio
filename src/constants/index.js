@@ -83,6 +83,7 @@ const projects = [
 		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
 		thumbnail: "img/blocktopia.png",
 		link: "https://github.com/metanmai/blocktopia",
+		tech: ["react", "vite", "threejs"]
 	},
 	{
 		id: 2,
@@ -90,6 +91,7 @@ const projects = [
 		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
 		thumbnail: "img/fake-news-detection.jpeg",
 		link: "https://github.com/metanmai/fake-news-detection",
+		tech: ["python", "tensorflow", "networkx"]
 	},
 	{
 		id: 3,
@@ -97,6 +99,7 @@ const projects = [
 		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
 		thumbnail: "img/graph-functionalities.webp",
 		link: "https://github.com/metanmai/Graph_Functionalities",
+		tech: ["C++", "pybind"]
 	},
 	{
 		id: 4,
@@ -104,6 +107,7 @@ const projects = [
 		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
 		thumbnail: "img/chatterbox.png",
 		link: "https://github.com/metanmai/chatterbox",
+		tech: ["flask", "bootstrap-css"]
 	}
 ];
 

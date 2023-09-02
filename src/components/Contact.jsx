@@ -89,7 +89,7 @@ const Input = styled.input`
     padding: 10px;
     border: 1.5px solid #00d1ff;
     background-color: rgba(138, 207, 255, 0.25);
-    border-radius: 5px;
+    border-radius: 10px;
     margin-bottom: 15px;
 
     &::placeholder {
@@ -105,7 +105,7 @@ const TextArea = styled.textarea`
     padding: 10px;
     border: 1.5px solid #00d1ff;
     background-color: rgba(138, 207, 255, 0.25);
-    border-radius: 5px;
+    border-radius: 10px;
     margin-bottom: 15px;
     resize: vertical;
     max-height: 200px;
@@ -129,12 +129,12 @@ const Button = styled.button`
     transition: background-color 0.3s ease;
 
     &:hover {
-        background-color: #0056b3;
+        background-color: rgba(0, 94, 237, 1);
     }
 `;
 
 const Loading = styled.img`
-    max-width: 11px;
+    max-width: 10px;
     animation: rotation 1s infinite linear;
     
     @keyframes rotation {

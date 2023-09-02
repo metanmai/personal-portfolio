@@ -39,17 +39,35 @@ const ProjectName = styled.div`
 
 const ProjectDescription = styled.div`
 	position: absolute;
+  	display: flex;
     right: 100%;
     width: 100%;
   	height: 100%;
+  	border-radius: 15px;
   	background-image: url("img/yellow-orange-gradient.jpeg");
   	background-size: auto 100%; // width and height
   	background-position: center;
-  	filter: brightness(0.9);
-  	justify-content: center;
+  	font-family: "PT Sans", sans-serif;
+  	font-size: 20px;
+  	color: white;
+  	text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
   	align-items: center;
-  	text-align: center;
     transition: 1s;
+`;
+
+const Bottom = styled.div`
+  	position: absolute;
+  	display: flex;
+  	max-width: 100%;
+  	padding: 8px;
+  	font-size: 15px;
+  	bottom: 0;
+	flex-direction: row;
+   	gap: 7px;
+	justify-content: flex-end;
+	align-items: flex-end;
+  	width: 100%;
+  	height: 20px;
 `;
 
 export const Project = ({index}) => {
@@ -65,6 +83,12 @@ export const Project = ({index}) => {
 			</ProjectName>
 			<ProjectDescription className={`slide`}>
 				{projects[index].description}
+				<Bottom>
+					{projects[index].tech.map((item, index) => (
+						<span key={index}> #{item} </span>
+					))}
+					&nbsp; &nbsp;
+				</Bottom>
 			</ProjectDescription>
 		</ProjectContainer>
 	)

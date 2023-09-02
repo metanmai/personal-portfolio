@@ -44,7 +44,6 @@ const Container2 = styled.div`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 25px;
-    //border: 5px solid #9eff88;
     margin: 15px;
 `;
 
