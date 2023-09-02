@@ -1,7 +1,6 @@
 import {projects} from "../constants/index.js";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import {useState} from "react";
 import {ImageBackground} from "./Backgrounds/ImageBackground.jsx";
 
 const ProjectContainer = styled.div`
@@ -9,7 +8,7 @@ const ProjectContainer = styled.div`
   	display: flex;
   	color: #101010;
   	border-radius: 15px;
-  	border: 1px solid #fdcd00;
+  	border: 1.5px solid #fdcd00;
   	justify-content: center;
   	align-items: center;
   	text-align: center;
@@ -54,23 +53,13 @@ const ProjectDescription = styled.div`
 `;
 
 export const Project = ({index}) => {
-	const [brightness, setBrightness] = useState(0.8);
-
-	const handleMouseEnter = () => {
-			setBrightness(0.8);
-	};
-
-	const handleMouseLeave = () => {
-		setBrightness(0.8);
+	const handleClick = () => {
+		window.open(projects[index].link, '_blank');
 	};
 
 	return (
-		<ProjectContainer
-			brightness={brightness}
-			onMouseEnter={handleMouseEnter}
-			onMouseLeave={handleMouseLeave}
-		>
-			<ImageBackground path={projects[index].thumbnail} brightness={brightness}/>
+		<ProjectContainer onClick={handleClick}>
+			<ImageBackground path={projects[index].thumbnail}/>
 			<ProjectName>
 				{projects[index].name}
 			</ProjectName>
@@ -82,5 +71,6 @@ export const Project = ({index}) => {
 };
 
 Project.propTypes = {
-	index: PropTypes.number.isRequired
+	index: PropTypes.number.isRequired,
+	path: PropTypes.string
 };

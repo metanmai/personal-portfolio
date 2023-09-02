@@ -12,10 +12,11 @@ const Navbar = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: black;
     border-bottom: 1px solid rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(3px);
     animation: fadeIn 1s ease-in-out;
+    z-index: 2;
 `;
 
 const NavbarContainer = styled.div`
@@ -71,7 +72,6 @@ const NavBar = () => {
                     </List>
                 </Links>
                 <Socials>
-                    1
                 </Socials>
             </NavbarContainer>
         </Navbar>

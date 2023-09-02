@@ -42,7 +42,7 @@ body {
 
 .swiper-slide {
   display: flex;
-  border: 1px solid #ff7af4;
+  border: 1.5px solid #ff7af4;
   border-radius: 18px;
   font-weight: bold;
 }
