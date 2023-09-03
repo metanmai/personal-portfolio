@@ -1,14 +1,23 @@
 import PropTypes from 'prop-types';
 import './NavButton.css';
 
-export const NavButton = ({text}) => {
+export const NavButton = ({id}) => {
+    const handleClickScroll = () => {
+		const element = document.getElementById(id);
+
+		console.log(typeof element)
+		if (element) {
+			element.scrollIntoView({ behavior: 'smooth' });
+		}
+  };
+
 	return (
-		<div className={`button button-1`}>
-			{text}
-		</div>
+			<div className={`button button-1`} onClick={handleClickScroll}>
+				{id}
+			</div>
 	)
 };
 
-NavButton.PropTypes = {
-	text: PropTypes.string.isRequired
+NavButton.propTypes = {
+  id: PropTypes.string.isRequired, // Ensure id is a required string
 };

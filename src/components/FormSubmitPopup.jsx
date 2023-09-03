@@ -9,6 +9,7 @@ const PopUp = styled.div`
 	border-radius: 10px;
 	text-align: center;
   	opacity: ${({show}) => show ? 1 : 0};
+  	transition: opacity 0.2s ease; 
 `;
 
 const FormSubmitPopup = ({status, show}) => {

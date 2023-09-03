@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import axios from "axios";
 import FormSubmitPopup from "./FormSubmitPopup.jsx";
 
-const ContactContainer = styled.div`
+const ContactContainer = styled.div.attrs({id: 'Contact'})`
     height: calc(100vh - 60px);
     scroll-snap-align: center;
     display: grid;
@@ -22,8 +22,7 @@ const ContactContainer = styled.div`
         grid-template-rows: 1fr;
         `
     }
-
-  /* Additional styling for grid items */
+    
   .grid-item {
     padding: 20px;
     border: 1px solid #ddd;

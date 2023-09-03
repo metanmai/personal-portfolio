@@ -2,7 +2,7 @@ import styled from "styled-components";
 import {projects} from "../constants/index.js";
 import {Project} from "./Project.jsx";
 
-const ProjectsContainer = styled.div`
+const ProjectsContainer = styled.div.attrs({id: 'Projects'})`
     height: calc(100vh - 60px);
     scroll-snap-align: center;
     display: grid;

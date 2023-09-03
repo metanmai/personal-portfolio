@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Typing from "./TypingAnimation/Typing.jsx";
 
 
-const HeroContainer = styled.div`
+const HeroContainer = styled.div.attrs({id: 'Home'})`
     height: calc(100vh - 60px);
     scroll-snap-align: center;
     display: grid;
@@ -125,8 +125,17 @@ const Home = () => {
     const leftOrder = aspectRatio >= 1 ? 1 : 2;
     const rightOrder = aspectRatio >= 1 ? 2 : 1;
 
+    const handleClickScroll = () => {
+		const element = document.getElementById('Contact');
+
+		console.log(element)
+		if (element) {
+			element.scrollIntoView({ behavior: 'smooth' });
+		}
+  };
+
     return (
-        <HeroContainer aspectRatio={aspectRatio}>
+        <HeroContainer aspectRatio={aspectRatio} onClick={handleClickScroll}>
             <Container1 order={leftOrder}>
                 <Typing/>
                 <Paragraph>Hello! I&apos;m Tanmai Niranjan, a final year Computer Science student at PES University. I&apos;m passionate about coding, problem-solving, and learning new technologies.</Paragraph>

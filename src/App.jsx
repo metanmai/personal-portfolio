@@ -8,19 +8,20 @@ import NavBar from "./components/Navbar.jsx";
 import {ParticlesBg} from "./components/Backgrounds/ParticlesBg.jsx";
 
 function App() {
+
   return (
         <div className="app-container">
             <NavBar/>
             <div className="components-container">
-                <Home/>
-                <Skills/>
-                <Projects/>
-                <Testimonials/>
-                <Contact/>
+                <Home id={`Home`}/>
+                <Skills id={`Skills`}/>
+                <Projects id={`Projects`}/>
+                <Testimonials id={`Testimonials`}/>
+                <Contact id={`Contact`}/>
             </div>
             <ParticlesBg/>
         </div>
   )
 }
 
-export default App
+export default App;

@@ -66,7 +66,7 @@ const NavBar = () => {
                     <List>
                         {sections.map((section, index) => (
                             <ListItem key={index}>
-                                <NavButton text={section}/>
+                                <NavButton id={section}/>
                             </ListItem>
                         ))}
                     </List>

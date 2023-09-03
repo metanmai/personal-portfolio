@@ -2,7 +2,7 @@ import styled from "styled-components";
 import BallCanvas from "./Balls/Ball.jsx";
 import {technologies} from "../constants/index.js";
 
-const SkillsContainer = styled.div`
+const SkillsContainer = styled.div.attrs({id: 'Skills'})`
     height: calc(100vh - 50px);
     scroll-snap-align: center;
     display: grid;

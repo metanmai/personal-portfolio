@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import {TestimonialSlideshow} from "./TestimonialSlider/TestimonialSlideshow.jsx";
 
-const TestimonialsContainer = styled.div`
+const TestimonialsContainer = styled.div.attrs({id: 'Testimonials'})`
   height: calc(100vh - 60px);
     scroll-snap-align: center;
     display: grid;

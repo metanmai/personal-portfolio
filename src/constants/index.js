@@ -51,28 +51,28 @@ const technologies = [
 
 const testimonials = [
 	{
-		text: "Testimonial 1, lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-		person: "Person 1",
-		company: "Company 1",
-		role: "Role 1"
+		text: "He has a natural talent for breaking down complex topics into easily digestible components, which not only benefits him in his own learning but also makes him an excellent resource for his peers.",
+		person: "Avinash Tiwari",
+		company: "pCloudy",
+		role: "CEO"
 	},
 	{
-		text: "Testimonial 2, lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-		person: "Person 2",
-		company: "Company 2",
-		role: "Role 2"
+		text: "Tanmai's work ethic extends beyond the classroom, as he willingly takes on challenging projects and consistently meets deadlines with high-quality results.",
+		person: "Shibu Prasad Panda",
+		company: "pCloudy",
+		role: "Senior Lead Software Developer"
 	},
 	{
-		text: "Testimonial 3, lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-		person: "Person 3",
-		company: "Company 3",
-		role: "Role 3"
+		text: "Tanmai's commitment to his work is truly impressive, and his ability to tackle challenges with a positive mindset is an asset to any team.",
+		person: "Kofi Opoku",
+		company: "Dosh",
+		role: "Director"
 	},
 	{
-		text: "Testimonial 4, lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-		person: "Person 4",
-		company: "Company 4",
-		role: "Role 4"
+		text: "Tanmai is not only a dedicated and hardworking student but also a team player who consistently brings a positive attitude to every project.",
+		person: "Vishnu Athreya",
+		company: "OPIN Tech",
+		role: "Head Of Logistics"
 	}
 ];
 
@@ -80,7 +80,7 @@ const projects = [
 	{
 		id: 1,
 		name: "Blocktopia",
-		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		description: "Dive into a pixelated universe, build, explore, and embark on your own unique adventures in this virtual sandbox.",
 		thumbnail: "img/blocktopia.png",
 		link: "https://github.com/metanmai/blocktopia",
 		tech: ["react", "vite", "threejs"]
@@ -88,7 +88,7 @@ const projects = [
 	{
 		id: 2,
 		name: "Fake News Detection",
-		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		description: "Using advanced algorithms and machine learning techniques, this project helps users distinguish between credible and unreliable information sources",
 		thumbnail: "img/fake-news-detection.jpeg",
 		link: "https://github.com/metanmai/fake-news-detection",
 		tech: ["python", "tensorflow", "networkx"]
@@ -96,7 +96,7 @@ const projects = [
 	{
 		id: 3,
 		name: "Graph Functionalities",
-		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		description: "The Graph Functionalities project showcases a collection of custom-built functions for handling and analyzing complex networks.",
 		thumbnail: "img/graph-functionalities.webp",
 		link: "https://github.com/metanmai/Graph_Functionalities",
 		tech: ["C++", "pybind"]
@@ -104,7 +104,7 @@ const projects = [
 	{
 		id: 4,
 		name: "Chatterbox",
-		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+		description: "Chatterbox is a versatile blogging platform where users can share their thoughts, stories, and ideas with a global audience.",
 		thumbnail: "img/chatterbox.png",
 		link: "https://github.com/metanmai/chatterbox",
 		tech: ["flask", "bootstrap-css"]
