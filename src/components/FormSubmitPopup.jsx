@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 const PopUp = styled.div`
 	position: relative;
+  	font-size: 16px;
   	font-family: "PT Sans", sans-serif;
 	background-color: ${({status}) => status ? "#3dca03" : "#ec2e2e"};
 	padding: 10px;
