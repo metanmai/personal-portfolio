@@ -1,7 +1,6 @@
 import {projects} from "../constants/index.js";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import {ImageBackground} from "./Backgrounds/ImageBackground.jsx";
 
 const ProjectContainer = styled.div`
 	position: relative;
@@ -19,6 +18,17 @@ const ProjectContainer = styled.div`
 		transition: 1s;
 		right: 0;
 	}
+`;
+
+const ImageBackground = styled.div`
+  	display: flex;
+  	height: 100%;
+  	width: 100%;
+  	border-radius: 15px;
+  	background-image: url(${({path}) => path});
+  	background-size: auto 100%; // width and height
+  	background-position: center;
+  	z-index: -10;
 `;
 
 const ProjectName = styled.div`

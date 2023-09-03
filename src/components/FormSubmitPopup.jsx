@@ -8,7 +8,7 @@ const PopUp = styled.div`
 	padding: 10px;
 	border-radius: 10px;
 	text-align: center;
-  	opacity: ${({show}) => show ? 1 : 0};
+  	opacity: ${({show}) => show};
   	transition: opacity 0.2s ease; 
 `;
 
@@ -21,8 +21,8 @@ const FormSubmitPopup = ({status, show}) => {
 };
 
 FormSubmitPopup.propTypes = {
-	status: PropTypes.bool,
-	show: PropTypes.bool
+	status: PropTypes.number.isRequired,
+	show: PropTypes.number.isRequired
 }
 
 export default FormSubmitPopup;

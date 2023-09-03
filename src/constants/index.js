@@ -111,4 +111,22 @@ const projects = [
 	}
 ];
 
-export {technologies, testimonials, projects};
+const socials = [
+	{
+		name: "leetcode",
+		imgUrl: "img/leetcode-icon.png",
+		link: "https://leetcode.com/metanmai/"
+	},
+	{
+		name: "github",
+		imgUrl: "img/github-icon.png",
+		link: "https://github.com/metanmai/"
+	},
+	{
+		name: "linkedin",
+		imgUrl: "img/linkedin-icon.png",
+		link: "https://www.linkedin.com/in/tanmai-niranjan-76326b288/"
+	}
+]
+
+export {technologies, testimonials, projects, socials};

@@ -107,7 +107,7 @@ const TextArea = styled.textarea`
     border-radius: 10px;
     margin-bottom: 15px;
     resize: vertical;
-    max-height: 200px;
+    max-height: 250px;
 
     &::placeholder {
         color: rgba(255, 255, 255, 0.55);
@@ -244,7 +244,7 @@ const Contact = () => {
                         <Button type={`submit`}> Send {showLoading && <Loading src={`img/loading.png`}/>} </Button>
                     </Form>
                     <br/>
-                    <FormSubmitPopup status={status} show={showPopup}/>
+                    <FormSubmitPopup status={status ? 1 : 0} show={showPopup ? 1 : 0}/>
                 </FormContainer>
             </Container2>
         </ContactContainer>
