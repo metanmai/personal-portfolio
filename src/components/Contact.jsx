@@ -216,7 +216,11 @@ const Contact = () => {
             </Container1>
             <Container2>
                 <FormContainer>
-                    <Form id={`form`} onSubmit={handleSubmit}>
+                    <Form
+                        id={`form`}
+                        onSubmit={handleSubmit}
+                        netlify
+                    >
                         <Input
                             required
                             type={`text`}
@@ -241,7 +245,9 @@ const Contact = () => {
                             placeholder={`Message`}
                             onChange={(e) => setMessage(e.target.value)}
                         />
-                        <Button type={`submit`}> Send {showLoading && <Loading src={`img/loading.png`}/>} </Button>
+                        <Button type={`submit`}>
+                            Send {showLoading && <Loading src={`img/loading.png`}/>}
+                        </Button>
                     </Form>
                     <br/>
                     <FormSubmitPopup status={status ? 1 : 0} show={showPopup ? 1 : 0}/>

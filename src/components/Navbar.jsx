@@ -125,7 +125,8 @@ const NavBar = () => {
                     <SocialAcc
                         key={index}
                         path={social.imgUrl}
-                        onClick={() => handleClick(social.link)}/>
+                        onClick={() => handleClick(social.link)}
+                    />
                 ))}
             </Socials>
         </Navbar>
