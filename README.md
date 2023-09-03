@@ -3,7 +3,7 @@
 
 ## Description
 
-Welcome to my personal portfolio website repository. This website is designed to showcase my skills, projects, and experiences in the field of Computer Science. It's built using React and Vite for a modern and responsive design.
+Hey there! Welcome to my personal portfolio website. Think of it as my digital playground where I showcase my journey in the tech world. I've whipped this up using React and Vite, and I'm pretty excited to show you around!
 
 ## Key Features
 
