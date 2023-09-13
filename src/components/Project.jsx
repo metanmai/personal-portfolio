@@ -7,7 +7,6 @@ const ProjectContainer = styled.div`
   	display: flex;
   	color: #101010;
   	border-radius: 15px;
-  	border: 1.5px solid #fdcd00;
   	justify-content: center;
   	align-items: center;
   	text-align: center;
@@ -26,7 +25,8 @@ const ImageBackground = styled.div`
   	width: 100%;
   	border-radius: 15px;
   	background-image: url(${({path}) => path});
-  	background-size: auto 100%; // width and height
+  	background-size: cover;
+  	background-repeat: no-repeat;
   	background-position: center;
   	z-index: -10;
 `;
@@ -63,6 +63,10 @@ const ProjectDescription = styled.div`
   	text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
   	align-items: center;
     transition: 1s;
+  
+	@media (max-width: 1200px) {
+		font-size: 12px;
+	}
 `;
 
 const Bottom = styled.div`
@@ -78,6 +82,10 @@ const Bottom = styled.div`
 	align-items: flex-end;
   	width: 100%;
   	height: 20px;
+  
+  	@media (max-width: 1200px) {
+		font-size: 10px;
+	}
 `;
 
 export const Project = ({index}) => {

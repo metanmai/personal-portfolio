@@ -41,11 +41,21 @@ const Bottom = styled.div`
 
 const Paragraph = styled.p`
     font-family: 'Roboto Serif', serif;
+  	overflow-y: auto;
     font-size: 30px;
     font-style: normal;
   	color: white;
     line-height: 1.5;
   	padding: 10px;
+  	margin-bottom: 0;
+  
+	@media (max-width: 1100px) {
+		font-size: 24px;
+	}
+  
+	@media (min-width: 1200px) {
+		font-size: 30px;
+	}
 `;
 
 const Person = styled.span`
@@ -72,7 +82,7 @@ export const Testimonial = ({index}) => {
 		<TestimonialContainer>
 			<Top>
 				<Paragraph>
-						&quot;{testimonials[index].text}&quot;
+					&quot;{testimonials[index].text}&quot;
 				</Paragraph>
 			</Top>
 			<Bottom>

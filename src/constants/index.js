@@ -88,7 +88,7 @@ const projects = [
 	{
 		id: 2,
 		name: "Fake News Detection",
-		description: "Using advanced algorithms and machine learning techniques, this project helps users distinguish between credible and unreliable information sources",
+		description: "Using advanced algorithms and ML techniques, this project helps users distinguish between credible and unreliable information sources.",
 		thumbnail: "img/fake-news-detection.jpeg",
 		link: "https://github.com/metanmai/fake-news-detection",
 		tech: ["python", "tensorflow", "networkx"]

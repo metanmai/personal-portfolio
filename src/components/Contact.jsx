@@ -32,6 +32,7 @@ const ContactContainer = styled.div.attrs({id: 'Contact'})`
 const Container1 = styled.div`
     padding: 20px;
     border: 4px solid #00d1ff;
+    overflow-y: auto;
     border-radius: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
     margin: 15px;
@@ -55,6 +56,10 @@ const Heading = styled.h2`
     color: #00d1ff;
     font-size: 75px;
     margin-bottom: 10px;
+    
+    @media (max-width: 1200px) {
+		font-size: 60px;
+	}
 `;
 
 const Paragraph = styled.p`
@@ -62,6 +67,10 @@ const Paragraph = styled.p`
     font-size: 25px;
     line-height: 1.5;
     margin-bottom: 15px;
+    
+    @media (max-width: 1200px) {
+		font-size: 20px;
+	}
 `;
 
 const FormContainer = styled.div`
@@ -72,6 +81,7 @@ const FormContainer = styled.div`
 `;
 
 const Form = styled.form`
+    max-height: 100%;
     max-width: 800px;
     justify-content: center;
     align-items: center;

@@ -1,13 +1,14 @@
 import styled from "styled-components";
 import {TestimonialSlideshow} from "./TestimonialSlider/TestimonialSlideshow.jsx";
+import {useEffect, useState} from "react";
 
-const TestimonialsContainer = styled.div.attrs({id: 'Testimonials'})`
-  height: calc(100vh - 60px);
+const TestimonialsContainer = styled.div.attrs({id: 'Home'})`
+    height: calc(100vh - 60px);
     scroll-snap-align: center;
     display: grid;
-    flex-direction: ${({ aspectRatio }) => aspectRatio < 1 ? "column" : "row"};
-  
-    ${({ aspectRatio }) =>
+    flex-direction: ${({aspectRatio}) => aspectRatio < 1 ? "column" : "row"};
+    
+    ${({aspectRatio}) =>
     aspectRatio < 1
         ? 
         `
@@ -20,11 +21,12 @@ const TestimonialsContainer = styled.div.attrs({id: 'Testimonials'})`
         grid-template-rows: 1fr;
         `
     }
-	
-  .grid-item {
-    padding: 20px;
-    border: 1px solid #ddd;
-  }
+    
+    /* Additional styling for grid items */
+    .grid-item {
+        padding: 20px;
+        border: 1px solid #ddd;
+    }
 `;
 
 const Container1 = styled.div`
@@ -33,13 +35,13 @@ const Container1 = styled.div`
     border-radius: 15px;
   	justify-content: center;
   	align-items: center;
-    margin: 15px;
     animation: fadeIn 4s ease forwards;
 `;
 
 const Container2 = styled.div`
   padding: 20px;
   border: 4px solid #ff7af4;
+  overflow-y: auto;
   border-radius: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
   margin: 15px;
@@ -53,6 +55,10 @@ const Heading = styled.h2`
     color: #ff7af4;
     font-size: 75px;
     margin-bottom: 10px;
+  
+  	@media (max-width: 1200px) {
+		font-size: 60px;
+	}
 `;
 
 const Paragraph = styled.p`
@@ -60,15 +66,35 @@ const Paragraph = styled.p`
     font-size: 25px;
     line-height: 1.5;
     margin-bottom: 15px;
+  
+  	@media (max-width: 1200px) {
+		font-size: 20px;
+	}
 `;
 
 export const Testimonials = () => {
+	const [aspectRatio, setAspectRatio] = useState(window.innerWidth / window.innerHeight);
+
+    const handleResize = () => {
+        setAspectRatio(window.innerWidth / window.innerHeight);
+    };
+
+    useEffect(() => {
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    const leftOrder = aspectRatio >= 1 ? 1 : 2;
+    const rightOrder = aspectRatio >= 1 ? 2 : 1;
 	return (
-		<TestimonialsContainer>
-            <Container1>
+		<TestimonialsContainer aspectRatio={aspectRatio}>
+            <Container1 order={leftOrder}>
 				<TestimonialSlideshow/>
             </Container1>
-            <Container2>
+            <Container2 order={rightOrder}>
 				<Heading>Testimonials 🙌</Heading>
                 <Paragraph>Discover endorsements from professionals who have worked with me. These testimonials showcase my skills and contributions. See why they vouch for my work.</Paragraph>
                 <Paragraph> These endorsements are a testament to the quality of my contributions and the trust others have placed in me.</Paragraph>

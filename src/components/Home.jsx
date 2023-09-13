@@ -8,7 +8,7 @@ const HeroContainer = styled.div.attrs({id: 'Home'})`
     scroll-snap-align: center;
     display: grid;
     flex-direction: ${({aspectRatio}) => aspectRatio < 1 ? "column" : "row"};
-  
+    
     ${({aspectRatio}) =>
     aspectRatio < 1
         ? 
@@ -22,16 +22,17 @@ const HeroContainer = styled.div.attrs({id: 'Home'})`
         grid-template-rows: 1fr;
         `
     }
-
-  /* Additional styling for grid items */
-  .grid-item {
-    padding: 20px;
-    border: 1px solid #ddd;
-  }
+    
+    /* Additional styling for grid items */
+    .grid-item {
+        padding: 20px;
+        border: 1px solid #ddd;
+    }
 `;
 
 const Container1 = styled.div`
     padding: 15px;
+    overflow-y: auto;
     background-color: rgba(0, 0, 0, 0.25);
     order: ${props => props.order};
     justify-content: center;
@@ -56,7 +57,6 @@ const Container1 = styled.div`
 `;
 
 const Container2 = styled.div`
-    //background-color: blueviolet;
     order: ${props => props.order};
     justify-content: center;
     align-items: center;
@@ -104,7 +104,10 @@ const Paragraph = styled.p`
     font-family: 'PT Sans', sans-serif;
     font-size: 25px;
     line-height: 1.5;
-    //margin-bottom: 15px;
+    
+    @media (max-width: 1200px) {
+		font-size: 20px;
+	}
 `;
 
 const Home = () => {
@@ -122,9 +125,6 @@ const Home = () => {
         };
     }, []);
 
-    const leftOrder = aspectRatio >= 1 ? 1 : 2;
-    const rightOrder = aspectRatio >= 1 ? 2 : 1;
-
     const handleClickScroll = () => {
 		const element = document.getElementById('Contact');
 
@@ -136,12 +136,12 @@ const Home = () => {
 
     return (
         <HeroContainer aspectRatio={aspectRatio} onClick={handleClickScroll}>
-            <Container1 order={leftOrder}>
+            <Container1>
                 <Typing/>
                 <Paragraph>Hello! I&apos;m Tanmai Niranjan, a final year Computer Science student at PES University. I&apos;m passionate about coding, problem-solving, and learning new technologies.</Paragraph>
                 <Paragraph>In my free time, I enjoy working on personal coding projects, exploring new programming languages, and playing video games.</Paragraph>
             </Container1>
-            <Container2 order={rightOrder}>
+            <Container2>
                 <FloatImage src={`img/boy-computer.png`} alt={`programmer`} aspectRatio={aspectRatio}/>
             </Container2>
         </HeroContainer>

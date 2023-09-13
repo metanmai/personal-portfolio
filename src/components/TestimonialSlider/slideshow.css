@@ -36,13 +36,19 @@ body {
 }
 
 .swiper {
-  width: 500px;
-  height: 500px;
+  width: 40vw;
+  height: 60vh;
+}
+
+@media (max-aspect-ratio: 1/1) {
+  .swiper {
+    width: 80vw;
+    height: 50vh;
+  }
 }
 
 .swiper-slide {
   display: flex;
-  border: 1.5px solid #ff7af4;
   border-radius: 18px;
   font-weight: bold;
 }
