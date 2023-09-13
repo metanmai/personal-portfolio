@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import {socials} from "../constants/index.js";
+import {useEffect, useRef, useState} from "react";
 
 const Navbar = styled.div`
     color: white;
@@ -51,21 +52,23 @@ const List = styled.ul`
     list-style: none;
     padding: 0;
     display: flex;
+    flex-direction: ${({ vertical }) => (vertical ? 'column' : 'row')};
     justify-content: center;
+    margin: 0 0;
 `;
 
 const ListItem = styled.li`
-    margin: 0 10px; /* Adjust the spacing between list items */
+    margin: 10px 10px; /* Adjust the spacing between list items */
 `;
 
 const Socials = styled.div`
-    position: absolute;
+    position: ${(props) => (props.footer ? `relative` : `absolute`)};
     display: flex;
     flex-direction: row-reverse;
-    padding: 0 10px;
-    right: 0; 
-    //background-color: #00154d;
+    right: ${(props) => (props.footer ? `` : `0`)};
+    padding: ${(props) => (props.footer ? `10px 0` : `0 10px`)};
 `;
+
 
 const SocialAcc = styled.div`
   	height: 30px;
@@ -86,7 +89,49 @@ const SocialAcc = styled.div`
     }
 `;
 
+const DropdownButton = styled.div`
+    user-select: none;
+    position: absolute;
+    right: 10px;
+    height: 30px;
+  	width: 30px;
+    border: 1px solid white;
+    margin: 5px;
+  	border-radius: 15px;
+  	background-image: url(${({path}) => path});
+  	background-size: auto 90%; // width and height
+  	background-position: center;
+    cursor: pointer;
+    transition: all .15s ease-in-out;
+    color: white;
+    
+    &:hover {
+        box-shadow: 0 0 10px 0 white inset, 0 0 20px 2px white;
+        border: 1px solid white;
+    }
+`;
+
+const DropdownMenu = styled.div`
+    position: absolute;
+    top: -100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-left: 1px solid rgba(255, 255, 255, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    border-bottom-left-radius: 10px;
+    align-items: center;
+    padding: 0 10px;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    transition: top 0.3s ease;
+`;
+
 const NavBar = () => {
+    const [showButtons, setShowButtons] = useState(false);
+    const [dropdown, setDropdown] = useState(false);
+    const dropdownRef = useRef(null);
+    const dropdownButtonRef = useRef(null);
     const sections = ["Home", "Skills", "Projects", "Testimonials", "Contact"];
     const handleMouseEnter = () => {
       document.body.style.overflow = 'hidden';
@@ -108,27 +153,97 @@ const NavBar = () => {
         window.open(link, '_blank');
     };
 
+    useEffect(() => {
+        const handleResize = () => {
+            const thresholdWidth = 900;
+
+            if (window.innerWidth > thresholdWidth) {
+                setShowButtons(true);
+                setDropdown(false)
+            } else {
+                setShowButtons(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current &&
+                !dropdownRef.current.contains(event.target) &&
+                event.target !== dropdownButtonRef.current) {
+            setDropdown(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     return (
         <Navbar onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
             <Logo src={"img/metanmai-logo.svg"}/>
-            <List>
-                {sections.map((section, index) => (
-                    <ListItem key={index}>
-                        <NavButton onClick={() => handleClickScroll(section)}>
-                            {section}
-                        </NavButton>
-                    </ListItem>
-                ))}
-            </List>
-            <Socials>
-                {socials.map((social, index) => (
-                    <SocialAcc
-                        key={index}
-                        path={social.imgUrl}
-                        onClick={() => handleClick(social.link)}
-                    />
-                ))}
-            </Socials>
+            {showButtons &&
+                <List vertical={false}>
+                    {sections.map((section, index) => (
+                        <ListItem key={index}>
+                            <NavButton onClick={() => handleClickScroll(section)}>
+                                {section}
+                            </NavButton>
+                        </ListItem>
+                    ))}
+                </List>
+            }
+            {showButtons &&
+                <Socials footer={false}>
+                    {socials.map((social, index) => (
+                        <SocialAcc
+                            key={index}
+                            path={social.imgUrl}
+                            onClick={() => handleClick(social.link)}
+                        />
+                    ))}
+                </Socials>
+            }
+            {!showButtons &&
+                <DropdownButton
+                    ref={dropdownButtonRef}
+                    path={`img/hamburger-button.png`}
+                    onClick={() => setDropdown(!dropdown)}
+                />
+            }
+            {
+                dropdown &&
+                <DropdownMenu style={{ top: dropdown ? '51px' : '-100%' }} ref={dropdownRef}>
+                    <List vertical={true}>
+                        {sections.map((section, index) => (
+                            <ListItem key={index}>
+                                <NavButton onClick={() => handleClickScroll(section)}>
+                                    {section}
+                                </NavButton>
+                            </ListItem>
+                        ))}
+                    </List>
+                    <Socials footer={true}>
+                        {socials.map((social, index) => (
+                            <SocialAcc
+                                key={index}
+                                path={social.imgUrl}
+                                onClick={() => handleClick(social.link)}
+                            />
+                        ))}
+                    </Socials>
+                </DropdownMenu>
+            }
         </Navbar>
     );
 };
