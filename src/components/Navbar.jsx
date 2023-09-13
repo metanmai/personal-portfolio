@@ -99,7 +99,8 @@ const DropdownButton = styled.div`
     margin: 5px;
   	border-radius: 15px;
   	background-image: url(${({path}) => path});
-  	background-size: auto 90%; // width and height
+  	background-size: 120%;
+    background-repeat: no-repeat;
   	background-position: center;
     cursor: pointer;
     transition: all .15s ease-in-out;
@@ -217,7 +218,7 @@ const NavBar = () => {
             {!showButtons &&
                 <DropdownButton
                     ref={dropdownButtonRef}
-                    path={`img/hamburger-button.png`}
+                    path={`img/hamburger-button.jpeg`}
                     onClick={() => setDropdown(!dropdown)}
                 />
             }
