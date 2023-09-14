@@ -5,6 +5,7 @@ import {useEffect, useState} from "react";
 const TestimonialsContainer = styled.div.attrs({id: 'Testimonials'})`
     height: calc(100vh - 60px);
     scroll-snap-align: center;
+  	-webkit-overflow-scrolling: touch;
     display: grid;
     flex-direction: ${({aspectratio}) => aspectratio < 1 ? "column" : "row"};
     
@@ -38,15 +39,16 @@ const Container1 = styled.div`
 `;
 
 const Container2 = styled.div`
-  padding: 20px;
-  border: 4px solid #ff7af4;
-  overflow-y: auto;
-  border-radius: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
-  margin: 15px;
-  animation: fadeIn 4s ease forwards;
-  background-color: rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(8px);
+padding: 20px;
+    overflow-y: auto;
+    order: ${props => props.order};
+    border: 4px solid #ff7af4;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
+    margin: 15px;
+    animation: fadeIn 4s ease forwards;
+    background-color: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(8px);
 `;
 
 const Heading = styled.h2`
@@ -86,15 +88,15 @@ export const Testimonials = () => {
         };
     }, []);
 
-    // const leftOrder = aspectRatio >= 1 ? 1 : 2;
-    // const rightOrder = aspectRatio >= 1 ? 2 : 1;
+    const leftOrder = aspectRatio >= 1 ? 1 : 2;
+    const rightOrder = aspectRatio >= 1 ? 2 : 1;
 
 	return (
 		<TestimonialsContainer aspectratio={aspectRatio}>
-            <Container1>
+            <Container1 order={leftOrder}>
 				<TestimonialSlideshow/>
             </Container1>
-            <Container2>
+            <Container2 order={rightOrder}>
 				<Heading>Testimonials 🙌</Heading>
                 <Paragraph>Discover endorsements from professionals who have worked with me. These testimonials showcase my skills and contributions. See why they vouch for my work.</Paragraph>
                 <Paragraph> These endorsements are a testament to the quality of my contributions and the trust others have placed in me.</Paragraph>

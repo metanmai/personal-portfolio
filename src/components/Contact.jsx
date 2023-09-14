@@ -6,6 +6,7 @@ import FormSubmitPopup from "./FormSubmitPopup.jsx";
 const ContactContainer = styled.div.attrs({id: 'Contact'})`
     height: calc(100vh - 60px);
     scroll-snap-align: center;
+    -webkit-overflow-scrolling: touch;
     display: grid;
     flex-direction: ${({aspectratio}) => aspectratio < 1 ? "column" : "row"};
     

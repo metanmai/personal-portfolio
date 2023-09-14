@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 const SkillsContainer = styled.div.attrs({id: 'Skills'})`
     height: calc(100vh - 60px);
     scroll-snap-align: center;
+    -webkit-overflow-scrolling: touch;
     display: grid;
     flex-direction: ${({aspectratio}) => aspectratio < 1 ? "column" : "row"};
     

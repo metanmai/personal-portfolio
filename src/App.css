@@ -5,7 +5,9 @@
     height: calc(100vh - 50px);
     width: 100%;
     scroll-snap-type: y mandatory;
+    -webkit-scroll-snap-type: y mandatory;
     scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
     overflow-y: auto;
     scrollbar-width: auto;
     /*Actually don't use this. It's causing a bunch of problems.*!*/

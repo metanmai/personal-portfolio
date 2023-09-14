@@ -6,6 +6,7 @@ import Typing from "./TypingAnimation/Typing.jsx";
 const HeroContainer = styled.div.attrs({id: 'Home'})`
     height: calc(100vh - 60px);
     scroll-snap-align: center;
+    -webkit-overflow-scrolling: touch;
     display: grid;
     flex-direction: ${({aspectratio}) => aspectratio < 1 ? "column" : "row"};
     

@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 const ProjectsContainer = styled.div.attrs({id: 'Projects'})`
     height: calc(100vh - 60px);
     scroll-snap-align: center;
+    -webkit-overflow-scrolling: touch;
     display: grid;
     flex-direction: ${({aspectRatio}) => aspectRatio < 1 ? "column" : "row"};
     
