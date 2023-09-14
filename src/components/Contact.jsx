@@ -7,10 +7,10 @@ const ContactContainer = styled.div.attrs({id: 'Contact'})`
     height: calc(100vh - 60px);
     scroll-snap-align: center;
     display: grid;
-    flex-direction: ${({ aspectRatio }) => aspectRatio < 1 ? "column" : "row"};
-  
-    ${({ aspectRatio }) =>
-    aspectRatio < 1
+    flex-direction: ${({aspectratio}) => aspectratio < 1 ? "column" : "row"};
+    
+    ${({aspectratio}) =>
+    aspectratio < 1
         ? 
         `
         grid-template-columns: 1fr;
@@ -22,17 +22,17 @@ const ContactContainer = styled.div.attrs({id: 'Contact'})`
         grid-template-rows: 1fr;
         `
     }
-    
-  .grid-item {
-    padding: 20px;
-    border: 1px solid #ddd;
-  }
+	
+    .grid-item {
+        padding: 20px;
+        border: 1px solid #ddd;
+    }
 `;
 
 const Container1 = styled.div`
+    overflow-y: auto;
     padding: 20px;
     border: 4px solid #00d1ff;
-    overflow-y: auto;
     border-radius: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0);
     margin: 15px;
@@ -42,10 +42,12 @@ const Container1 = styled.div`
 `;
 
 const Container2 = styled.div`
+    overflow-y: auto;
     order: ${props => props.order};
     justify-content: center;
     align-items: center;
     display: flex;
+    flex-direction: row;
     border-radius: 15px;
     margin: 15px;
     animation: fadeIn 4s ease forwards;
@@ -78,11 +80,16 @@ const FormContainer = styled.div`
     padding: 20px;
     justify-content: center;
     align-items: center;
+    
+    @media (max-aspect-ratio: 1/1) {
+    max-height: calc((100vh - 60px) / 2);
+}
 `;
 
 const Form = styled.form`
     max-height: 100%;
     max-width: 800px;
+    padding: 20px;
     justify-content: center;
     align-items: center;
     display: flex;
@@ -218,7 +225,7 @@ const Contact = () => {
     }, []);
 
     return (
-        <ContactContainer aspectRatio={aspectRatio}>
+        <ContactContainer aspectratio={aspectRatio}>
             <Container1>
                 <Heading>Get in Touch ✉️</Heading>
                 <Paragraph>If you&apos;d like to get in touch with me or have any inquiries, please feel free to send me an email using the given form.</Paragraph>
