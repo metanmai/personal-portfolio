@@ -3,14 +3,14 @@ import BallCanvas from "./Balls/Ball.jsx";
 import {technologies} from "../constants/index.js";
 import {useEffect, useState} from "react";
 
-const SkillsContainer = styled.div.attrs({id: 'Home'})`
+const SkillsContainer = styled.div.attrs({id: 'Skills'})`
     height: calc(100vh - 60px);
     scroll-snap-align: center;
     display: grid;
-    flex-direction: ${({aspectRatio}) => aspectRatio < 1 ? "column" : "row"};
+    flex-direction: ${({aspectratio}) => aspectratio < 1 ? "column" : "row"};
     
-    ${({aspectRatio}) =>
-    aspectRatio < 1
+    ${({aspectratio}) =>
+    aspectratio < 1
         ? 
         `
         grid-template-columns: 1fr;
@@ -102,7 +102,7 @@ const Skills = () => {
     const rightOrder = aspectRatio >= 1 ? 2 : 1;
 
     return (
-        <SkillsContainer aspectRatio={aspectRatio}>
+        <SkillsContainer aspectratio={aspectRatio}>
             <Container1 order={leftOrder}>
                 {technologies.map((technology) => (
                     <BallContainer key={technology.name} style={{cursor: "grab"}}>

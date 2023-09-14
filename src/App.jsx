@@ -13,11 +13,11 @@ function App() {
         <div className="app-container">
             <NavBar/>
             <div className="components-container">
-                <Home id={`Home`}/>
-                <Skills id={`Skills`}/>
-                <Projects id={`Projects`}/>
-                <Testimonials id={`Testimonials`}/>
-                <Contact id={`Contact`}/>
+                <Home/>
+                <Skills/>
+                <Projects/>
+                <Testimonials/>
+                <Contact/>
             </div>
             <ParticlesBg/>
         </div>

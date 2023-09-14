@@ -7,10 +7,10 @@ const HeroContainer = styled.div.attrs({id: 'Home'})`
     height: calc(100vh - 60px);
     scroll-snap-align: center;
     display: grid;
-    flex-direction: ${({aspectRatio}) => aspectRatio < 1 ? "column" : "row"};
+    flex-direction: ${({aspectratio}) => aspectratio < 1 ? "column" : "row"};
     
-    ${({aspectRatio}) =>
-    aspectRatio < 1
+    ${({aspectratio}) =>
+    aspectratio < 1
         ? 
         `
         grid-template-columns: 1fr;
@@ -67,8 +67,8 @@ const Container2 = styled.div`
 `;
 
 const FloatImage = styled.img`
-    ${({aspectRatio}) =>
-    aspectRatio < 1
+    ${({aspectratio}) =>
+    aspectratio < 1
         ? 
         `
             max-width: 60vw;
@@ -135,14 +135,14 @@ const Home = () => {
   };
 
     return (
-        <HeroContainer aspectRatio={aspectRatio} onClick={handleClickScroll}>
+        <HeroContainer aspectratio={aspectRatio} onClick={handleClickScroll}>
             <Container1>
                 <Typing/>
                 <Paragraph>Hello! I&apos;m Tanmai Niranjan, a final year Computer Science student at PES University. I&apos;m passionate about coding, problem-solving, and learning new technologies.</Paragraph>
                 <Paragraph>In my free time, I enjoy working on personal coding projects, exploring new programming languages, and playing video games.</Paragraph>
             </Container1>
             <Container2>
-                <FloatImage src={`img/boy-computer.png`} alt={`programmer`} aspectRatio={aspectRatio}/>
+                <FloatImage src={`img/boy-computer.png`} alt={`programmer`} aspectratio={aspectRatio}/>
             </Container2>
         </HeroContainer>
     );

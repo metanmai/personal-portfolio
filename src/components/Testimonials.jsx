@@ -2,14 +2,14 @@ import styled from "styled-components";
 import {TestimonialSlideshow} from "./TestimonialSlider/TestimonialSlideshow.jsx";
 import {useEffect, useState} from "react";
 
-const TestimonialsContainer = styled.div.attrs({id: 'Home'})`
+const TestimonialsContainer = styled.div.attrs({id: 'Testimonials'})`
     height: calc(100vh - 60px);
     scroll-snap-align: center;
     display: grid;
-    flex-direction: ${({aspectRatio}) => aspectRatio < 1 ? "column" : "row"};
+    flex-direction: ${({aspectratio}) => aspectratio < 1 ? "column" : "row"};
     
-    ${({aspectRatio}) =>
-    aspectRatio < 1
+    ${({aspectratio}) =>
+    aspectratio < 1
         ? 
         `
         grid-template-columns: 1fr;
@@ -21,8 +21,7 @@ const TestimonialsContainer = styled.div.attrs({id: 'Home'})`
         grid-template-rows: 1fr;
         `
     }
-    
-    /* Additional styling for grid items */
+	
     .grid-item {
         padding: 20px;
         border: 1px solid #ddd;
@@ -87,14 +86,15 @@ export const Testimonials = () => {
         };
     }, []);
 
-    const leftOrder = aspectRatio >= 1 ? 1 : 2;
-    const rightOrder = aspectRatio >= 1 ? 2 : 1;
+    // const leftOrder = aspectRatio >= 1 ? 1 : 2;
+    // const rightOrder = aspectRatio >= 1 ? 2 : 1;
+
 	return (
-		<TestimonialsContainer aspectRatio={aspectRatio}>
-            <Container1 order={leftOrder}>
+		<TestimonialsContainer aspectratio={aspectRatio}>
+            <Container1>
 				<TestimonialSlideshow/>
             </Container1>
-            <Container2 order={rightOrder}>
+            <Container2>
 				<Heading>Testimonials 🙌</Heading>
                 <Paragraph>Discover endorsements from professionals who have worked with me. These testimonials showcase my skills and contributions. See why they vouch for my work.</Paragraph>
                 <Paragraph> These endorsements are a testament to the quality of my contributions and the trust others have placed in me.</Paragraph>

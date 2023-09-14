@@ -3,7 +3,7 @@ import {projects} from "../constants/index.js";
 import {Project} from "./Project.jsx";
 import {useEffect, useState} from "react";
 
-const ProjectsContainer = styled.div.attrs({id: 'Home'})`
+const ProjectsContainer = styled.div.attrs({id: 'Projects'})`
     height: calc(100vh - 60px);
     scroll-snap-align: center;
     display: grid;

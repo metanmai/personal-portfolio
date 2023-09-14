@@ -7,10 +7,11 @@ const CanvasLoader = () => {
 			as='div'
 			center
 			style={{
-			display: "flex",
-			justifyContent: "center",
-			alignItems: "center",
-			flexDirection: "column",
+				display: "flex",
+				justifyContent: "center",
+				alignItems: "center",
+				flexDirection: "column",
+				backgroundColor: "white"
 			}}
 		>
 			<span className='canvas-loader'></span>
