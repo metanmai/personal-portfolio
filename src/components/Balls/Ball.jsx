@@ -1,5 +1,5 @@
 import {Suspense, useEffect, useRef, useState} from "react";
-import {Canvas, useFrame} from "@react-three/fiber";
+import {Canvas} from "@react-three/fiber";
 import {
   Decal,
   Float,
@@ -40,13 +40,14 @@ const Ball = ({imgUrl}) => {
 			speed={1.75}
 			rotationIntensity={0}
 			floatIntensity={0}
-			style={{
-				cursor: "grab",
-				backgroundColor: "white"
-		}}>
+		>
 			<ambientLight intensity={0.5} />
 			<directionalLight position={[0, 0, 0.05]} />
-			<mesh castShadow receiveShadow scale={meshSize} ref={meshRef}>
+			<mesh
+				castShadow
+				receiveShadow
+				scale={meshSize}
+				ref={meshRef}>
 				<icosahedronGeometry args={[1, 1]} />
 				<meshStandardMaterial
 					color='#ff4046'
@@ -67,20 +68,20 @@ const Ball = ({imgUrl}) => {
 };
 
 const BallCanvas = ({ icon }) => {
-  return (
-      <Canvas
-          frameloop='demand'
-          dpr={[1, 2]}
-          gl={{ preserveDrawingBuffer: true }}
-      >
-        <Suspense fallback={<CanvasLoader />}>
-          <OrbitControls enableZoom={false} />
-          <Ball imgUrl={icon} />
-        </Suspense>
+	return (
+		<Canvas
+			frameloop='demand'
+			dpr={[1, 2]}
+			gl={{ preserveDrawingBuffer: true }}
+		>
+			<Suspense fallback={<CanvasLoader />}>
+			<OrbitControls enableZoom={false} />
+			<Ball imgUrl={icon} />
+			</Suspense>
 
-        <Preload all />
-      </Canvas>
-  );
+			<Preload all />
+		</Canvas>
+	);
 };
 
 Ball.propTypes = {
