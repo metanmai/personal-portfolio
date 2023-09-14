@@ -1,5 +1,5 @@
-import {Suspense} from "react";
-import { Canvas } from "@react-three/fiber";
+import {Suspense, useEffect, useRef, useState} from "react";
+import {Canvas, useFrame} from "@react-three/fiber";
 import {
   Decal,
   Float,
@@ -11,20 +11,42 @@ import CanvasLoader from "./Loader.jsx";
 import PropTypes from "prop-types";
 
 const Ball = ({imgUrl}) => {
+	const [meshSize, setMeshSize] = useState(2.5);
 	const [decal] = useTexture([imgUrl]);
+	const meshRef = useRef();
+
+	useEffect(() => {
+		const checkWindowWidth = () => {
+			if (window.innerWidth >= 1200) {
+				setMeshSize(2.5);
+			} else if (window.innerWidth >= 900) {
+				setMeshSize(2);
+			} else {
+				setMeshSize(1.75);
+			}
+		};
+
+		checkWindowWidth();
+
+		window.addEventListener('resize', checkWindowWidth);
+
+		return () => {
+			window.removeEventListener('resize', checkWindowWidth);
+		};
+	});
 
 	return (
 		<Float
 			speed={1.75}
-			rotationIntensity={1}
-			floatIntensity={2}
+			rotationIntensity={0}
+			floatIntensity={0}
 			style={{
 				cursor: "grab",
 				backgroundColor: "white"
 		}}>
-			<ambientLight intensity={0.25} />
+			<ambientLight intensity={0.5} />
 			<directionalLight position={[0, 0, 0.05]} />
-			<mesh castShadow receiveShadow scale={2.75}>
+			<mesh castShadow receiveShadow scale={meshSize} ref={meshRef}>
 				<icosahedronGeometry args={[1, 1]} />
 				<meshStandardMaterial
 					color='#ff4046'
