@@ -31,4 +31,16 @@ describe('OpenComms', () => {
         await fillAndSubmit();
         expect(await screen.findByText(/RELAY FAILURE/)).toBeInTheDocument();
     });
+
+    it('rejects submission with empty callsign without calling fetch', async () => {
+        const fetchMock = vi.fn().mockResolvedValue({ ok: true });
+        vi.stubGlobal('fetch', fetchMock);
+        render(<MemoryRouter><OpenComms /></MemoryRouter>);
+        await userEvent.type(screen.getByLabelText(/RETURN FREQUENCY/i), 'dweller@vault.com');
+        await userEvent.type(screen.getByLabelText(/SUBJECT/i), 'Hello');
+        await userEvent.type(screen.getByLabelText(/MESSAGE/i), 'GECK located.');
+        await userEvent.click(screen.getByRole('button', { name: /TRANSMIT/i }));
+        expect(await screen.findByText(/TRANSMISSION REJECTED/)).toBeInTheDocument();
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
 });
