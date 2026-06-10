@@ -31,7 +31,8 @@ const VisuallyHidden = styled.span`
 `;
 
 const Banner = styled.pre`
-    font-family: inherit;
+    /* VT323 lacks box-drawing glyphs (╔═╝); mixed fallback widths garble the art */
+    font-family: Menlo, Consolas, 'Courier New', monospace;
     font-size: clamp(7px, 1.3vw, 15px);
     line-height: 1.15;
     letter-spacing: 0;
