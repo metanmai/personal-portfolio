@@ -11,6 +11,15 @@ const powerOn = keyframes`
     100% { opacity: 1; }
 `;
 
+const ambient = keyframes`
+    0%, 100% { opacity: 1; }
+    97.4% { opacity: 1; }
+    97.5% { opacity: 0.93; }
+    97.9% { opacity: 1; }
+    98.3% { opacity: 0.96; }
+    98.4% { opacity: 1; }
+`;
+
 const sweep = keyframes`
     from { top: -120px; }
     to { top: 110%; }
@@ -25,7 +34,7 @@ const Shell = styled.div`
     text-shadow: 0 0 7px var(--glow);
     position: relative;
     padding: clamp(14px, 4vw, 56px);
-    animation: ${powerOn} 0.35s ease-out;
+    animation: ${powerOn} 0.35s ease-out, ${ambient} 11s steps(1) 3s infinite;
 
     @media (prefers-reduced-motion: reduce) {
         animation: none;

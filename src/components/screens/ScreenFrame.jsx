@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { useScramble } from '../../hooks/useScramble.js';
 
 const Frame = styled.section`
     max-width: 920px;
@@ -35,15 +36,18 @@ const BackLink = styled(Link)`
     }
 `;
 
-const ScreenFrame = ({ title, children }) => (
-    <Frame>
-        <Bar>
-            <Title>▸ {title}</Title>
-            <BackLink to="/">[ESC] MAIN MENU</BackLink>
-        </Bar>
-        {children}
-    </Frame>
-);
+const ScreenFrame = ({ title, children }) => {
+    const scrambledTitle = useScramble(title);
+    return (
+        <Frame>
+            <Bar>
+                <Title>▸ {scrambledTitle}</Title>
+                <BackLink to="/">[ESC] MAIN MENU</BackLink>
+            </Bar>
+            {children}
+        </Frame>
+    );
+};
 
 ScreenFrame.propTypes = {
     title: PropTypes.string.isRequired,
