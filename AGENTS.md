@@ -2,7 +2,10 @@
 
 ## Project Overview
 
-Personal portfolio website built with **React 18 + Vite 4**, deployed on **Netlify**. Single-page app with full-viewport scroll-snap sections, 3D skill icons (Three.js), particle background, Swiper testimonial carousel, and a contact form backed by a Netlify serverless function.
+Personal portfolio built with **React 18 + Vite 8**, deployed on **Netlify**. The site is a **Fallout-style CRT terminal**: a boot sequence, a numbered main menu, and paged screens with real URLs. Amber phosphor by default, green as a toggle. Fully keyboard-operable.
+
+Design spec: `docs/superpowers/specs/2026-06-10-fallout-terminal-portfolio-design.md`
+Phase 1 plan: `docs/superpowers/plans/2026-06-10-terminal-portfolio-phase-1.md`
 
 ## Essential Commands
 
@@ -11,6 +14,8 @@ npm run dev        # Start Vite dev server
 npm run build      # Production build (outputs to dist/)
 npm run preview    # Preview production build locally
 npm run lint       # ESLint (js/jsx, zero warnings policy)
+npm test           # Vitest, happy-dom environment
+npm run test:watch # Vitest watch mode
 ```
 
 ## Architecture
@@ -18,103 +23,57 @@ npm run lint       # ESLint (js/jsx, zero warnings policy)
 ### App Structure
 
 ```
-App.jsx
-├── Navbar (fixed top bar, responsive dropdown at <900px)
-├── Home          (hero + typing animation)
-├── Skills        (3D ball icons + description)
-├── Projects      (project cards + description)
-├── Testimonials  (Swiper carousel + description)
-└── Contact       (form + popup)
-└── ParticlesBg   (z-index: -1000 particle layer)
+App.jsx                       boot gate (sessionStorage) + providers + routes
+├── BootSequence/             POST-style boot text, once per session, skippable
+└── BrowserRouter
+    └── Terminal/             CRT shell: scanlines, vignette, sweep, flicker
+        ├── EscToMenu         global Esc → navigate('/')
+        └── SystemFault.jsx   error boundary → "SYSTEM FAULT" screen
+            ├── /             MainMenu/  (numbered menu, digit/arrow/Enter keys)
+            ├── /personnel    screens/PersonnelFile    (typed bio, timeline, skill bars)
+            ├── /archives     screens/ProjectArchives  (expandable files + PhosphorImage)
+            ├── /commendations screens/Commendations   (testimonials as recovered logs)
+            ├── /comms        screens/OpenComms        (contact form + socials + resume)
+            ├── /calibration  screens/Calibration      (theme + scanline settings)
+            └── *             screens/FileCorrupted    (404)
 ```
 
-All section components (`Home`, `Skills`, `Projects`, `Testimonials`, `Contact`) are full-viewport (`height: calc(100vh - 60px)`) with `scroll-snap-align: center`. The `.app-container` in `App.css` drives the scroll-snap behavior.
+Shared pieces: `screens/ScreenFrame.jsx` (title bar + `[ESC] MAIN MENU` link wrapper used by every screen), `PhosphorImage/` (duotone-tinted image + `[VIEW RAW]` lightbox).
+
+### Theming
+
+- `src/theme.js` — amber/green palettes; `applyTheme()` writes CSS custom properties (`--phosphor`, `--dim`, `--bg`, `--glow`) onto `<html>` and sets `data-theme`.
+- `src/settings.jsx` — `SettingsProvider` / `useSettings()` context; persists `{ theme, scanlines }` to localStorage key `termlink-settings`; memoized context value.
+- styled-components consume the CSS variables (`var(--phosphor)`), so a theme swap recolors everything without re-rendering styles.
+- `src/index.css` holds the global reset + amber fallback variables (prevents flash before JS).
+
+### Hooks
+
+- `src/hooks/useTypewriter.js` — rAF-driven `{ output, done, skip }`; instant under `prefers-reduced-motion`. The return shape is a contract — don't change it.
+- `src/hooks/usePageMeta.js` — per-route `document.title` + meta description.
 
 ### Data Flow
 
-- All content data (technologies, testimonials, projects, socials) lives in `src/constants/index.js` — this is the **single source of truth**.
-- No routing library; navigation uses `element.scrollIntoView()` targeting section IDs (`"Home"`, `"Skills"`, `"Projects"`, `"Testimonials"`, `"Contact"`).
-- Contact form POSTs to `/.netlify/functions/send-email` via **axios**. The serverless function uses **nodemailer** with Elastic Email SMTP.
-
-### Key Dependencies
-
-| Package | Purpose |
-|---|---|
-| `styled-components` | All component styling |
-| `@react-three/fiber`, `@react-three/drei` | 3D skill icon balls (Canvas, Float, Decal) |
-| `swiper` | Testimonial cards carousel (EffectCards + Autoplay) |
-| `react-particles`, `tsparticles` | Animated particle background |
-| `axios` | HTTP client for contact form |
-| `gsap` | **Listed as dependency but unused in source code** |
-| `express`, `cors`, `body-parser` | **Listed as dependencies but unused — Netlify functions don't use Express** |
-
-### Netlify Serverless Function
-
-`functions/send-email.js` — CommonJS (`exports.handler`) per Netlify convention. Uses `dotenv/config` for SMTP credentials. Node version pinned to `20.5.1` in `netlify.toml`.
+- All content lives in `src/constants/index.js` — **single source of truth**: `personal`, `bootLines`, `menuItems`, `experience`, `skills`, `projects`, `testimonials`, `socials`. Several entries are marked `PLACEHOLDER` / `UPDATE ME` pending owner content.
+- Contact form POSTs JSON to `/.netlify/functions/send-email` via **fetch** (no axios). The serverless function uses **nodemailer** with Elastic Email SMTP (`EMAIL_USERNAME`/`EMAIL_PASSWORD` env vars).
+- Routing: **react-router-dom**; `netlify.toml` has the SPA catch-all redirect. Function calls must use the canonical `/.netlify/functions/...` path (served before redirects).
 
 ## Code Patterns & Conventions
 
-### Export Style — Inconsistent
-
-Both default and named exports are used with no clear rule:
-
-- **Default exports**: `Home`, `Contact`, `Skills`, `Projects`, `Navbar`, `FormSubmitPopup`, `BallCanvas`, `CanvasLoader`, `VideoBackground`, `Typing`
-- **Named exports**: `Testimonials`, `Project`, `Testimonial`, `TestimonialSlideshow`, `ParticlesBg`
-- Import accordingly: `import Foo from "./Foo.jsx"` vs `import { Bar } from "./Bar.jsx"`
-- When adding a new component, **follow the style used by neighboring/sibling components**.
-
-### Styling
-
-- All styling uses `styled-components`. No CSS modules, no inline styles beyond dynamic values.
-- CSS files (`App.css`, `index.css`, `Video.css`, `Typing.css`, `slideshow.css`) exist but are imported traditionally. **Multiple CSS files override `body` — style conflicts are likely**.
-- Responsive breakpoints: `@media (max-width: 1200px)` for font scaling, `@media (max-aspect-ratio: 1/1)` for portrait/landscape layout switches.
-- Dynamic responsive layouts pass `aspectratio` (lowercase) as a styled-component prop and use `${({aspectratio}) => ...}` template interpolation.
-
-### Responsive Layout Pattern (Duplicated)
-
-Every section component (`Home`, `Skills`, `Projects`, `Testimonials`, `Contact`) duplicates the same pattern:
-
-```jsx
-const [aspectRatio, setAspectRatio] = useState(window.innerWidth / window.innerHeight);
-const handleResize = () => { setAspectRatio(window.innerWidth / window.innerHeight); };
-useEffect(() => {
-  window.addEventListener('resize', handleResize);
-  return () => window.removeEventListener('resize', handleResize);
-}, []);
-```
-
-This is copy-pasted 5 times. A custom hook or HOC would reduce duplication.
-
-### PropTypes — Sporadic
-
-Only some components use `prop-types`: `Project`, `FormSubmitPopup`, `Ball`, `BallCanvas`, `Testimonial`. Most components have no prop validation.
-
-### File Extensions
-
-All component imports use explicit `.jsx` extensions (e.g., `import Home from "./components/Home.jsx"`). This is Vite's convention.
-
-### Image/Asset References
-
-All public assets live in `public/img/`. They are referenced as root-relative paths (e.g., `"img/html.png"`) — Vite serves the `public/` directory at `/`.
+- **styled-components for all styling**; the only CSS file is `src/index.css`. Components reference theme via `var(--...)` custom properties, never hard-coded colors.
+- **Default exports** for components; named exports for hooks/utilities (`useTypewriter`, `useSettings`, `applyTheme`).
+- **PropTypes** on every component that takes props.
+- Explicit `.jsx` extensions in imports (Vite convention).
+- Public assets in `public/img/`, referenced root-relative (`img/foo.png`).
+- Tests sit next to source (`*.test.jsx`), run on **happy-dom** (NOT jsdom — the corporate npm proxy blocks a jsdom transitive dep). `src/test/setup.js` shims `matchMedia` and `localStorage`.
+- JSX text starting with `//` must be wrapped as a string expression (`{'// TITLE'}`) or ESLint's `react/jsx-no-comment-textnodes` fails the zero-warnings build.
 
 ## Gotchas & Non-Obvious Details
 
-1. **Unused video background**: `index.html` has a `<video>` element with the `<source>` tag **commented out**. The `VideoBg` component in `src/components/Backgrounds/VideoBg.jsx` exists but is **never imported**. The video background feature is effectively dead code.
-
-2. **GSAP and Express are zombie dependencies**: Listed in `package.json` but never imported. Don't add code that depends on them without verifying they're actually needed.
-
-3. **Scroll-snap quirks**: The navbar applies `document.body.style.overflow = 'hidden'` on hover to prevent scroll during dropdown interaction. The `app-container` handles scroll-snap, but individual sections also have `scroll-snap-align: center`. Changing scroll behavior requires touching both `App.css` and per-section styled components.
-
-4. **Casing inconsistency**: State variable is `aspectRatio` (camelCase), but the styled-component prop is `aspectratio` (lowercase). Both refer to the same concept (`width/height`).
-
-5. **FormSubmitPopup prop type mismatch**: `PropTypes.number` is declared but semantically boolean values are passed as `status ? 1 : 0` and `showPopup ? 1 : 0`.
-
-6. **Fonts loaded in `index.html`**: Google Fonts (`PT Sans`, `Merriweather Sans`, `IBM Plex Serif`, `Roboto Serif`) are loaded via `<link>` tags in the HTML, not through CSS `@import` or JS. The `Abyssinica SIL` font used in headings is referenced but **not loaded via link** — it may only render if the user has it installed locally.
-
-7. **ESLint config uses `.cjs`**: The project has `"type": "module"` in `package.json`, so `.eslintrc.cjs` uses the `.cjs` extension to force CommonJS. The lint command targets `.js` and `.jsx` files only.
-
-8. **`Ball.jsx` — missing dependency array in `useEffect`**: The resize listener `useEffect` in `Ball.jsx:19` has **no dependency array**, meaning it runs on every render. This is likely a bug (should be `[]`).
-
-9. **`index.css` sets `background-color: #00154d`** but this is immediately overlaid by the particle background (`z-index: -1000`) and the app container, so it's only visible as a flash before JS loads or if particles fail.
-
-10. **Netlify function uses CJS**: `functions/send-email.js` uses `exports.handler` (CommonJS) — this is the Netlify serverless function convention. The project's `"type": "module"` in `package.json` does NOT apply to files in the `functions/` directory per Netlify's build config.
+1. **Boot plays once per session** — gated by `sessionStorage.termlink-booted`. Clear it to re-test the boot.
+2. **EscToMenu reads `window.location.pathname` at event time**, not from a React closure — a closure goes stale in the gap between navigation and effect re-registration. Don't "simplify" it back.
+3. **PhosphorImage Esc handling uses a capture-phase listener + stopPropagation** so closing the lightbox doesn't also trigger EscToMenu. Same caution.
+4. **Bright/white source images look flat under the duotone** (multiply blend over phosphor). Prefer darker screenshots for project thumbnails.
+5. **Netlify function is CJS** (`exports.handler`) with an ESM-style nodemailer import inlined by `netlify-plugin-inline-functions-env`; env vars come from Netlify, there is no dotenv.
+6. **`npm test` exits 1 if no test files match** — fine in isolation, but don't "fix" it by adding `--passWithNoTests` without checking CI expectations.
+7. **Phase 2/3 features are specced but unbuilt** (command prompt, hack minigame, sound, SYSTEM MONITOR, HOLOTAPE LOGS, guestbook). Check the spec before inventing structure for them.
