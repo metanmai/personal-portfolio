@@ -6,7 +6,9 @@ describe('applyTheme', () => {
         applyTheme('amber');
         const root = document.documentElement;
         expect(root.style.getPropertyValue('--phosphor')).toBe(THEMES.amber.phosphor);
+        expect(root.style.getPropertyValue('--dim')).toBe(THEMES.amber.dim);
         expect(root.style.getPropertyValue('--bg')).toBe(THEMES.amber.bg);
+        expect(root.style.getPropertyValue('--glow')).toBe(THEMES.amber.glow);
         expect(root.dataset.theme).toBe('amber');
     });
 
