@@ -26,8 +26,8 @@ const sweep = keyframes`
     to { top: 110%; }
 `;
 
-/* weak-signal stutter: brief stepped jitter + slice jumps, ~180ms */
-const glitch = keyframes`
+/* Type 1 — horizontal jitter + skew + clip-path slices (the original weak-signal stutter) */
+const glitch1 = keyframes`
     0%   { transform: translate(0, 0) skewX(0deg); filter: none; clip-path: inset(0 0 0 0); }
     15%  { transform: translate(-3px, 1px) skewX(2deg); filter: saturate(3) hue-rotate(20deg); clip-path: inset(8% 0 62% 0); }
     30%  { transform: translate(2px, -2px) skewX(-1deg); filter: saturate(3) hue-rotate(-15deg); clip-path: inset(40% 0 18% 0); }
@@ -36,6 +36,44 @@ const glitch = keyframes`
     85%  { transform: translate(-1px, 1px) skewX(0.5deg); filter: saturate(2) hue-rotate(8deg); clip-path: inset(0 0 0 0); }
     100% { transform: translate(0, 0) skewX(0deg); filter: none; clip-path: inset(0 0 0 0); }
 `;
+
+/* Type 2 — vertical hold loss: picture rolls up/down with brightness/contrast spikes */
+const glitch2 = keyframes`
+    0%   { transform: translate(0, 0); filter: none; }
+    20%  { transform: translate(0, -6px); filter: brightness(1.4) contrast(1.3); }
+    40%  { transform: translate(0, 5px); filter: brightness(0.7) contrast(1.5); }
+    60%  { transform: translate(0, -4px); filter: brightness(1.3) contrast(0.9); }
+    80%  { transform: translate(0, 3px); filter: brightness(1.1) contrast(1.2); }
+    100% { transform: translate(0, 0); filter: none; }
+`;
+
+/* Type 3 — zig-zag: diagonal stepped jumps + small rotate/skewY, like the beam losing sync */
+const glitch3 = keyframes`
+    0%   { transform: translate(0, 0) rotate(0deg) skewY(0deg); filter: none; }
+    20%  { transform: translate(4px, 3px) rotate(0.6deg) skewY(1deg); filter: saturate(1.8); }
+    40%  { transform: translate(-5px, -3px) rotate(-0.7deg) skewY(-1.2deg); filter: saturate(2); }
+    60%  { transform: translate(4px, -3px) rotate(0.5deg) skewY(0.8deg); filter: saturate(1.6); }
+    80%  { transform: translate(-3px, 3px) rotate(-0.4deg) skewY(-0.6deg); filter: saturate(1.8); }
+    100% { transform: translate(0, 0) rotate(0deg) skewY(0deg); filter: none; }
+`;
+
+/* Type 4 — horizontal tear/shear: strong skewX with opposite clip-path displacements + hue flash */
+const glitch4 = keyframes`
+    0%   { transform: translate(0, 0) skewX(0deg); filter: none; clip-path: inset(0 0 0 0); }
+    20%  { transform: translate(8px, 0) skewX(8deg); filter: hue-rotate(40deg) saturate(3); clip-path: inset(30% 0 55% 0); }
+    40%  { transform: translate(-9px, 0) skewX(-9deg); filter: hue-rotate(-35deg) saturate(2.5); clip-path: inset(55% 0 30% 0); }
+    60%  { transform: translate(7px, 0) skewX(6deg); filter: hue-rotate(25deg) saturate(3); clip-path: inset(15% 0 70% 0); }
+    80%  { transform: translate(-4px, 0) skewX(-3deg); filter: hue-rotate(-10deg) saturate(2); clip-path: inset(0 0 0 0); }
+    100% { transform: translate(0, 0) skewX(0deg); filter: none; clip-path: inset(0 0 0 0); }
+`;
+
+/* one source of truth: keyframe + duration paired so JS timeout can't drift from CSS */
+const GLITCH_VARIANTS = [
+    { id: '1', keyframes: glitch1, duration: 180, steps: 6 },
+    { id: '2', keyframes: glitch2, duration: 220, steps: 5 },
+    { id: '3', keyframes: glitch3, duration: 260, steps: 6 },
+    { id: '4', keyframes: glitch4, duration: 200, steps: 5 },
+];
 
 const Shell = styled.div`
     min-height: 100dvh;
@@ -52,16 +90,24 @@ const Shell = styled.div`
     padding-right: calc(clamp(14px, 4vw, 56px) + env(safe-area-inset-right, 0px));
     animation: ${powerOn} 0.35s ease-out, ${ambient} 11s steps(1) 3s infinite;
 
-    &[data-glitch='true'] {
-        ${css`animation: ${glitch} 180ms steps(6, end) 1;`}
-    }
+    ${GLITCH_VARIANTS.map(
+        (v) => css`
+            &[data-glitch='${v.id}'] {
+                animation: ${v.keyframes} ${v.duration}ms steps(${v.steps}, end) 1;
+            }
+        `,
+    )}
 
     @media (prefers-reduced-motion: reduce) {
         animation: none;
 
-        &[data-glitch='true'] {
-            animation: none;
-        }
+        ${GLITCH_VARIANTS.map(
+            (v) => css`
+                &[data-glitch='${v.id}'] {
+                    animation: none;
+                }
+            `,
+        )}
     }
 `;
 
@@ -97,7 +143,7 @@ const Sweep = styled(Overlay)`
 `;
 
 const Terminal = ({ children }) => {
-    const [glitching, setGlitching] = useState(false);
+    const [glitchType, setGlitchType] = useState(null);
 
     useEffect(() => {
         // disable entirely under reduced-motion — don't even schedule
@@ -114,15 +160,18 @@ const Terminal = ({ children }) => {
         let cancelled = false;
 
         const schedule = () => {
-            const delay = 12000 + Math.random() * 16000; // avg ~1 per 20s
+            // 1-2 glitches per ~20s → next trigger in 7-19s (avg ~13s)
+            const delay = 7000 + Math.random() * 12000;
             timeoutId = setTimeout(() => {
                 if (cancelled) return;
-                setGlitching(true);
+                const variant =
+                    GLITCH_VARIANTS[Math.floor(Math.random() * GLITCH_VARIANTS.length)];
+                setGlitchType(variant.id);
                 stopTimeoutId = setTimeout(() => {
                     if (cancelled) return;
-                    setGlitching(false);
+                    setGlitchType(null);
                     schedule();
-                }, 180);
+                }, variant.duration);
             }, delay);
         };
 
@@ -136,7 +185,7 @@ const Terminal = ({ children }) => {
     }, []);
 
     return (
-        <Shell data-glitch={glitching ? 'true' : undefined}>
+        <Shell data-glitch={glitchType || undefined}>
             <PhosphorSwitch />
             {children}
             <Scanlines data-testid="scanlines" />
