@@ -3,7 +3,6 @@ import nodemailer from "nodemailer";
 exports.handler = async (event) => {
     const { name, email, subject, message } = JSON.parse(event.body);
 
-    console.log(name, '\n', email, '\n', subject, '\n', message)
 
     const transporter = nodemailer.createTransport({
         host: 'smtp.elasticemail.com',

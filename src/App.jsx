@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { SettingsProvider } from './settings.jsx';
 import Terminal from './components/Terminal/Terminal.jsx';
 import MainMenu from './components/MainMenu/MainMenu.jsx';
@@ -14,17 +14,18 @@ import BootSequence from './components/BootSequence/BootSequence.jsx';
 
 const EscToMenu = () => {
     const navigate = useNavigate();
-    const location = useLocation();
 
     useEffect(() => {
         const onKey = (event) => {
-            if (event.key === 'Escape' && location.pathname !== '/') {
+            // read the path at event time — a closure over location.pathname
+            // goes stale between navigation and effect re-registration
+            if (event.key === 'Escape' && window.location.pathname !== '/') {
                 navigate('/');
             }
         };
         window.addEventListener('keydown', onKey);
         return () => window.removeEventListener('keydown', onKey);
-    }, [navigate, location.pathname]);
+    }, [navigate]);
 
     return null;
 };
