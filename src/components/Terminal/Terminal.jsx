@@ -30,7 +30,7 @@ const Shell = styled.div`
     background-color: var(--bg);
     color: var(--phosphor);
     font-family: 'VT323', 'Courier New', monospace;
-    font-size: clamp(17px, 2.2vmin, 22px);
+    font-size: calc(clamp(19px, 2.6vmin, 26px) * var(--font-scale, 1));
     text-shadow: 0 0 7px var(--glow);
     position: relative;
     padding: clamp(14px, 4vw, 56px);
@@ -85,7 +85,7 @@ const Terminal = ({ children }) => {
             {children}
             <Scanlines $intensity={settings.scanlines} data-testid="scanlines" />
             <Vignette />
-            {settings.scanlines !== 'off' && <Sweep />}
+            {settings.sweep !== false && settings.scanlines !== 'off' && <Sweep />}
         </Shell>
     );
 };

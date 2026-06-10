@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import ScreenFrame from './ScreenFrame.jsx';
-import { useSettings } from '../../settings.jsx';
+import { useSettings, DEFAULT_SETTINGS } from '../../settings.jsx';
 import { usePageMeta } from '../../hooks/usePageMeta.js';
 
 const Group = styled.div`
@@ -11,6 +11,12 @@ const GroupTitle = styled.h3`
     color: var(--dim);
     margin-bottom: 0.6rem;
     letter-spacing: 0.1em;
+`;
+
+const Caption = styled.p`
+    color: var(--dim);
+    margin-top: 0.4rem;
+    font-size: 0.85em;
 `;
 
 const OptionButton = styled.button`
@@ -58,6 +64,47 @@ const Calibration = () => {
                         {level.toUpperCase()}
                     </OptionButton>
                 ))}
+            </Group>
+            <Group>
+                <GroupTitle>{'// TEXT SIZE'}</GroupTitle>
+                {[
+                    { label: 'NORMAL', value: 1 },
+                    { label: 'LARGE', value: 1.15 },
+                    { label: 'X-LARGE', value: 1.3 },
+                ].map((opt) => (
+                    <OptionButton
+                        key={opt.label}
+                        data-active={settings.fontScale === opt.value}
+                        onClick={() => update({ fontScale: opt.value })}
+                    >
+                        {opt.label}
+                    </OptionButton>
+                ))}
+            </Group>
+            <Group>
+                <GroupTitle>{'// CRT SWEEP'}</GroupTitle>
+                <OptionButton data-active={settings.sweep === true} onClick={() => update({ sweep: true })}>
+                    ON
+                </OptionButton>
+                <OptionButton data-active={settings.sweep === false} onClick={() => update({ sweep: false })}>
+                    OFF
+                </OptionButton>
+            </Group>
+            <Group>
+                <GroupTitle>{'// BOOT SEQUENCE'}</GroupTitle>
+                <OptionButton data-active={settings.boot === 'full'} onClick={() => update({ boot: 'full' })}>
+                    FULL
+                </OptionButton>
+                <OptionButton data-active={settings.boot === 'quick'} onClick={() => update({ boot: 'quick' })}>
+                    QUICK
+                </OptionButton>
+                <Caption>{'// QUICK SKIPS POST ON FUTURE VISITS'}</Caption>
+            </Group>
+            <Group>
+                <GroupTitle>{'// FACTORY RESET'}</GroupTitle>
+                <OptionButton onClick={() => update({ ...DEFAULT_SETTINGS })}>
+                    RESTORE DEFAULTS
+                </OptionButton>
             </Group>
             <p style={{ color: 'var(--dim)' }}>
                 {'// AUDIO EMITTER: INSTALLED IN A FUTURE FIRMWARE UPDATE (PHASE 2)'}

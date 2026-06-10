@@ -1,13 +1,13 @@
 export const THEMES = {
     amber: {
         phosphor: '#ffb000',
-        dim: '#8a6200',
+        dim: '#a07a1a',
         bg: '#160f01',
         glow: 'rgba(255, 176, 0, 0.55)',
     },
     green: {
         phosphor: '#41ff7e',
-        dim: '#1d8a44',
+        dim: '#2aa85c',
         bg: '#061206',
         glow: 'rgba(65, 255, 126, 0.55)',
     },

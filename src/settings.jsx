@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { applyTheme, DEFAULT_THEME } from './theme.js';
 
 const STORAGE_KEY = 'termlink-settings';
-const DEFAULT_SETTINGS = { theme: DEFAULT_THEME, scanlines: 'full' };
+// eslint-disable-next-line react-refresh/only-export-components
+export const DEFAULT_SETTINGS = { theme: DEFAULT_THEME, scanlines: 'full', fontScale: 1, sweep: true, boot: 'full' };
 
 const SettingsContext = createContext(null);
 
@@ -21,6 +22,7 @@ export const SettingsProvider = ({ children }) => {
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
         applyTheme(settings.theme);
+        document.documentElement.style.setProperty('--font-scale', String(settings.fontScale));
     }, [settings]);
 
     const update = useCallback((patch) => setSettings((prev) => ({ ...prev, ...patch })), []);

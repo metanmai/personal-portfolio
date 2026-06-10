@@ -26,7 +26,35 @@ describe('Calibration', () => {
 
     it('switches scanline intensity', async () => {
         renderScreen();
-        await userEvent.click(screen.getByRole('button', { name: /OFF/ }));
+        const scanlineOff = screen.getAllByRole('button', { name: /OFF/ })[0];
+        await userEvent.click(scanlineOff);
         expect(JSON.parse(localStorage.getItem('termlink-settings')).scanlines).toBe('off');
+    });
+
+    it('selects X-LARGE text size', async () => {
+        renderScreen();
+        await userEvent.click(screen.getByRole('button', { name: /X-LARGE/ }));
+        expect(JSON.parse(localStorage.getItem('termlink-settings')).fontScale).toBe(1.3);
+    });
+
+    it('switches boot to QUICK', async () => {
+        renderScreen();
+        await userEvent.click(screen.getByRole('button', { name: /^QUICK$/ }));
+        expect(JSON.parse(localStorage.getItem('termlink-settings')).boot).toBe('quick');
+    });
+
+    it('restores defaults', async () => {
+        renderScreen();
+        await userEvent.click(screen.getByRole('button', { name: /GREEN/ }));
+        expect(JSON.parse(localStorage.getItem('termlink-settings')).theme).toBe('green');
+        await userEvent.click(screen.getByRole('button', { name: /RESTORE DEFAULTS/ }));
+        const stored = JSON.parse(localStorage.getItem('termlink-settings'));
+        expect(stored).toEqual({
+            theme: 'amber',
+            scanlines: 'full',
+            fontScale: 1,
+            sweep: true,
+            boot: 'full',
+        });
     });
 });

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import PropTypes from 'prop-types';
-import { SettingsProvider } from './settings.jsx';
+import { SettingsProvider, useSettings } from './settings.jsx';
 import Terminal from './components/Terminal/Terminal.jsx';
 import MainMenu from './components/MainMenu/MainMenu.jsx';
 import PersonnelFile from './components/screens/PersonnelFile.jsx';
@@ -56,38 +56,45 @@ RouteRedraw.propTypes = {
     children: PropTypes.node.isRequired,
 };
 
-function App() {
-    const [booted, setBooted] = useState(false);
+const TerminalApp = () => {
+    const { settings } = useSettings();
+    const [booted, setBooted] = useState(settings.boot === 'quick');
 
     const handleBootDone = () => {
         setBooted(true);
     };
 
+    if (!booted) {
+        return <BootSequence onDone={handleBootDone} />;
+    }
+
+    return (
+        <BrowserRouter>
+            <Terminal>
+                <EscToMenu />
+                <RouteRedraw>
+                    <SystemFault>
+                        <Routes>
+                            <Route path="/" element={<MainMenu />} />
+                            <Route path="/personnel" element={<PersonnelFile />} />
+                            <Route path="/archives" element={<ProjectArchives />} />
+                            <Route path="/commendations" element={<Commendations />} />
+                            <Route path="/comms" element={<OpenComms />} />
+                            <Route path="/calibration" element={<Calibration />} />
+                            <Route path="*" element={<FileCorrupted />} />
+                        </Routes>
+                    </SystemFault>
+                </RouteRedraw>
+                <StatusBar />
+            </Terminal>
+        </BrowserRouter>
+    );
+};
+
+function App() {
     return (
         <SettingsProvider>
-            {!booted ? (
-                <BootSequence onDone={handleBootDone} />
-            ) : (
-                <BrowserRouter>
-                    <Terminal>
-                        <EscToMenu />
-                        <RouteRedraw>
-                            <SystemFault>
-                                <Routes>
-                                    <Route path="/" element={<MainMenu />} />
-                                    <Route path="/personnel" element={<PersonnelFile />} />
-                                    <Route path="/archives" element={<ProjectArchives />} />
-                                    <Route path="/commendations" element={<Commendations />} />
-                                    <Route path="/comms" element={<OpenComms />} />
-                                    <Route path="/calibration" element={<Calibration />} />
-                                    <Route path="*" element={<FileCorrupted />} />
-                                </Routes>
-                            </SystemFault>
-                        </RouteRedraw>
-                        <StatusBar />
-                    </Terminal>
-                </BrowserRouter>
-            )}
+            <TerminalApp />
         </SettingsProvider>
     );
 }
