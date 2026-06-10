@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { applyTheme, DEFAULT_THEME } from './theme.js';
 
@@ -23,10 +23,12 @@ export const SettingsProvider = ({ children }) => {
         applyTheme(settings.theme);
     }, [settings]);
 
-    const update = (patch) => setSettings((prev) => ({ ...prev, ...patch }));
+    const update = useCallback((patch) => setSettings((prev) => ({ ...prev, ...patch })), []);
+
+    const value = useMemo(() => ({ settings, update }), [settings, update]);
 
     return (
-        <SettingsContext.Provider value={{ settings, update }}>
+        <SettingsContext.Provider value={value}>
             {children}
         </SettingsContext.Provider>
     );

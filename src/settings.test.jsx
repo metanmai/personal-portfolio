@@ -34,5 +34,6 @@ describe('SettingsProvider', () => {
         localStorage.setItem('termlink-settings', JSON.stringify({ theme: 'green' }));
         render(<SettingsProvider><Probe /></SettingsProvider>);
         expect(screen.getByTestId('theme')).toHaveTextContent('green');
+        expect(screen.getByTestId('scanlines')).toHaveTextContent('full');
     });
 });

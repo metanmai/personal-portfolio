@@ -25,13 +25,19 @@ Object.defineProperty(window, 'localStorage', {
             return this._data[key] ?? null;
         },
         setItem(key, value) {
-            this._data[key] = value.toString();
+            this._data[key] = String(value);
         },
         removeItem(key) {
             delete this._data[key];
         },
         clear() {
             this._data = {};
+        },
+        key(index) {
+            return Object.keys(this._data)[index] ?? null;
+        },
+        get length() {
+            return Object.keys(this._data).length;
         },
     },
     writable: true,
