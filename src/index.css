@@ -49,4 +49,8 @@ a {
     a, button:enabled, [role='button'], summary, label {
         cursor: var(--cursor-pointer, pointer) !important;
     }
+
+    input, textarea {
+        cursor: var(--cursor-text, text);
+    }
 }

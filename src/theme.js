@@ -37,10 +37,28 @@ const GLOVE_GRID = [
     '....XXXXXX..',
 ];
 
-const gloveCursorSvg = (fill) => {
+// Pixel I-beam for text fields — chunky serif bars top and bottom.
+const IBEAM_GRID = [
+    'XXXXXXX',
+    'X#####X',
+    'XXX#XXX',
+    '..X#X..',
+    '..X#X..',
+    '..X#X..',
+    '..X#X..',
+    '..X#X..',
+    '..X#X..',
+    '..X#X..',
+    '..X#X..',
+    'XXX#XXX',
+    'X#####X',
+    'XXXXXXX',
+];
+
+const gridToCursorSvg = (grid, fill) => {
     const px = 2;
     let rects = '';
-    GLOVE_GRID.forEach((row, y) => {
+    grid.forEach((row, y) => {
         // merge horizontal runs of the same cell into single rects
         let x = 0;
         while (x < row.length) {
@@ -56,8 +74,8 @@ const gloveCursorSvg = (fill) => {
             x = end + 1;
         }
     });
-    const w = GLOVE_GRID[0].length * px;
-    const h = GLOVE_GRID.length * px;
+    const w = grid[0].length * px;
+    const h = grid.length * px;
     return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges">${rects}</svg>`;
 };
 
@@ -71,6 +89,7 @@ export function applyTheme(name) {
     root.style.setProperty('--bg', theme.bg);
     root.style.setProperty('--glow', theme.glow);
     root.style.setProperty('--cursor-default', cursorValue(arrowCursorSvg(theme.phosphor), 2, 1, 'default'));
-    root.style.setProperty('--cursor-pointer', cursorValue(gloveCursorSvg(theme.phosphor), 9, 0, 'pointer'));
+    root.style.setProperty('--cursor-pointer', cursorValue(gridToCursorSvg(GLOVE_GRID, theme.phosphor), 9, 0, 'pointer'));
+    root.style.setProperty('--cursor-text', cursorValue(gridToCursorSvg(IBEAM_GRID, theme.phosphor), 7, 14, 'text'));
     root.dataset.theme = THEMES[name] ? name : DEFAULT_THEME;
 }
