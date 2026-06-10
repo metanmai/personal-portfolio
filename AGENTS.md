@@ -25,7 +25,7 @@ App.jsx                       boot gate (plain useState, boots EVERY visit: cred
 │   └── (uses utils/deviceSpecs.js + api.ipify.org; writes sessionStorage 'termlink-operator')
 └── BrowserRouter
     └── Terminal/             CRT shell: scanlines, vignette, sweep, flicker, ~20s random glitch
-        ├── PhosphorSwitch    fixed top-right cluster aligned to content padding: phosphor cycle + [♪] sound toggle (blobs on mobile)
+        ├── PhosphorSwitch    in-flow right-aligned row at top of shell: phosphor cycle + [♪] sound toggle (blobs on mobile); NOT fixed — fixed positioning overlapped the [ESC] back link
         ├── EscToMenu         global Esc → navigate('/')
         ├── RouteRedraw       keyed clip-path wipe on every navigation
         ├── SystemFault.jsx   error boundary

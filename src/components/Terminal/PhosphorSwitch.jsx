@@ -3,16 +3,14 @@ import { useSettings } from '../../settings.jsx';
 import { THEME_ORDER, DEFAULT_THEME } from '../../theme.js';
 import { playConfirmBlip } from '../../hooks/useSound.js';
 
-// Right/top offsets mirror the Terminal Shell padding so the cluster's edge
-// lines up with the content column instead of hugging the viewport corner.
+// In normal flow (not fixed) so the cluster lines up with the content column
+// and can never sit on top of screen titles or the [ESC] back link.
 const Cluster = styled.div`
-    position: fixed;
-    top: clamp(14px, 4vw, 56px);
-    right: clamp(14px, 4vw, 56px);
-    z-index: 60;
     display: flex;
     gap: 0.5rem;
     align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 0.9rem;
 `;
 
 const ChromeButton = styled.button`
