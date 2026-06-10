@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import styled, { keyframes, css } from 'styled-components';
 import PropTypes from 'prop-types';
 import {
     getDeviceSpecLines,
@@ -7,22 +7,27 @@ import {
     getBrowserName,
     padLine,
 } from '../../utils/deviceSpecs.js';
+import { useClock } from '../../hooks/useClock.js';
 import AsciiGlobe from './AsciiGlobe.jsx';
 
-// Boot lines are defined locally — constants/index.js is being restructured
-// by another agent. Header lines for stage 1 (UPLINK).
+// Static lines shown on the LOGIN screen and at the top of BOOT screen.
 const HEADER_LINES = [
     'TANMAI INDUSTRIES (TM) TERMLINK PROTOCOL',
     'COPYRIGHT 2026 TANMAI INDUSTRIES',
-    'ESTABLISHING UPLINK...',
+    '',
+    'RESTRICTED ACCESS — AUTHENTICATION REQUIRED',
 ];
 
-const HEADER_INTERVAL_MS = 250;
-const REPORT_INTERVAL_MS = 300;
-const TYPE_CHAR_MS = 120;
-const UPLINK_MIN_MS = 3000;
+// Stage timings.
+const BOOT_TOTAL_MS = 4000;
+const BOOT_LINE_INTERVAL_MS = 270;
+const GRANTED_HOLD_MS = 900;
+const BLINK_MS = 250;
+const REDUCED_GRANTED_HOLD_MS = 600;
 const IP_TIMEOUT_MS = 3000;
-const LOGIN_GRANTED_HOLD_MS = 700;
+const BAR_CELLS = 20;
+
+const SESSION_KEY = 'termlink-operator';
 
 const reducedMotion = () => {
     try {
@@ -34,22 +39,29 @@ const reducedMotion = () => {
     }
 };
 
-const localTime = () => {
-    const d = new Date();
-    const hh = String(d.getHours()).padStart(2, '0');
-    const mm = String(d.getMinutes()).padStart(2, '0');
-    const ss = String(d.getSeconds()).padStart(2, '0');
-    return `${hh}:${mm}:${ss}`;
-};
-
 const fetchIp = (signal) => fetch('https://api.ipify.org?format=json', { signal })
     .then((r) => r.json())
     .then((j) => (j && typeof j.ip === 'string' && j.ip.length > 0 ? j.ip : 'UNTRACEABLE'))
     .catch(() => 'UNTRACEABLE');
 
-const blink = keyframes`
+const buildBar = (pct) => {
+    const clamped = Math.max(0, Math.min(100, pct));
+    const filled = Math.round((clamped / 100) * BAR_CELLS);
+    const empty = BAR_CELLS - filled;
+    return `[${'▮'.repeat(filled)}${'░'.repeat(empty)}] ${String(clamped).padStart(3, ' ')}%`;
+};
+
+const caretBlink = keyframes`
     0%, 49% { opacity: 1; }
     50%, 100% { opacity: 0; }
+`;
+
+const screenBlink = keyframes`
+    0%   { opacity: 1; }
+    20%  { opacity: 0; }
+    40%  { opacity: 1; }
+    60%  { opacity: 0; }
+    100% { opacity: 0; }
 `;
 
 const Screen = styled.div`
@@ -61,6 +73,15 @@ const Screen = styled.div`
     text-shadow: 0 0 7px var(--glow);
     padding: clamp(14px, 4vw, 56px);
     cursor: default;
+
+    ${({ $blink }) => $blink && css`
+        animation: ${screenBlink} ${BLINK_MS}ms steps(2, end) forwards;
+
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+            opacity: 1;
+        }
+    `}
 `;
 
 const Line = styled.p`
@@ -69,16 +90,16 @@ const Line = styled.p`
     margin: 0;
 `;
 
-const Hint = styled.p`
-    color: var(--dim);
-    margin: 0;
-    min-height: 1em;
+const Bright = styled(Line)`
+    color: var(--phosphor);
+    filter: brightness(1.35);
+    text-shadow: 0 0 10px var(--glow), 0 0 18px var(--glow);
 `;
 
 const Caret = styled.span`
     display: inline-block;
     width: 0.6em;
-    animation: ${blink} 1s steps(1) infinite;
+    animation: ${caretBlink} 1s steps(1) infinite;
 
     @media (prefers-reduced-motion: reduce) {
         animation: none;
@@ -90,238 +111,270 @@ const GlobeWrap = styled.div`
     margin: 0.75rem 0;
 `;
 
-const GlobeCaption = styled.p`
+const Form = styled.form`
+    display: grid;
+    grid-template-columns: minmax(9rem, max-content) 1fr;
+    gap: 0.65rem 1rem;
+    align-items: center;
+    max-width: 640px;
+    margin: 1.5rem 0 0;
+`;
+
+const Label = styled.label`
     color: var(--dim);
-    margin: 0.25rem 0 0;
+    letter-spacing: 0.05em;
+`;
+
+const Field = styled.input`
+    background: transparent;
+    border: 1px solid var(--dim);
+    color: var(--phosphor);
+    font-family: inherit;
+    font-size: inherit;
+    text-shadow: inherit;
+    padding: 0.5rem 0.75rem;
+    min-height: 2.25rem;
+    outline: none;
+    caret-color: var(--phosphor);
+
+    &:focus, &:focus-visible {
+        border-color: var(--phosphor);
+        box-shadow: 0 0 0 1px var(--phosphor);
+    }
+`;
+
+const Submit = styled.button`
+    grid-column: 1 / -1;
+    justify-self: start;
+    background: transparent;
+    border: 1px solid var(--phosphor);
+    color: var(--phosphor);
+    font-family: inherit;
+    font-size: inherit;
+    text-shadow: inherit;
+    padding: 0.5rem 1.1rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+
+    &:hover, &:focus, &:focus-visible {
+        background: var(--phosphor);
+        color: var(--bg);
+        text-shadow: none;
+        outline: none;
+    }
+`;
+
+const Bar = styled(Line)`
+    margin-top: 0.75rem;
+    letter-spacing: 0.05em;
 `;
 
 const BootSequence = ({ onDone }) => {
-    const [stage, setStage] = useState('uplink'); // 'uplink' | 'report' | 'login' | 'granted'
-    const [headerCount, setHeaderCount] = useState(0);
-    const [ip, setIp] = useState(null); // null while pending; set when settled
-    const [reportLines, setReportLines] = useState([]);
-    const [reportCount, setReportCount] = useState(0);
-    const [guestTyped, setGuestTyped] = useState('');
-    const [grantedShown, setGrantedShown] = useState(false);
+    const [stage, setStage] = useState('login'); // 'login' | 'boot' | 'granted'
+    const [operatorId, setOperatorId] = useState('');
+    const [passcode, setPasscode] = useState('');
+    const [operator, setOperator] = useState('GUEST');
+    const [ip, setIp] = useState(null); // null while pending
+    const [bootLineCount, setBootLineCount] = useState(0);
+    const [progress, setProgress] = useState(0);
+    const [blink, setBlink] = useState(false);
 
+    const clock = useClock();
     const doneRef = useRef(false);
-    const stageRef = useRef('uplink');
-    stageRef.current = stage;
+    const operatorIdRef = useRef(null);
 
-    const finish = () => {
-        if (!doneRef.current) {
-            doneRef.current = true;
-            onDone();
-        }
-    };
-
-    // --- Stage 1: UPLINK ---
-    // Type header lines + start IP fetch + enforce 3s minimum.
+    // Start the IP fetch at MOUNT so it usually resolves before BOOT starts.
     useEffect(() => {
-        const reduce = reducedMotion();
         const controller = new AbortController();
-        let elapsed = false;
-        let ipSettled = false;
-        let fetchedIp = 'UNTRACEABLE';
-
-        const tryAdvance = () => {
-            if (elapsed && ipSettled && stageRef.current === 'uplink') {
-                setIp(fetchedIp);
-                setStage('report');
-            }
-        };
-
-        // Header typing
-        if (reduce) {
-            setHeaderCount(HEADER_LINES.length);
-        } else {
-            const id = setInterval(() => {
-                setHeaderCount((n) => {
-                    if (n >= HEADER_LINES.length) {
-                        clearInterval(id);
-                        return n;
-                    }
-                    return n + 1;
-                });
-            }, HEADER_INTERVAL_MS);
-            // ensure cleanup on unmount
-            // (the interval self-clears at completion, but we still cancel on unmount)
-            // store id for cleanup below
-            // We attach to controller via abort listener to keep cleanup simple.
-            controller.signal.addEventListener('abort', () => clearInterval(id));
-        }
-
-        // Minimum stage-1 dwell
-        const minTimer = setTimeout(() => {
-            elapsed = true;
-            tryAdvance();
-        }, UPLINK_MIN_MS);
-
-        // IP fetch with timeout
-        const timeoutTimer = setTimeout(() => controller.abort(), IP_TIMEOUT_MS);
+        const timeoutId = setTimeout(() => controller.abort(), IP_TIMEOUT_MS);
         fetchIp(controller.signal).then((result) => {
-            fetchedIp = result;
-            ipSettled = true;
-            clearTimeout(timeoutTimer);
-            tryAdvance();
+            clearTimeout(timeoutId);
+            setIp(result);
         });
-
         return () => {
             controller.abort();
-            clearTimeout(minTimer);
-            clearTimeout(timeoutTimer);
+            clearTimeout(timeoutId);
         };
     }, []);
 
-    // --- Stage 2: REPORT ---
-    // Build the visitor report lines once IP is known, then type them out.
+    // Autofocus OPERATOR ID on mount (autoFocus prop covers most cases, but
+    // some browsers ignore it inside transformed/animated trees — be explicit).
     useEffect(() => {
-        if (stage !== 'report') return undefined;
-        const lines = [
+        if (stage === 'login' && operatorIdRef.current) {
+            operatorIdRef.current.focus();
+        }
+    }, [stage]);
+
+    // Build the boot lines once we are on the BOOT stage. IP may still be
+    // pending — fall through with 'UNTRACEABLE' if it never settles in time.
+    const bootLines = useMemo(() => {
+        if (stage !== 'boot' && stage !== 'granted') return [];
+        return [
             padLine('NODE ADDR', ip || 'UNTRACEABLE'),
             padLine('REGION', getRegion()),
             padLine('BROWSER', getBrowserName()),
             ...getDeviceSpecLines(),
-            padLine('LOCAL TIME', localTime()),
+            // LOCAL TIME is rendered specially (live clock) — we still reserve
+            // a slot in the list so the typewriter timing covers it.
+            'LOCAL_TIME_PLACEHOLDER',
         ];
-        setReportLines(lines);
+    }, [stage, ip]);
 
+    // BOOT stage: tick lines + drive the progress bar for ~4s.
+    useEffect(() => {
+        if (stage !== 'boot') return undefined;
         const reduce = reducedMotion();
+        const total = bootLines.length;
+
         if (reduce) {
-            setReportCount(lines.length);
-            // brief beat then advance to login
-            const t = setTimeout(() => setStage('login'), 300);
+            setBootLineCount(total);
+            setProgress(100);
+            const t = setTimeout(() => setStage('granted'), 200);
             return () => clearTimeout(t);
         }
 
-        let i = 0;
-        setReportCount(0);
-        const id = setInterval(() => {
-            i += 1;
-            setReportCount(i);
-            if (i >= lines.length) {
-                clearInterval(id);
-                // small beat after report finishes
-                setTimeout(() => {
-                    if (stageRef.current === 'report') setStage('login');
-                }, 400);
-            }
-        }, REPORT_INTERVAL_MS);
-        return () => clearInterval(id);
-    }, [stage, ip]);
+        setBootLineCount(0);
+        setProgress(0);
+        const started = Date.now();
 
-    // --- Stage 3: LOGIN ---
-    // Any keydown or click/tap triggers the fake-type then grant.
-    useEffect(() => {
-        if (stage !== 'login') return undefined;
+        const lineId = setInterval(() => {
+            setBootLineCount((n) => {
+                if (n >= total) {
+                    clearInterval(lineId);
+                    return n;
+                }
+                return n + 1;
+            });
+        }, BOOT_LINE_INTERVAL_MS);
 
-        const startLogin = () => {
-            if (stageRef.current !== 'login') return;
+        const barId = setInterval(() => {
+            const elapsed = Date.now() - started;
+            const pct = Math.min(100, Math.round((elapsed / BOOT_TOTAL_MS) * 100));
+            setProgress(pct);
+        }, 60);
+
+        const advance = setTimeout(() => {
+            setBootLineCount(total);
+            setProgress(100);
             setStage('granted');
-        };
+        }, BOOT_TOTAL_MS);
 
-        const onKey = () => startLogin();
-        const onPointer = () => startLogin();
-
-        window.addEventListener('keydown', onKey);
-        window.addEventListener('click', onPointer);
-        window.addEventListener('touchstart', onPointer);
         return () => {
-            window.removeEventListener('keydown', onKey);
-            window.removeEventListener('click', onPointer);
-            window.removeEventListener('touchstart', onPointer);
+            clearInterval(lineId);
+            clearInterval(barId);
+            clearTimeout(advance);
         };
-    }, [stage]);
+    }, [stage, bootLines.length]);
 
-    // --- Stage 4 (granted): fake-type GUEST, then ACCESS LEVEL line, then onDone.
+    // GRANTED stage: hold briefly, blink, finish.
     useEffect(() => {
         if (stage !== 'granted') return undefined;
         const reduce = reducedMotion();
-        const target = 'GUEST';
-        setGuestTyped('');
-        setGrantedShown(false);
 
-        const timeouts = [];
-        const intervals = [];
-
-        const finishGranted = () => {
-            setGrantedShown(true);
-            const t = setTimeout(finish, LOGIN_GRANTED_HOLD_MS);
-            timeouts.push(t);
+        const finish = () => {
+            if (doneRef.current) return;
+            doneRef.current = true;
+            onDone();
         };
 
         if (reduce) {
-            setGuestTyped(target);
-            finishGranted();
-        } else {
-            let i = 0;
-            const id = setInterval(() => {
-                i += 1;
-                setGuestTyped(target.slice(0, i));
-                if (i >= target.length) {
-                    clearInterval(id);
-                    finishGranted();
-                }
-            }, TYPE_CHAR_MS);
-            intervals.push(id);
+            const t = setTimeout(finish, REDUCED_GRANTED_HOLD_MS);
+            return () => clearTimeout(t);
         }
 
+        const blinkAt = setTimeout(() => setBlink(true), GRANTED_HOLD_MS);
+        const finishAt = setTimeout(finish, GRANTED_HOLD_MS + BLINK_MS);
         return () => {
-            intervals.forEach(clearInterval);
-            timeouts.forEach(clearTimeout);
+            clearTimeout(blinkAt);
+            clearTimeout(finishAt);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [stage]);
+    }, [stage, onDone]);
 
-    const renderedHeader = HEADER_LINES.slice(0, headerCount);
-    const renderedReport = reportLines.slice(0, reportCount);
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const cleaned = (operatorId.trim() || 'GUEST').toUpperCase();
+        try {
+            sessionStorage.setItem(SESSION_KEY, cleaned);
+        } catch {
+            // sessionStorage can throw in privacy modes — never block boot.
+        }
+        setOperator(cleaned);
+        setStage('boot');
+    };
+
+    // Render boot lines, intercepting the LOCAL TIME placeholder so the live
+    // clock value can be slotted in as JSX (seconds visibly advance).
+    const renderBootLine = (line, i) => {
+        if (line === 'LOCAL_TIME_PLACEHOLDER') {
+            // Mirror padLine layout: "LOCAL TIME .................. <value>"
+            const prefix = padLine('LOCAL TIME', '');
+            return (
+                <Line key={`b-${i}`}>
+                    {prefix}
+                    {clock}
+                </Line>
+            );
+        }
+        return <Line key={`b-${i}`}>{line || ' '}</Line>;
+    };
+
+    // Reference passcode to silence unused-var lint while keeping a controlled
+    // input — the field is theater, no validation ever happens.
+    void passcode;
 
     return (
-        <Screen role="status" aria-label="Terminal login sequence">
-            {renderedHeader.map((line, i) => (
+        <Screen role="status" aria-label="Terminal login sequence" $blink={blink}>
+            {HEADER_LINES.map((line, i) => (
                 <Line key={`h-${i}`}>{line || ' '}</Line>
             ))}
 
-            {stage === 'uplink' && (
-                <GlobeWrap>
-                    <AsciiGlobe />
-                    <GlobeCaption>ROUTING THROUGH RELAY GRID...</GlobeCaption>
-                </GlobeWrap>
+            {stage === 'login' && (
+                <Form onSubmit={handleSubmit} aria-label="Authentication">
+                    <Label htmlFor="operator-id">OPERATOR ID:</Label>
+                    <Field
+                        id="operator-id"
+                        name="operator-id"
+                        type="text"
+                        value={operatorId}
+                        onChange={(e) => setOperatorId(e.target.value)}
+                        autoComplete="off"
+                        autoCapitalize="characters"
+                        spellCheck={false}
+                        ref={operatorIdRef}
+                        autoFocus
+                    />
+
+                    <Label htmlFor="passcode">PASSCODE:</Label>
+                    <Field
+                        id="passcode"
+                        name="passcode"
+                        type="password"
+                        value={passcode}
+                        onChange={(e) => setPasscode(e.target.value)}
+                        autoComplete="off"
+                    />
+
+                    <Submit type="submit">[ AUTHENTICATE ]</Submit>
+                </Form>
             )}
 
-            {stage !== 'uplink' && (
+            {(stage === 'boot' || stage === 'granted') && (
                 <>
-                    {/* Globe stays visible at top once report begins (kept spinning) */}
                     <GlobeWrap>
                         <AsciiGlobe />
                     </GlobeWrap>
-                    {renderedReport.map((line, i) => (
-                        <Line key={`r-${i}`}>{line || ' '}</Line>
-                    ))}
-                </>
-            )}
-
-            {(stage === 'login' || stage === 'granted') && reportCount >= reportLines.length && (
-                <>
-                    <Line>{' '}</Line>
-                    {stage === 'login' && (
-                        <>
-                            <Line>
-                                {'IDENTIFY USER: '}
-                                <Caret>█</Caret>
-                            </Line>
-                            <Hint>[ PRESS ANY KEY TO LOG IN AS GUEST ]</Hint>
-                        </>
+                    {bootLines.slice(0, bootLineCount).map((line, i) => renderBootLine(line, i))}
+                    {stage === 'boot' && (
+                        <Bar aria-label="Boot progress">
+                            {buildBar(progress)}
+                            <Caret>█</Caret>
+                        </Bar>
                     )}
                     {stage === 'granted' && (
                         <>
-                            <Line>
-                                {`IDENTIFY USER: ${guestTyped}`}
-                                <Caret>█</Caret>
-                            </Line>
-                            {grantedShown && (
-                                <Line>{'ACCESS LEVEL: VISITOR ......... GRANTED'}</Line>
-                            )}
+                            <Line>{' '}</Line>
+                            <Line>{'ACCESS LEVEL: VISITOR ......... GRANTED'}</Line>
+                            <Bright>{`WELCOME, ${operator}`}</Bright>
                         </>
                     )}
                 </>
