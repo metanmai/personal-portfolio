@@ -74,6 +74,13 @@ const Screen = styled.div`
     padding: clamp(14px, 4vw, 56px);
     cursor: default;
 
+    ${({ $centered }) => $centered && css`
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    `}
+
     ${({ $blink }) => $blink && css`
         animation: ${screenBlink} ${BLINK_MS}ms steps(2, end) forwards;
 
@@ -82,6 +89,15 @@ const Screen = styled.div`
             opacity: 1;
         }
     `}
+`;
+
+// Wraps the centered login column so the header text + form + hint share a
+// common left edge in the middle of the viewport.
+const LoginColumn = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: min(560px, 92vw);
 `;
 
 const Line = styled.p`
@@ -114,9 +130,9 @@ const GlobeWrap = styled.div`
 const Form = styled.form`
     display: grid;
     grid-template-columns: minmax(9rem, max-content) 1fr;
-    gap: 0.65rem 1rem;
+    gap: 0.75rem 1rem;
     align-items: center;
-    max-width: 640px;
+    width: 100%;
     margin: 1.5rem 0 0;
 `;
 
@@ -130,10 +146,10 @@ const Field = styled.input`
     border: 1px solid var(--dim);
     color: var(--phosphor);
     font-family: inherit;
-    font-size: inherit;
+    font-size: 1.1em;
     text-shadow: inherit;
-    padding: 0.5rem 0.75rem;
-    min-height: 2.25rem;
+    padding: 0.7rem 0.9rem;
+    width: min(420px, 80vw);
     outline: none;
     caret-color: var(--phosphor);
 
@@ -150,10 +166,10 @@ const Submit = styled.button`
     border: 1px solid var(--phosphor);
     color: var(--phosphor);
     font-family: inherit;
-    font-size: inherit;
+    font-size: 1.1em;
     text-shadow: inherit;
-    padding: 0.5rem 1.1rem;
-    margin-top: 0.5rem;
+    padding: 0.7rem 1.4rem;
+    margin-top: 0.75rem;
     cursor: pointer;
 
     &:hover, &:focus, &:focus-visible {
@@ -162,6 +178,14 @@ const Submit = styled.button`
         text-shadow: none;
         outline: none;
     }
+`;
+
+const Hint = styled.p`
+    color: var(--dim);
+    font-size: 0.85em;
+    letter-spacing: 0.05em;
+    margin: 1.1rem 0 0;
+    opacity: 0.85;
 `;
 
 const Bar = styled(Line)`
@@ -182,6 +206,21 @@ const BootSequence = ({ onDone }) => {
     const clock = useClock();
     const doneRef = useRef(false);
     const operatorIdRef = useRef(null);
+    const passcodeRef = useRef(null);
+    const submitRef = useRef(null);
+
+    // ArrowDown: OPERATOR ID → PASSCODE → AUTHENTICATE; ArrowUp reverses.
+    // preventDefault keeps the caret from jumping to start/end of the input.
+    const handleFormKeyDown = (event) => {
+        if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+        const order = [operatorIdRef.current, passcodeRef.current, submitRef.current];
+        const idx = order.indexOf(event.target);
+        if (idx === -1) return;
+        const next = event.key === 'ArrowDown' ? idx + 1 : idx - 1;
+        if (next < 0 || next >= order.length) return;
+        event.preventDefault();
+        order[next]?.focus();
+    };
 
     // Start the IP fetch at MOUNT so it usually resolves before BOOT starts.
     useEffect(() => {
@@ -323,43 +362,56 @@ const BootSequence = ({ onDone }) => {
     void passcode;
 
     return (
-        <Screen role="status" aria-label="Terminal login sequence" $blink={blink}>
-            {HEADER_LINES.map((line, i) => (
-                <Line key={`h-${i}`}>{line || ' '}</Line>
-            ))}
+        <Screen
+            role="status"
+            aria-label="Terminal login sequence"
+            $blink={blink}
+            $centered={stage === 'login'}
+        >
+            {stage === 'login' ? (
+                <LoginColumn>
+                    {HEADER_LINES.map((line, i) => (
+                        <Line key={`h-${i}`}>{line || ' '}</Line>
+                    ))}
+                    <Form
+                        onSubmit={handleSubmit}
+                        onKeyDown={handleFormKeyDown}
+                        aria-label="Authentication"
+                    >
+                        <Label htmlFor="operator-id">OPERATOR ID:</Label>
+                        <Field
+                            id="operator-id"
+                            name="operator-id"
+                            type="text"
+                            value={operatorId}
+                            onChange={(e) => setOperatorId(e.target.value)}
+                            autoComplete="off"
+                            autoCapitalize="characters"
+                            spellCheck={false}
+                            ref={operatorIdRef}
+                            autoFocus
+                        />
 
-            {stage === 'login' && (
-                <Form onSubmit={handleSubmit} aria-label="Authentication">
-                    <Label htmlFor="operator-id">OPERATOR ID:</Label>
-                    <Field
-                        id="operator-id"
-                        name="operator-id"
-                        type="text"
-                        value={operatorId}
-                        onChange={(e) => setOperatorId(e.target.value)}
-                        autoComplete="off"
-                        autoCapitalize="characters"
-                        spellCheck={false}
-                        ref={operatorIdRef}
-                        autoFocus
-                    />
+                        <Label htmlFor="passcode">PASSCODE:</Label>
+                        <Field
+                            id="passcode"
+                            name="passcode"
+                            type="password"
+                            value={passcode}
+                            onChange={(e) => setPasscode(e.target.value)}
+                            autoComplete="off"
+                            ref={passcodeRef}
+                        />
 
-                    <Label htmlFor="passcode">PASSCODE:</Label>
-                    <Field
-                        id="passcode"
-                        name="passcode"
-                        type="password"
-                        value={passcode}
-                        onChange={(e) => setPasscode(e.target.value)}
-                        autoComplete="off"
-                    />
-
-                    <Submit type="submit">[ AUTHENTICATE ]</Submit>
-                </Form>
-            )}
-
-            {(stage === 'boot' || stage === 'granted') && (
+                        <Submit type="submit" ref={submitRef}>[ AUTHENTICATE ]</Submit>
+                    </Form>
+                    <Hint>UNREGISTERED OPERATORS ARE ISSUED GUEST CLEARANCE ON FIRST LOGIN.</Hint>
+                </LoginColumn>
+            ) : (
                 <>
+                    {HEADER_LINES.map((line, i) => (
+                        <Line key={`h-${i}`}>{line || ' '}</Line>
+                    ))}
                     <GlobeWrap>
                         <AsciiGlobe />
                     </GlobeWrap>
