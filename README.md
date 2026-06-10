@@ -48,6 +48,7 @@ for 5 minutes (`Cache-Control: public, max-age=300`):
   `LASTFM_API_KEY` and `LASTFM_USERNAME`.
 - `functions/get-steam-games.js` — Steam recently-played (last 14 days).
   Requires `STEAM_API_KEY` and `STEAM_ID64`.
+- `functions/get-leetcode-stats.js` — LeetCode solved counts via GraphQL proxy, no key required (`LEETCODE_USERNAME` env optional override), cached 1h.
 
 If env vars are missing the function returns `500 NOT CONFIGURED`; if the
 upstream is unreachable it returns `502 UPSTREAM FAILURE`. The UI degrades
