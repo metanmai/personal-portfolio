@@ -124,4 +124,33 @@ const socials = [
     { name: 'LEETCODE', link: 'https://leetcode.com/metanmai/' },
 ];
 
-export { personal, bootLines, menuItems, experience, skills, projects, testimonials, socials };
+const asciiBanner = [
+    '████████╗ █████╗ ███╗   ██╗███╗   ███╗ █████╗ ██╗',
+    '╚══██╔══╝██╔══██╗████╗  ██║████╗ ████║██╔══██╗██║',
+    '   ██║   ███████║██╔██╗ ██║██╔████╔██║███████║██║',
+    '   ██║   ██╔══██║██║╚██╗██║██║╚██╔╝██║██╔══██║██║',
+    '   ██║   ██║  ██║██║ ╚████║██║ ╚═╝ ██║██║  ██║██║',
+    '   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝',
+];
+
+const diagnostics = [
+    'MEMORY CHECK .......... OK',
+    'RADIATION SHIELDING ... NOMINAL',
+    'COOLANT PRESSURE ...... STABLE',
+    'UPLINK INTEGRITY ...... 98.6%',
+    'INTRUSION COUNTER ..... 0 ATTEMPTS',
+    'COFFEE RESERVES ....... CRITICAL',
+];
+
+export {
+    personal,
+    bootLines,
+    menuItems,
+    experience,
+    skills,
+    projects,
+    testimonials,
+    socials,
+    asciiBanner,
+    diagnostics,
+};

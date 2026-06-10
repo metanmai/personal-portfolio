@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { menuItems, personal } from '../../constants/index.js';
+import { asciiBanner, menuItems, personal } from '../../constants/index.js';
 import { usePageMeta } from '../../hooks/usePageMeta.js';
+import StatusPanel from './StatusPanel.jsx';
 
 const Header = styled.header`
     border-bottom: 1px solid var(--dim);
@@ -12,10 +13,32 @@ const Header = styled.header`
     font-size: 0.9em;
 `;
 
-const Name = styled.h1`
-    font-size: clamp(2.2rem, 8vw, 4rem);
-    letter-spacing: 0.04em;
-    margin-bottom: 0.2rem;
+const Title = styled.h1`
+    margin-bottom: 0.6rem;
+`;
+
+const VisuallyHidden = styled.span`
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+`;
+
+const Banner = styled.pre`
+    font-family: inherit;
+    font-size: clamp(7px, 1.3vw, 15px);
+    line-height: 1.15;
+    letter-spacing: 0;
+    color: var(--phosphor);
+    text-shadow: inherit;
+    overflow: hidden;
+    margin: 0;
 `;
 
 const Tagline = styled.p`
@@ -23,14 +46,34 @@ const Tagline = styled.p`
     margin-bottom: 2rem;
 `;
 
+const Layout = styled.div`
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 3rem;
+    align-items: start;
+
+    @media (max-width: 900px) {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 2rem;
+    }
+`;
+
 const Menu = styled.ul`
     list-style: none;
+`;
+
+const Marker = styled.span`
+    display: inline-block;
+    width: 1.4em;
+`;
+
+const RowLabel = styled.span`
+    display: inline-block;
 `;
 
 const Row = styled.button`
     display: block;
     width: 100%;
-    max-width: 640px;
     min-height: 44px;
     background: none;
     border: none;
@@ -47,6 +90,31 @@ const Row = styled.button`
         text-shadow: none;
         outline: none;
     }
+
+    &[data-active='true'] ${RowLabel} {
+        animation: bump 0.4s steps(2) infinite;
+    }
+
+    &:hover ${RowLabel} {
+        animation: flicker 120ms steps(2, end) 1;
+    }
+
+    @keyframes bump {
+        50% { transform: translateX(4px); }
+    }
+
+    @keyframes flicker {
+        0% { opacity: 1; }
+        50% { opacity: 0.75; }
+        100% { opacity: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        &[data-active='true'] ${RowLabel},
+        &:hover ${RowLabel} {
+            animation: none;
+        }
+    }
 `;
 
 const Hint = styled.span`
@@ -58,6 +126,10 @@ const Cursor = styled.span`
 
     @keyframes blink {
         50% { opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
     }
 `;
 
@@ -92,26 +164,37 @@ const MainMenu = () => {
                 <br />
                 ENTER PASSWORD NOW — ACCESS GRANTED
             </Header>
-            <Name>{personal.name}</Name>
+            <Title>
+                <VisuallyHidden>{personal.name}</VisuallyHidden>
+                <Banner aria-hidden="true">{asciiBanner.join('\n')}</Banner>
+            </Title>
             <Tagline>
                 {personal.role} · EST. {personal.established} · STATUS: ONLINE
             </Tagline>
-            <Menu>
-                {menuItems.map((item, index) => (
-                    <li key={item.path}>
-                        <Row
-                            data-active={index === selected}
-                            onMouseEnter={() => setSelected(index)}
-                            onClick={() => navigate(item.path)}
-                        >
-                            &gt; [{item.num}] {item.label} <Hint>...... {item.hint}</Hint>
-                        </Row>
+            <Layout>
+                <Menu>
+                    {menuItems.map((item, index) => (
+                        <li key={item.path}>
+                            <Row
+                                data-active={index === selected}
+                                onMouseEnter={() => setSelected(index)}
+                                onClick={() => navigate(item.path)}
+                            >
+                                <Marker>{index === selected ? '► ' : '> '}</Marker>
+                                <RowLabel>
+                                    [{item.num}] {item.label} <Hint>...... {item.hint}</Hint>
+                                </RowLabel>
+                            </Row>
+                        </li>
+                    ))}
+                    <li>
+                        <p style={{ marginTop: '1.5rem', padding: '0.4rem 0.6rem' }}>
+                            &gt; <Cursor>█</Cursor>
+                        </p>
                     </li>
-                ))}
-            </Menu>
-            <p style={{ marginTop: '1.5rem' }}>
-                &gt; <Cursor>█</Cursor>
-            </p>
+                </Menu>
+                <StatusPanel />
+            </Layout>
         </main>
     );
 };
