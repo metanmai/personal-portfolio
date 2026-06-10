@@ -41,7 +41,8 @@ const redraw = keyframes`
 `;
 
 const Redraw = styled.div`
-    padding-bottom: 3rem; /* clear the fixed StatusBar */
+    /* clear the fixed StatusBar, which itself grows by the safe-area inset */
+    padding-bottom: calc(3rem + env(safe-area-inset-bottom, 0px));
     animation: ${redraw} 0.3s steps(12);
 
     @media (prefers-reduced-motion: reduce) {

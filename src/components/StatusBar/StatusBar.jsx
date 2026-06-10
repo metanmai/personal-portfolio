@@ -13,7 +13,12 @@ const Bar = styled.footer`
     border-top: 1px solid var(--dim);
     color: var(--dim);
     font-size: 0.85em;
-    padding: 0.25rem 1rem;
+    /* safe-area insets keep the bar clear of browser toolbars / the home
+       indicator on iOS Safari, Arc, etc. (zero on desktop) */
+    padding: 0.25rem
+        max(1rem, env(safe-area-inset-right, 0px))
+        calc(0.25rem + env(safe-area-inset-bottom, 0px))
+        max(1rem, env(safe-area-inset-left, 0px));
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -25,7 +30,10 @@ const Bar = styled.footer`
     @media (max-width: 600px) {
         gap: 0.4rem;
         font-size: 0.8em;
-        padding: 0.25rem 0.5rem;
+        padding: 0.25rem
+            max(0.5rem, env(safe-area-inset-right, 0px))
+            calc(0.25rem + env(safe-area-inset-bottom, 0px))
+            max(0.5rem, env(safe-area-inset-left, 0px));
     }
 `;
 

@@ -46,6 +46,10 @@ const Shell = styled.div`
     text-shadow: 0 0 7px var(--glow);
     position: relative;
     padding: clamp(14px, 4vw, 56px);
+    /* keep content clear of the notch / browser chrome under viewport-fit=cover */
+    padding-top: calc(clamp(14px, 4vw, 56px) + env(safe-area-inset-top, 0px));
+    padding-left: calc(clamp(14px, 4vw, 56px) + env(safe-area-inset-left, 0px));
+    padding-right: calc(clamp(14px, 4vw, 56px) + env(safe-area-inset-right, 0px));
     animation: ${powerOn} 0.35s ease-out, ${ambient} 11s steps(1) 3s infinite;
 
     &[data-glitch='true'] {

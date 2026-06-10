@@ -72,7 +72,10 @@ const Screen = styled.div`
     font-family: 'VT323', 'Courier New', monospace;
     font-size: clamp(15px, 2.2vmin, 20px);
     text-shadow: 0 0 7px var(--glow);
-    padding: clamp(14px, 4vw, 56px);
+    padding: calc(clamp(14px, 4vw, 56px) + env(safe-area-inset-top, 0px))
+        calc(clamp(14px, 4vw, 56px) + env(safe-area-inset-right, 0px))
+        calc(clamp(14px, 4vw, 56px) + env(safe-area-inset-bottom, 0px))
+        calc(clamp(14px, 4vw, 56px) + env(safe-area-inset-left, 0px));
     display: flex;
     flex-direction: column;
 

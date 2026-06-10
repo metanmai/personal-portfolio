@@ -80,7 +80,7 @@ const Overlay = styled.div`
     /* anchor for the absolutely-positioned close button */
     left: 50%;
     transform: translateX(-50%);
-    bottom: 2.2rem;
+    bottom: calc(2.2rem + env(safe-area-inset-bottom, 0px));
     width: calc(100% - 2rem);
     max-width: 760px;
     z-index: 80;
@@ -153,8 +153,8 @@ const Input = styled.input`
 
 const FloatingButton = styled.button`
     position: fixed;
-    bottom: 2.4rem;
-    right: 14px;
+    bottom: calc(2.4rem + env(safe-area-inset-bottom, 0px));
+    right: max(14px, env(safe-area-inset-right, 0px));
     /* Above the overlay (z=80) so tapping [CMD] while open can close it on mobile. */
     z-index: 90;
     font: inherit;
