@@ -1,10 +1,11 @@
 const personal = {
     name: 'TANMAI NUTHI',
+    designation: 'TEST SUBJECT #TN-2001',
     handle: 'tanmai.n',
     role: 'SOFTWARE ENGINEER',
     established: 2001,
-    // PLACEHOLDER — owner must update bio to current role
-    bio: 'Software engineer. Builder of systems and interfaces. This dossier is being updated — entries below may reference the college era.',
+    // PLACEHOLDER — owner must update bio to current containment status
+    bio: 'SUBJECT EXHIBITS PERSISTENT COMPULSION TO BUILD SOFTWARE. OBSERVED CONSTRUCTING SYSTEMS AND INTERFACES WITHOUT EXTERNAL DIRECTIVE. RECORDS BELOW MAY REFERENCE THE COLLEGE-ERA CONTAINMENT PERIOD. UPDATE ME.',
     // PLACEHOLDER — owner will replace with a real PNG cutout (pip-boy style)
     portrait: 'img/boy-computer.png',
 };
@@ -93,13 +94,13 @@ const experience = [
         period: '2023 — PRESENT',
         title: 'SOFTWARE ENGINEER',
         org: 'UPDATE ME',
-        summary: 'Current role — details pending declassification.',
+        summary: 'SUBJECT EMBEDDED AT UPDATE ME. CURRENT ASSIGNMENT — DETAILS PENDING DECLASSIFICATION.',
     },
     {
         period: '2019 — 2023',
         title: 'B.TECH, COMPUTER SCIENCE',
         org: 'UPDATE ME (university)',
-        summary: 'Built the original version of this terminal, among other things.',
+        summary: 'SUBJECT UNDERWENT FORMAL TRAINING. CONSTRUCTED THE ORIGINAL VERSION OF THIS TERMINAL DURING CONTAINMENT, AMONG OTHER ARTIFACTS.',
     },
 ];
 
@@ -108,38 +109,38 @@ const journey = [
     {
         year: '2001',
         title: 'SUBJECT INITIALIZED',
-        note: 'UPDATE ME — where it all began.',
-        body: 'Subject enters the world. Early aptitude for taking things apart; mixed record on reassembly. UPDATE ME with the real story.',
+        note: 'LOCATION OF FIRST OBSERVATION: UPDATE ME.',
+        body: 'SUBJECT ENTERS THE WORLD. EARLY APTITUDE FOR DISASSEMBLING DEVICES NOTED; REASSEMBLY RECORD INCOMPLETE. UPDATE ME WITH RECOVERED DETAILS.',
     },
     {
         year: '2013',
         title: 'FIRST CONTACT WITH A COMPUTER',
-        note: 'UPDATE ME — the machine that started it.',
-        body: 'First boot-up with a personal machine. Hours logged staring at a CRT, learning what a cursor wanted from you. UPDATE ME with the actual hardware and the first program written.',
+        note: 'INITIATING HARDWARE: UPDATE ME.',
+        body: 'SUBJECT MAKES FIRST DOCUMENTED CONTACT WITH A PERSONAL MACHINE. HOURS LOGGED STARING INTO A CRT, ATTEMPTING TO INTERPRET A BLINKING CURSOR. UPDATE ME WITH THE ACTUAL HARDWARE AND THE FIRST PROGRAM RECORDED.',
     },
     {
         year: '2019',
         title: 'ENROLLED: B.TECH COMPUTER SCIENCE',
-        note: 'UPDATE ME — college era, first real programs.',
-        body: 'Enrolls in formal training. Discovers that loops and recursion are not optional. UPDATE ME with the dorm-room projects, the late-night debugging, and the people who made it stick.',
+        note: 'CONTAINMENT FACILITY: UPDATE ME.',
+        body: 'SUBJECT IS PROCESSED INTO FORMAL TRAINING. DISCOVERS THAT LOOPS AND RECURSION ARE NOT OPTIONAL. UPDATE ME WITH DORM-ROOM ARTIFACTS, LATE-NIGHT DEBUGGING SESSIONS, AND THE OTHER INDIVIDUALS WHO MADE THE CONDITIONING STICK.',
     },
     {
         year: '2022',
         title: 'BUILT THIS TERMINAL (V1)',
-        note: 'The original portfolio this terminal replaced.',
-        body: 'Shipped the first iteration of this portfolio — a more conventional site that lived here for years. The current Fallout-style rebuild stands on its bones. UPDATE ME with what V1 taught you.',
+        note: 'ARTIFACT: ORIGINAL TERMINAL, PRECURSOR TO CURRENT BUILD.',
+        body: 'SUBJECT SHIPPED THE FIRST ITERATION OF THIS PORTFOLIO — A MORE CONVENTIONAL SITE THAT REMAINED IN ROTATION FOR YEARS. THE CURRENT FALLOUT-STYLE REBUILD RESTS ON ITS BONES. UPDATE ME WITH WHAT V1 TAUGHT THE SUBJECT.',
     },
     {
         year: '2023',
         title: 'WENT PROFESSIONAL',
-        note: 'UPDATE ME — first role, what changed.',
-        body: 'Crosses from coursework into payroll. Codebases get bigger, feedback loops get longer, opinions get stronger. UPDATE ME with the company, the team, and the first lesson the job actually taught you.',
+        note: 'FIRST DOCUMENTED EMPLOYMENT: UPDATE ME.',
+        body: 'SUBJECT CROSSES FROM COURSEWORK INTO PAYROLL. CODEBASES GROW LARGER, FEEDBACK LOOPS LENGTHEN, OPINIONS HARDEN. UPDATE ME WITH THE EMPLOYER, THE TEAM, AND THE FIRST LESSON THE ROLE IMPRINTED.',
     },
     {
         year: 'NOW',
         title: 'ONGOING OPERATIONS',
-        note: 'UPDATE ME — current chapter.',
-        body: 'Current assignment, still in progress. Building, breaking, and occasionally documenting. UPDATE ME with what you are actually working on right now.',
+        note: 'CURRENT OPERATIONAL CHAPTER: UPDATE ME.',
+        body: 'CURRENT ASSIGNMENT STILL IN PROGRESS. SUBJECT OBSERVED BUILDING, BREAKING, AND OCCASIONALLY DOCUMENTING. UPDATE ME WITH WHAT THE SUBJECT IS ACTUALLY WORKING ON RIGHT NOW.',
     },
 ];
 
@@ -152,12 +153,12 @@ const recreation = {
         genres: ['UPDATE ME'],
     },
     photography: {
-        blurb: 'UPDATE ME — what you like shooting.',
+        blurb: 'SUBJECT DOCUMENTS SURROUNDINGS OBSESSIVELY. SPECIMENS BELOW. UPDATE ME.',
         shots: [
             { src: 'img/blocktopia.png', caption: 'PLACEHOLDER SHOT — replace with real photos in public/img/' },
         ],
     },
-    tinkering: ['UPDATE ME — side quests, builds, experiments'],
+    tinkering: ['UNSANCTIONED EXPERIMENTS: UPDATE ME.'],
 };
 
 const skills = [

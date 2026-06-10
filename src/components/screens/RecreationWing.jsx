@@ -186,6 +186,7 @@ const RecreationWing = () => {
 
     return (
         <ScreenFrame title="RECREATION WING">
+            <Blurb>{"SUBJECT'S RECORDED LEISURE PROTOCOLS. OBSERVED BEHAVIOR DURING OFF-DUTY CYCLES."}</Blurb>
             <Section>
                 <SectionTitle>{'// GAME LOG'}</SectionTitle>
                 <Line>

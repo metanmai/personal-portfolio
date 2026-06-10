@@ -160,10 +160,10 @@ const PersonnelFile = () => {
     return (
         <ScreenFrame title="PERSONNEL FILE">
             <SectionTitle>{'// IDENTIFICATION'}</SectionTitle>
-            <p>NAME: {personal.name} · ROLE: {personal.role} · EST. {personal.established}</p>
+            <p>DESIGNATION: {personal.designation} · RECORDED ALIAS: {personal.name} · FIRST OBSERVED: {personal.established}</p>
             <Bio>{output}█</Bio>
 
-            <SectionTitle>{'// THE JOURNEY'}</SectionTitle>
+            <SectionTitle>{'// OBSERVATION LOG'}</SectionTitle>
             <JourneyGrid>
                 <Timeline>
                     {journey.map((entry, idx) => {
@@ -191,7 +191,7 @@ const PersonnelFile = () => {
                     })}
                 </Timeline>
                 <PortraitPanel>
-                    <PortraitCaption>{'// OPERATOR PORTRAIT — FILE PHOTO'}</PortraitCaption>
+                    <PortraitCaption>{'// SUBJECT PORTRAIT — SURVEILLANCE CAPTURE'}</PortraitCaption>
                     <PortraitFrame>
                         <PortraitImg src={personal.portrait} alt="" aria-hidden="true" loading="lazy" />
                         <PortraitScanlines />

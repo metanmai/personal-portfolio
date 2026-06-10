@@ -5,7 +5,16 @@ import { usePageMeta } from '../../hooks/usePageMeta.js';
 
 const Wrapper = styled.div`
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+`;
+
+const Intro = styled.p`
+    color: var(--dim);
+    max-width: 620px;
+    width: 100%;
+    margin: 0 auto 1.2rem;
+    letter-spacing: 0.04em;
 `;
 
 const Form = styled.form`
@@ -166,6 +175,7 @@ const OpenComms = () => {
     return (
         <ScreenFrame title="OPEN COMMS CHANNEL">
             <Wrapper>
+                <Intro>{"DIRECT CHANNEL TO THE SUBJECT'S HANDLERS. TRANSMISSIONS ARE MONITORED."}</Intro>
                 <Form id="form" onSubmit={handleSubmit} noValidate>
                     <Field>
                         CALLSIGN (NAME)

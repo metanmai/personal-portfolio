@@ -178,7 +178,7 @@ const MainMenu = () => {
                 <Banner aria-hidden="true">{asciiBanner.join('\n')}</Banner>
             </Title>
             <Tagline>
-                {personal.role} · EST. {personal.established} · STATUS: ONLINE
+                {personal.designation} · {personal.role} · STATUS: AT LARGE
             </Tagline>
             <Layout>
                 <Menu>
