@@ -5,6 +5,8 @@ const personal = {
     established: 2001,
     // PLACEHOLDER — owner must update bio to current role
     bio: 'Software engineer. Builder of systems and interfaces. This dossier is being updated — entries below may reference the college era.',
+    // PLACEHOLDER — owner will replace with a real PNG cutout (pip-boy style)
+    portrait: 'img/boy-computer.png',
 };
 
 const bootLines = [
@@ -46,12 +48,42 @@ const experience = [
 
 // PLACEHOLDER content — owner must personalize every entry marked UPDATE ME
 const journey = [
-    { year: '2001', title: 'SUBJECT INITIALIZED', note: 'UPDATE ME — where it all began.' },
-    { year: '2013', title: 'FIRST CONTACT WITH A COMPUTER', note: 'UPDATE ME — the machine that started it.' },
-    { year: '2019', title: 'ENROLLED: B.TECH COMPUTER SCIENCE', note: 'UPDATE ME — college era, first real programs.' },
-    { year: '2022', title: 'BUILT THIS TERMINAL (V1)', note: 'The original portfolio this terminal replaced.' },
-    { year: '2023', title: 'WENT PROFESSIONAL', note: 'UPDATE ME — first role, what changed.' },
-    { year: 'NOW', title: 'ONGOING OPERATIONS', note: 'UPDATE ME — current chapter.' },
+    {
+        year: '2001',
+        title: 'SUBJECT INITIALIZED',
+        note: 'UPDATE ME — where it all began.',
+        body: 'Subject enters the world. Early aptitude for taking things apart; mixed record on reassembly. UPDATE ME with the real story.',
+    },
+    {
+        year: '2013',
+        title: 'FIRST CONTACT WITH A COMPUTER',
+        note: 'UPDATE ME — the machine that started it.',
+        body: 'First boot-up with a personal machine. Hours logged staring at a CRT, learning what a cursor wanted from you. UPDATE ME with the actual hardware and the first program written.',
+    },
+    {
+        year: '2019',
+        title: 'ENROLLED: B.TECH COMPUTER SCIENCE',
+        note: 'UPDATE ME — college era, first real programs.',
+        body: 'Enrolls in formal training. Discovers that loops and recursion are not optional. UPDATE ME with the dorm-room projects, the late-night debugging, and the people who made it stick.',
+    },
+    {
+        year: '2022',
+        title: 'BUILT THIS TERMINAL (V1)',
+        note: 'The original portfolio this terminal replaced.',
+        body: 'Shipped the first iteration of this portfolio — a more conventional site that lived here for years. The current Fallout-style rebuild stands on its bones. UPDATE ME with what V1 taught you.',
+    },
+    {
+        year: '2023',
+        title: 'WENT PROFESSIONAL',
+        note: 'UPDATE ME — first role, what changed.',
+        body: 'Crosses from coursework into payroll. Codebases get bigger, feedback loops get longer, opinions get stronger. UPDATE ME with the company, the team, and the first lesson the job actually taught you.',
+    },
+    {
+        year: 'NOW',
+        title: 'ONGOING OPERATIONS',
+        note: 'UPDATE ME — current chapter.',
+        body: 'Current assignment, still in progress. Building, breaking, and occasionally documenting. UPDATE ME with what you are actually working on right now.',
+    },
 ];
 
 const recreation = {
