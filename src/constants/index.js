@@ -61,7 +61,6 @@ const recreation = {
     },
     music: {
         genres: ['UPDATE ME'],
-        currentRotation: ['UPDATE ME — artist or album', 'UPDATE ME'],
     },
     photography: {
         blurb: 'UPDATE ME — what you like shooting.',

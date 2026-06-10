@@ -3,6 +3,7 @@ import ScreenFrame from './ScreenFrame.jsx';
 import PhosphorImage from '../PhosphorImage/PhosphorImage.jsx';
 import { recreation } from '../../constants/index.js';
 import { usePageMeta } from '../../hooks/usePageMeta.js';
+import { useRemoteData } from '../../hooks/useRemoteData.js';
 
 const Section = styled.section`
     margin-bottom: 2.6rem;
@@ -16,6 +17,13 @@ const SectionTitle = styled.h3`
     color: var(--dim);
     margin-bottom: 0.9rem;
     letter-spacing: 0.1em;
+`;
+
+const SubTitle = styled.h4`
+    color: var(--dim);
+    margin: 1.4rem 0 0.6rem;
+    letter-spacing: 0.1em;
+    font-weight: normal;
 `;
 
 const Line = styled.p`
@@ -43,6 +51,50 @@ const ListItem = styled.li`
     }
 `;
 
+const FeedList = styled.ul`
+    list-style: none;
+    padding: 0;
+    margin: 0.4rem 0 0;
+`;
+
+const FeedRow = styled.li`
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.18rem 0;
+    color: var(--phosphor);
+`;
+
+const FeedPrimary = styled.span`
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &::before {
+        content: '${(props) => props.$marker || '>'} ';
+        color: var(--dim);
+    }
+`;
+
+const FeedMeta = styled.span`
+    color: var(--dim);
+    flex: 0 0 auto;
+    letter-spacing: 0.04em;
+    font-size: 0.9em;
+`;
+
+const StatusLine = styled.p`
+    color: var(--dim);
+    margin: 0.4rem 0 0;
+
+    &::before {
+        content: '> ';
+    }
+`;
+
 const Blurb = styled.p`
     max-width: 70ch;
     margin-bottom: 1rem;
@@ -64,6 +116,70 @@ const Caption = styled.figcaption`
     font-size: 0.85em;
 `;
 
+const relativeTime = (uts) => {
+    if (!uts) return '';
+    const diffSec = Math.max(0, Math.floor(Date.now() / 1000 - uts));
+    if (diffSec < 60) return 'JUST NOW';
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return `${diffMin} MIN AGO`;
+    const diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return `${diffHr} HR${diffHr === 1 ? '' : 'S'} AGO`;
+    const diffDay = Math.floor(diffHr / 24);
+    return `${diffDay} DAY${diffDay === 1 ? '' : 'S'} AGO`;
+};
+
+const SteamFeed = () => {
+    const { status, data } = useRemoteData('/.netlify/functions/get-steam-games');
+
+    if (status === 'loading') {
+        return <StatusLine>QUERYING STEAM RELAY...</StatusLine>;
+    }
+    if (status === 'failed') {
+        return <StatusLine>SIGNAL LOST — STEAM RELAY UNREACHABLE</StatusLine>;
+    }
+    const games = (data && Array.isArray(data.games)) ? data.games : [];
+    if (games.length === 0) {
+        return <StatusLine>NO ACTIVITY LOGGED IN THE LAST 14 DAYS</StatusLine>;
+    }
+    return (
+        <FeedList>
+            {games.slice(0, 6).map((game) => (
+                <FeedRow key={game.appid}>
+                    <FeedPrimary $marker=">">{game.name}</FeedPrimary>
+                    <FeedMeta>{game.hours2w} HRS / {game.hoursTotal} HRS TOTAL</FeedMeta>
+                </FeedRow>
+            ))}
+        </FeedList>
+    );
+};
+
+const TracksFeed = () => {
+    const { status, data } = useRemoteData('/.netlify/functions/get-recent-tracks');
+
+    if (status === 'loading') {
+        return <StatusLine>TUNING RECEIVER...</StatusLine>;
+    }
+    if (status === 'failed') {
+        return <StatusLine>SIGNAL LOST — AUDIO RELAY UNREACHABLE</StatusLine>;
+    }
+    const tracks = (data && Array.isArray(data.tracks)) ? data.tracks : [];
+    if (tracks.length === 0) {
+        return <StatusLine>NO TRACKS LOGGED</StatusLine>;
+    }
+    return (
+        <FeedList>
+            {tracks.slice(0, 8).map((track, index) => (
+                <FeedRow key={`${track.name}-${track.playedAt || 'live'}-${index}`}>
+                    <FeedPrimary $marker="▶">{track.name} — {track.artist}</FeedPrimary>
+                    <FeedMeta>
+                        {track.nowPlaying ? 'NOW PLAYING' : relativeTime(track.playedAt)}
+                    </FeedMeta>
+                </FeedRow>
+            ))}
+        </FeedList>
+    );
+};
+
 const RecreationWing = () => {
     usePageMeta('RECREATION WING', 'Off-duty: games, music, photography, tinkering.');
     const { games, music, photography, tinkering } = recreation;
@@ -83,6 +199,8 @@ const RecreationWing = () => {
                         <ListItem key={`${title}-${index}`}>{title}</ListItem>
                     ))}
                 </List>
+                <SubTitle>{'// FIELD ACTIVITY — LAST 14 DAYS'}</SubTitle>
+                <SteamFeed />
             </Section>
 
             <Section>
@@ -93,11 +211,7 @@ const RecreationWing = () => {
                 <Line>
                     <Label>ON ROTATION:</Label>
                 </Line>
-                <List>
-                    {music.currentRotation.map((track, index) => (
-                        <ListItem key={`${track}-${index}`}>{track}</ListItem>
-                    ))}
-                </List>
+                <TracksFeed />
             </Section>
 
             <Section>

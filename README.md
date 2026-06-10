@@ -38,6 +38,21 @@ npm run test:watch # Vitest watch mode
 - **Contact form** posts to the Netlify function `functions/send-email.js`
   (needs `EMAIL_USERNAME`/`EMAIL_PASSWORD` env vars in Netlify).
 
+### Live data
+
+The RECREATION WING pulls two live feeds via Netlify functions, each cached
+for 5 minutes (`Cache-Control: public, max-age=300`):
+
+- `functions/get-recent-tracks.js` — Last.fm recent tracks. Requires
+  `LASTFM_API_KEY` and `LASTFM_USERNAME`.
+- `functions/get-steam-games.js` — Steam recently-played (last 14 days).
+  Requires `STEAM_API_KEY` and `STEAM_ID64`.
+
+If env vars are missing the function returns `500 NOT CONFIGURED`; if the
+upstream is unreachable it returns `502 UPSTREAM FAILURE`. The UI degrades
+in-fiction to `SIGNAL LOST — <RELAY> UNREACHABLE`. Functions don't run under
+`vite dev`, so locally you'll always see the SIGNAL LOST state.
+
 ## Content lives in one place
 
 All copy and data: `src/constants/index.js`.
