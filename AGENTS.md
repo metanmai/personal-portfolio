@@ -2,20 +2,16 @@
 
 ## Project Overview
 
-Personal portfolio built with **React 18 + Vite 8**, deployed on **Netlify**. The site is a **Fallout-style CRT terminal**: a boot sequence, a numbered main menu, and paged screens with real URLs. Amber phosphor by default, green as a toggle. Fully keyboard-operable.
+Personal site built with **React 18 + Vite 8**, deployed on **Netlify**. The site is a **Fallout-style CRT terminal**: a login-style boot sequence, a numbered main menu, and paged screens with real URLs. It is deliberately NOT a resume site — work lives in one section; the rest is the owner's journey and hobbies. Amber phosphor default, green toggle. Fully keyboard-operable.
 
-Design spec: `docs/superpowers/specs/2026-06-10-fallout-terminal-portfolio-design.md`
-Phase 1 plan: `docs/superpowers/plans/2026-06-10-terminal-portfolio-phase-1.md`
+Design spec + amendment log: `docs/superpowers/specs/2026-06-10-fallout-terminal-portfolio-design.md`
 
 ## Essential Commands
 
 ```bash
-npm run dev        # Start Vite dev server
-npm run build      # Production build (outputs to dist/)
-npm run preview    # Preview production build locally
-npm run lint       # ESLint (js/jsx, zero warnings policy)
+npm run dev / build / preview
+npm run lint       # ESLint, zero-warnings policy
 npm test           # Vitest, happy-dom environment
-npm run test:watch # Vitest watch mode
 ```
 
 ## Architecture
@@ -23,57 +19,58 @@ npm run test:watch # Vitest watch mode
 ### App Structure
 
 ```
-App.jsx                       boot gate (sessionStorage) + providers + routes
-├── BootSequence/             POST-style boot text, once per session, skippable
+App.jsx                       boot gate (plain useState, boots EVERY visit) + providers + routes
+├── BootSequence/             stage machine: uplink → visitor report → login (user-paced)
+│   ├── AsciiGlobe.jsx        rotating <pre> wireframe sphere
+│   └── (uses utils/deviceSpecs.js + api.ipify.org for the live report)
 └── BrowserRouter
-    └── Terminal/             CRT shell: scanlines, vignette, sweep, flicker
+    └── Terminal/             CRT shell: scanlines, vignette, sweep, flicker (no settings dep)
         ├── EscToMenu         global Esc → navigate('/')
-        └── SystemFault.jsx   error boundary → "SYSTEM FAULT" screen
-            ├── /             MainMenu/  (numbered menu, digit/arrow/Enter keys)
-            ├── /personnel    screens/PersonnelFile    (typed bio, timeline, skill bars)
-            ├── /archives     screens/ProjectArchives  (expandable files + PhosphorImage)
-            ├── /commendations screens/Commendations   (testimonials as recovered logs)
-            ├── /comms        screens/OpenComms        (contact form + socials + resume)
-            ├── /calibration  screens/Calibration      (theme + scanline settings)
-            └── *             screens/FileCorrupted    (404)
+        ├── RouteRedraw       keyed clip-path wipe on every navigation
+        ├── SystemFault.jsx   error boundary
+        │   ├── /             MainMenu/  (ascii banner, roving-tabindex menu, StatusPanel)
+        │   ├── /personnel    screens/PersonnelFile    (journey timeline, NOT a CV)
+        │   ├── /career       screens/CareerDossier    (ALL work: experience, projects, testimonials, resume)
+        │   ├── /recreation   screens/RecreationWing   (games, music, photography, side quests)
+        │   ├── /comms        screens/OpenComms        (contact form + socials)
+        │   └── *             screens/FileCorrupted    (404)
+        └── StatusBar/        fixed footer: path · socials · [PHOSPHOR] toggle · clock
 ```
 
-Shared pieces: `screens/ScreenFrame.jsx` (title bar + `[ESC] MAIN MENU` link wrapper used by every screen), `PhosphorImage/` (duotone-tinted image + `[VIEW RAW]` lightbox).
+Shared: `screens/ScreenFrame.jsx` (scramble-decode title + back link), `PhosphorImage/` (duotone image + VIEW RAW lightbox).
 
-### Theming
+### Boot sequence contract
+`BootSequence({ onDone })`, default export. Stages: (1) uplink — local header lines + AsciiGlobe + IP fetch (api.ipify.org, 3s AbortController timeout, fallback 'UNTRACEABLE'); (2) report — padLine-formatted visitor lines from `utils/deviceSpecs.js` (`getDeviceSpecLines`, `getRegion`, `getBrowserName` — all throw-proof with in-fiction fallbacks); (3) login — holds at `IDENTIFY USER:` until any key/click, fake-types GUEST, then onDone. **There is intentionally no skip** — the owner wants it user-paced. Don't reintroduce sessionStorage gating.
 
-- `src/theme.js` — amber/green palettes; `applyTheme()` writes CSS custom properties (`--phosphor`, `--dim`, `--bg`, `--glow`) onto `<html>` and sets `data-theme`.
-- `src/settings.jsx` — `SettingsProvider` / `useSettings()` context; persists `{ theme, scanlines }` to localStorage key `termlink-settings`; memoized context value.
-- styled-components consume the CSS variables (`var(--phosphor)`), so a theme swap recolors everything without re-rendering styles.
-- `src/index.css` holds the global reset + amber fallback variables (prevents flash before JS).
+### Theming & settings
+- `src/theme.js` — amber/green palettes → CSS custom properties (`--phosphor`, `--dim`, `--bg`, `--glow`) + `data-theme`.
+- `src/settings.jsx` — context persisting `{ theme }` ONLY (localStorage `termlink-settings`). The owner explicitly killed all other toggles (scanlines/text-size/sweep/boot were removed). The only control is the `[PHOSPHOR]` button in StatusBar.
+- styled-components consume `var(--...)`; never hard-code colors.
 
 ### Hooks
-
-- `src/hooks/useTypewriter.js` — rAF-driven `{ output, done, skip }`; instant under `prefers-reduced-motion`. The return shape is a contract — don't change it.
-- `src/hooks/usePageMeta.js` — per-route `document.title` + meta description.
+- `useTypewriter` — rAF `{ output, done, skip }`; contract, don't change shape.
+- `useScramble` — heading decode effect (returns string).
+- `useClock` — ticking HH:MM:SS.
+- `usePageMeta` — per-route title/description.
 
 ### Data Flow
-
-- All content lives in `src/constants/index.js` — **single source of truth**: `personal`, `bootLines`, `menuItems`, `experience`, `skills`, `projects`, `testimonials`, `socials`. Several entries are marked `PLACEHOLDER` / `UPDATE ME` pending owner content.
-- Contact form POSTs JSON to `/.netlify/functions/send-email` via **fetch** (no axios). The serverless function uses **nodemailer** with Elastic Email SMTP (`EMAIL_USERNAME`/`EMAIL_PASSWORD` env vars).
-- Routing: **react-router-dom**; `netlify.toml` has the SPA catch-all redirect. Function calls must use the canonical `/.netlify/functions/...` path (served before redirects).
+- ALL content in `src/constants/index.js`: `personal`, `journey`, `experience`, `skills`, `projects`, `testimonials`, `recreation`, `socials`, `menuItems`, `asciiBanner`, `diagnostics`, `bootLines` (legacy export, no longer imported by BootSequence). Many entries are `UPDATE ME` placeholders pending owner content.
+- Contact form: fetch POST to `/.netlify/functions/send-email` (nodemailer + ElasticEmail; env from Netlify).
+- Routing: react-router-dom; SPA catch-all in `netlify.toml`; function calls must use `/.netlify/functions/...`.
 
 ## Code Patterns & Conventions
-
-- **styled-components for all styling**; the only CSS file is `src/index.css`. Components reference theme via `var(--...)` custom properties, never hard-coded colors.
-- **Default exports** for components; named exports for hooks/utilities (`useTypewriter`, `useSettings`, `applyTheme`).
-- **PropTypes** on every component that takes props.
-- Explicit `.jsx` extensions in imports (Vite convention).
-- Public assets in `public/img/`, referenced root-relative (`img/foo.png`).
-- Tests sit next to source (`*.test.jsx`), run on **happy-dom** (NOT jsdom — the corporate npm proxy blocks a jsdom transitive dep). `src/test/setup.js` shims `matchMedia` and `localStorage`.
-- JSX text starting with `//` must be wrapped as a string expression (`{'// TITLE'}`) or ESLint's `react/jsx-no-comment-textnodes` fails the zero-warnings build.
+- styled-components everywhere; only CSS file is `src/index.css`.
+- Default exports for components; named for hooks/utils. PropTypes on components with props. Explicit `.jsx` imports.
+- Tests beside source, **happy-dom** (corporate proxy blocks jsdom); `src/test/setup.js` shims matchMedia + localStorage.
+- JSX text starting with `//` must be `{'// LIKE THIS'}` or `react/jsx-no-comment-textnodes` fails the zero-warnings lint.
+- ASCII art `<pre>`s must NOT use VT323 (missing box-drawing glyphs) — use Menlo/Consolas stack (see MainMenu Banner).
 
 ## Gotchas & Non-Obvious Details
-
-1. **Boot plays once per session** — gated by `sessionStorage.termlink-booted`. Clear it to re-test the boot.
-2. **EscToMenu reads `window.location.pathname` at event time**, not from a React closure — a closure goes stale in the gap between navigation and effect re-registration. Don't "simplify" it back.
-3. **PhosphorImage Esc handling uses a capture-phase listener + stopPropagation** so closing the lightbox doesn't also trigger EscToMenu. Same caution.
-4. **Bright/white source images look flat under the duotone** (multiply blend over phosphor). Prefer darker screenshots for project thumbnails.
-5. **Netlify function is CJS** (`exports.handler`) with an ESM-style nodemailer import inlined by `netlify-plugin-inline-functions-env`; env vars come from Netlify, there is no dotenv.
-6. **`npm test` exits 1 if no test files match** — fine in isolation, but don't "fix" it by adding `--passWithNoTests` without checking CI expectations.
-7. **Phase 2/3 features are specced but unbuilt** (command prompt, hack minigame, sound, SYSTEM MONITOR, HOLOTAPE LOGS, guestbook). Check the spec before inventing structure for them.
+1. **Boot plays on every full page load** — including deep links. E2E tests must get through the login hold (press a key) before asserting page content.
+2. **EscToMenu reads `window.location.pathname` at event time** (stale-closure fix). PhosphorImage's lightbox Esc uses a capture-phase listener + stopPropagation. Don't "simplify" either.
+3. **Roving tabindex on MainMenu**: arrow selection and DOM focus are the same element; highlight comes only from `data-active` — don't add `:focus-visible` backgrounds back (that recreates the double-highlight bug).
+4. **Bright/white images wash out** under the duotone multiply — prefer darker imagery.
+5. **api.ipify.org** is the only external runtime dependency; it fails soft to 'UNTRACEABLE'.
+6. **GPU renderer strings are truncated at 48 chars** in deviceSpecs — headless browsers report huge ANGLE/SwiftShader strings.
+7. Netlify function is CJS; env inlined by `netlify-plugin-inline-functions-env`; no dotenv.
+8. Phase 2/3 (command prompt, hack minigame, sound, system monitor, holotapes, guestbook) are specced but unbuilt.

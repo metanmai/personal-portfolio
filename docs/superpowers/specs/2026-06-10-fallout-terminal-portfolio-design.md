@@ -138,3 +138,16 @@ Prerendered per-route meta (title, description, OG tags, OG image styled as a te
 3. **Phase 3 — Guestbook:** backend, moderation flow, screen.
 
 Each phase ends in a deployable site.
+
+---
+
+## Amendment Log
+
+**2026-06-10 (post-launch owner feedback, round 1):** Boot plays every visit (faster, skippable). ASCII banner hero, SYSTEM STATUS panel, persistent bottom status bar, route redraw transitions, scramble-decode headings, ambient flicker.
+
+**2026-06-10 (round 2):** Readability bump; socials in status bar; roving-tabindex menu focus (single highlight); larger project imagery; real device specs in boot; expanded Calibration.
+
+**2026-06-10 (round 3 — supersedes parts of rounds 1–2 and the original spec):**
+- **Calibration screen REMOVED** ("settings are pointless") — only control is a phosphor toggle in the status bar; settings persist `{ theme }` only.
+- **Boot v2:** login fiction replaces timed boot — uplink stage with rotating ASCII globe + live IP fetch (api.ipify.org), visitor report (region/browser/device), then HOLDS at `IDENTIFY USER:` until keypress (no skip, no timeout, plays every visit).
+- **IA restructure ("not a resume website"):** menu is now [01] PERSONNEL FILE (life journey), [02] CAREER DOSSIER (ALL work merged: experience + projects + testimonials + resume), [03] RECREATION WING (games/music/photography/side quests), [04] OPEN COMMS. ProjectArchives, Commendations, Calibration screens removed/merged accordingly.

@@ -2,9 +2,10 @@
 
 [**Website Link**](https://metanmai.netlify.app)
 
-Personal portfolio of Tanmai Nuthi, rebuilt as a Fallout-style CRT terminal.
-Amber phosphor by default (New Vegas), green toggle (Fallout 3/4), fully
-keyboard-operable, responsive at every display size.
+Personal site of Tanmai Nuthi, built as a Fallout-style CRT terminal. Not a
+resume site — a place: the journey, the hobbies, the work (one section), and
+a way to reach me. Amber phosphor by default (New Vegas), green toggle.
+Fully keyboard-operable, responsive at every display size.
 
 ## Commands
 
@@ -19,40 +20,41 @@ npm run test:watch # Vitest watch mode
 
 ## How it works
 
-- **Paged terminal screens** — the numbered main menu IS the navigation.
-  Each screen has a real URL (React Router): `/personnel`, `/archives`,
-  `/commendations`, `/comms`, `/calibration`. Unknown routes render an
-  in-fiction `404: FILE CORRUPTED` screen.
-- **Boot sequence** plays once per browser session (sessionStorage gate),
-  skippable with any key or tap.
-- **Keyboard**: number keys or ↑/↓ + Enter on the menu, `Esc` returns to
-  the menu, Tab reaches everything.
-- **Theming**: `src/theme.js` palettes are applied as CSS custom properties
-  on `<html>`; styled-components consume `var(--phosphor)` etc. The
-  CALIBRATION screen toggles phosphor color and scanline intensity,
-  persisted in localStorage.
-- **CRT effects** (scanlines, vignette, sweep, power-on flicker) are pure
-  CSS in `src/components/Terminal/Terminal.jsx` and respect
-  `prefers-reduced-motion`.
+- **Login boot** on every visit: uplink + rotating ASCII globe, then a live
+  visitor report (public IP via api.ipify.org, region from your timezone,
+  browser/CPU/memory/display/GPU from browser APIs), then it **holds** at
+  `IDENTIFY USER:` until any key/tap logs you in as GUEST. User-paced — no
+  skip, no timeout.
+- **Paged terminal screens** — the numbered menu IS the navigation. Real URLs:
+  `/personnel` (the journey), `/career` (all work: experience, projects,
+  testimonials, resume), `/recreation` (games, music, photography, side
+  quests), `/comms` (contact). Unknown routes → `404: FILE CORRUPTED`.
+- **Keyboard**: number keys or ↑/↓ + Enter on the menu, `Esc` back to menu,
+  Tab reaches everything (roving tabindex on the menu).
+- **Theme**: `[PHOSPHOR: AMBER/GREEN]` toggle in the bottom status bar,
+  persisted in localStorage. CSS custom properties drive every color.
+- **CRT effects** (scanlines, vignette, sweep, flicker) are pure CSS and
+  respect `prefers-reduced-motion`.
 - **Contact form** posts to the Netlify function `functions/send-email.js`
-  (ElasticEmail SMTP; needs `EMAIL_USERNAME`/`EMAIL_PASSWORD` env vars in
-  Netlify).
+  (needs `EMAIL_USERNAME`/`EMAIL_PASSWORD` env vars in Netlify).
 
 ## Content lives in one place
 
-All copy and data: `src/constants/index.js` — bio, experience timeline,
-skills, projects, testimonials, socials, boot lines, menu items.
+All copy and data: `src/constants/index.js`.
 
 ### PLACEHOLDERS the owner must update
 
-- `personal.bio` and the `experience` array are marked `PLACEHOLDER` /
-  `UPDATE ME` — fill in the current role and history.
-- Projects are still the college-era four; refresh when ready (darker
-  screenshots look best under the phosphor tint).
-- Drop `resume.pdf` into `public/` to make the `EXPORT DOSSIER` link work.
+- `journey` — the life timeline (entries marked `UPDATE ME`)
+- `recreation` — now playing / all-timer games, music rotation, photography
+  blurb + real photos (drop them in `public/img/`, darker shots look best
+  under the phosphor tint), side quests
+- `personal.bio`, `experience` — bio and work history
+- Projects are still the college-era four
+- Drop `resume.pdf` into `public/` for the `EXPORT DOSSIER` link
 
-## Phase 2/3 (planned, not built)
+## Planned (not built)
 
-Command prompt, hacking minigame + hidden VAULT screen, sound design,
-SYSTEM MONITOR (live GitHub/LeetCode), HOLOTAPE LOGS, guestbook.
-Spec: `docs/superpowers/specs/2026-06-10-fallout-terminal-portfolio-design.md`.
+Phase 2: command prompt, hacking minigame + hidden VAULT screen, sound
+design, SYSTEM MONITOR (live GitHub/LeetCode), HOLOTAPE LOGS.
+Phase 3: guestbook.
+Spec + amendments: `docs/superpowers/specs/2026-06-10-fallout-terminal-portfolio-design.md`.
