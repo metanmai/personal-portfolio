@@ -25,13 +25,11 @@ const bootLines = [
 ];
 
 const menuItems = [
-    { num: '01', label: 'PERSONNEL FILE', hint: 'my journey', path: '/personnel' },
-    { num: '02', label: 'CAREER DOSSIER', hint: 'work', path: '/career' },
-    { num: '03', label: 'RECREATION WING', hint: 'off duty', path: '/recreation' },
-    { num: '04', label: 'HOLOTAPE ARCHIVE', hint: 'logs', path: '/holotapes' },
-    { num: '05', label: 'SYSTEM MONITOR', hint: 'diagnostics', path: '/monitor' },
-    { num: '06', label: 'OPEN COMMS CHANNEL', hint: 'contact', path: '/comms' },
-    { num: '??', label: '◼◼ REDACTED ◼◼', hint: '████████', path: '/vault' },
+    { num: '01', label: 'CAREER DOSSIER', hint: 'work', path: '/career' },
+    { num: '02', label: 'RECREATION WING', hint: 'off duty', path: '/recreation' },
+    { num: '03', label: 'PERSONNEL FILE', hint: 'classified', path: '/personnel', locked: true },
+    { num: '04', label: 'SYSTEM MONITOR', hint: 'diagnostics', path: '/monitor' },
+    { num: '05', label: 'OPEN COMMS CHANNEL', hint: 'contact', path: '/comms' },
 ];
 
 const commands = [
@@ -48,35 +46,6 @@ const commands = [
 const hackGame = {
     attempts: 3,
 };
-
-// PLACEHOLDER — owner should replace with real off-resume facts
-const vaultEntries = [
-    'SUBJECT ONCE SPENT AN ENTIRE WEEKEND SPEEDRUNNING A GAME INSTEAD OF STUDYING FOR FINALS. PASSED ANYWAY. UPDATE ME.',
-    'THE FIRST PROGRAM SUBJECT EVER WROTE CRASHED THE FAMILY COMPUTER. UPDATE ME.',
-    'CLASSIFIED PLAYLIST: UPDATE ME WITH THE SONGS YOU PRETEND NOT TO LIKE.',
-];
-
-// PLACEHOLDER — owner should replace with real log entries (newest first)
-const holotapes = [
-    {
-        id: 'LOG-003',
-        date: '2026-06-10',
-        title: 'TERMINAL REBUILT',
-        body: 'Tore the old portfolio down to the studs and rebuilt it as the machine you are reading this on. UPDATE ME with real notes.',
-    },
-    {
-        id: 'LOG-002',
-        date: 'UPDATE ME',
-        title: 'UPDATE ME — A THING I LEARNED',
-        body: 'UPDATE ME — write about something you figured out recently.',
-    },
-    {
-        id: 'LOG-001',
-        date: 'UPDATE ME',
-        title: 'UPDATE ME — FIRST ENTRY',
-        body: 'UPDATE ME — why this log exists.',
-    },
-];
 
 const monitor = {
     githubUser: 'metanmai',
@@ -268,7 +237,5 @@ export {
     diagnostics,
     commands,
     hackGame,
-    vaultEntries,
-    holotapes,
     monitor,
 };

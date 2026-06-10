@@ -24,9 +24,7 @@ const renderPrompt = (initial = '/') =>
                     <Route path="/career" element={<Stub name="career" />} />
                     <Route path="/recreation" element={<Stub name="recreation" />} />
                     <Route path="/comms" element={<Stub name="comms" />} />
-                    <Route path="/holotapes" element={<Stub name="holotapes" />} />
                     <Route path="/monitor" element={<Stub name="monitor" />} />
-                    <Route path="/vault" element={<Stub name="vault" />} />
                 </Routes>
                 <CommandPrompt />
             </MemoryRouter>

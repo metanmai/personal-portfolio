@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import ScreenFrame from './ScreenFrame.jsx';
-import { personal, journey } from '../../constants/index.js';
+import HackMinigame from '../HackMinigame/HackMinigame.jsx';
+import { personal, journey, hackGame } from '../../constants/index.js';
 import { useTypewriter } from '../../hooks/useTypewriter.js';
 import { usePageMeta } from '../../hooks/usePageMeta.js';
 
@@ -121,6 +122,11 @@ const PortraitPanel = styled.aside`
         position: sticky;
         top: 2rem;
     }
+
+    /* mobile single-column: surveillance capture leads, log follows */
+    @media (max-width: 800px) {
+        order: -1;
+    }
 `;
 
 const PortraitCaption = styled.div`
@@ -152,10 +158,56 @@ const PortraitScanlines = styled.div`
     pointer-events: none;
 `;
 
-const PersonnelFile = () => {
+const Intro = styled.p`
+    color: var(--dim);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+`;
+
+const RotationNotice = styled.p`
+    color: var(--dim);
+    opacity: 0.7;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.08em;
+    font-size: 0.9em;
+`;
+
+const LockoutBlock = styled.div`
+    border: 1px solid var(--dim);
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+`;
+
+const LockoutMsg = styled.p`
+    color: var(--phosphor);
+    letter-spacing: 0.1em;
+`;
+
+const RetryButton = styled.button`
+    background: transparent;
+    border: 1px solid var(--phosphor);
+    color: var(--phosphor);
+    font: inherit;
+    text-shadow: inherit;
+    padding: 0.5rem 1.4rem;
+    cursor: pointer;
+
+    &:hover, &:focus-visible {
+        background: var(--phosphor);
+        color: var(--bg);
+        text-shadow: none;
+    }
+`;
+
+// Split out so the bio typewriter starts when the record is revealed,
+// not while the security gate is still up.
+const PersonnelRecord = () => {
     const { output } = useTypewriter(personal.bio, 90);
     const [openKey, setOpenKey] = useState(null);
-    usePageMeta('PERSONNEL FILE', 'Tanmai Nuthi — the journey so far.');
 
     return (
         <ScreenFrame title="PERSONNEL FILE">
@@ -163,9 +215,12 @@ const PersonnelFile = () => {
             <p>DESIGNATION: {personal.designation} · RECORDED ALIAS: {personal.name} · FIRST OBSERVED: {personal.established}</p>
             <Bio>{output}█</Bio>
 
-            <SectionTitle>{'// OBSERVATION LOG'}</SectionTitle>
             <JourneyGrid>
-                <Timeline>
+                {/* title lives in the log column so the mobile order swap
+                    puts the portrait above the whole OBSERVATION LOG section */}
+                <div>
+                    <SectionTitle>{'// OBSERVATION LOG'}</SectionTitle>
+                    <Timeline>
                     {journey.map((entry, idx) => {
                         const key = `${entry.year}-${entry.title}`;
                         const bodyId = `journey-body-${idx}`;
@@ -189,7 +244,8 @@ const PersonnelFile = () => {
                             </EntryBlock>
                         );
                     })}
-                </Timeline>
+                    </Timeline>
+                </div>
                 <PortraitPanel>
                     <PortraitCaption>{'// SUBJECT PORTRAIT — SURVEILLANCE CAPTURE'}</PortraitCaption>
                     <PortraitFrame>
@@ -198,6 +254,55 @@ const PersonnelFile = () => {
                     </PortraitFrame>
                 </PortraitPanel>
             </JourneyGrid>
+        </ScreenFrame>
+    );
+};
+
+const PersonnelFile = () => {
+    usePageMeta('PERSONNEL FILE', 'Tanmai Nuthi — the journey so far.');
+    // Unlock state is intentionally NOT persisted — the record re-locks on
+    // every visit, dealing a fresh access code each time.
+    const [unlocked, setUnlocked] = useState(false);
+    const [lockedOut, setLockedOut] = useState(false);
+    const [gameKey, setGameKey] = useState(0);
+
+    const handleWin = useCallback(() => {
+        setUnlocked(true);
+    }, []);
+
+    const handleLockout = useCallback(() => {
+        setLockedOut(true);
+    }, []);
+
+    const handleRetry = useCallback(() => {
+        setLockedOut(false);
+        setGameKey((k) => k + 1);
+    }, []);
+
+    if (unlocked) {
+        return <PersonnelRecord />;
+    }
+
+    return (
+        <ScreenFrame title="SECURITY LAYER">
+            <Intro>
+                {`PERSONNEL FILE FOR ${personal.designation} IS CLASSIFIED. BYPASS SECURITY TO VIEW THE RECORD. ${hackGame.attempts} ATTEMPTS BEFORE LOCKOUT.`}
+            </Intro>
+            <RotationNotice>
+                {'SECURITY ROTATES CIPHERS AFTER EVERY SESSION. PREVIOUS BYPASSES VOID.'}
+            </RotationNotice>
+            {lockedOut ? (
+                <LockoutBlock>
+                    <LockoutMsg>{'> TERMINAL LOCKED — INTRUSION LOGGED.'}</LockoutMsg>
+                    <RetryButton type="button" onClick={handleRetry}>[ RETRY ]</RetryButton>
+                </LockoutBlock>
+            ) : (
+                <HackMinigame
+                    key={gameKey}
+                    onWin={handleWin}
+                    onLockout={handleLockout}
+                />
+            )}
         </ScreenFrame>
     );
 };

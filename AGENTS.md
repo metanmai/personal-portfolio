@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Personal site built with **React 18 + Vite 8**, deployed on **Netlify**. The site is a **Fallout-style CRT terminal**: a login-style boot sequence, a numbered main menu, and paged screens with real URLs. It is deliberately NOT a resume site — work lives in one section; the rest is the owner's journey and hobbies. Amber phosphor default, green toggle. Fully keyboard-operable.
+Personal site built with **React 18 + Vite 8**, deployed on **Netlify**. The site is a **Fallout-style CRT terminal**: a login-style boot sequence, a numbered main menu, and paged screens with real URLs. It is deliberately NOT a resume site — work lives in one section; the rest is the owner's journey and hobbies. Green phosphor default, 5-theme cycle (green/amber/ice/white/alert) with theme-tinted pixel cursors. Fully keyboard-operable.
 
 Design spec + amendment log: `docs/superpowers/specs/2026-06-10-fallout-terminal-portfolio-design.md`
 
@@ -25,25 +25,23 @@ App.jsx                       boot gate (plain useState, boots EVERY visit: cred
 │   └── (uses utils/deviceSpecs.js + api.ipify.org; writes sessionStorage 'termlink-operator')
 └── BrowserRouter
     └── Terminal/             CRT shell: scanlines, vignette, sweep, flicker, ~20s random glitch
-        ├── PhosphorSwitch    fixed top-right, cycles THEME_ORDER (blob on mobile)
+        ├── PhosphorSwitch    fixed top-right cluster aligned to content padding: phosphor cycle + [♪] sound toggle (blobs on mobile)
         ├── EscToMenu         global Esc → navigate('/')
         ├── RouteRedraw       keyed clip-path wipe on every navigation
         ├── SystemFault.jsx   error boundary
         │   ├── /             MainMenu/  (ascii banner, roving-tabindex menu, StatusPanel)
-        │   ├── /personnel    screens/PersonnelFile    (journey accordion + portrait, NOT a CV)
-        │   ├── /career       screens/CareerDossier    (ALL work: experience+loadout, projects, testimonials, resume link)
-        │   ├── /recreation   screens/RecreationWing   (live Steam + Last.fm feeds, photos, side quests)
-        │   ├── /holotapes    screens/HolotapeArchive  (log entries, typed playback)
-        │   ├── /monitor      screens/SystemMonitor    (live GitHub + LeetCode telemetry)
-        │   ├── /comms        screens/OpenComms        (contact form, JS-validated in-fiction)
-        │   ├── /vault        screens/Vault            (HackMinigame gate → vaultEntries; sessionStorage 'termlink-vault-unlocked')
+        │   ├── /career       screens/CareerDossier    [01] (ALL work: experience+loadout, projects, testimonials, resume link)
+        │   ├── /recreation   screens/RecreationWing   [02] (live Steam + Last.fm feeds, photos, side quests)
+        │   ├── /personnel    screens/PersonnelFile    [03, locked] (HackMinigame gate → journey accordion + portrait; re-locks every visit)
+        │   ├── /monitor      screens/SystemMonitor    [04] (live GitHub + LeetCode telemetry)
+        │   ├── /comms        screens/OpenComms        [05] (contact form, JS-validated in-fiction)
         │   └── *             screens/FileCorrupted    (404)
-        ├── StatusBar/        fixed footer: path · socials · [♪] sound · [LOGOUT] · clock (hints hidden <900px)
-        ├── CommandPrompt/    Ctrl+K or '>' summonable prompt; commands data in constants; [CMD] button <900px
-        └── SoundLayer        WebAudio key clicks + hum when settings.sound (off by default)
+        ├── StatusBar/        fixed footer: path · socials · [LOGOUT] · clock (hints hidden <900px)
+        ├── CommandPrompt/    Ctrl+K or '>' summonable prompt; commands data in constants; [CMD] button all sizes
+        └── SoundLayer        WebAudio key clicks + hum when settings.sound (ON by default)
 ```
 
-Shared: `screens/ScreenFrame.jsx` (scramble-decode title + back link), `PhosphorImage/` (duotone image + VIEW RAW lightbox), `HackMinigame/` (Fallout word-guess, props onWin/onLockout).
+Shared: `screens/ScreenFrame.jsx` (scramble-decode title + back link), `PhosphorImage/` (duotone image + VIEW RAW lightbox), `HackMinigame/` (CODE INTERCEPT memory game: memorize a 5-digit code in 4s, 3 attempts; props onWin/onLockout).
 
 ### Boot sequence contract
 `BootSequence({ onDone })`, default export. Stages: (1) uplink — local header lines + AsciiGlobe + IP fetch (api.ipify.org, 3s AbortController timeout, fallback 'UNTRACEABLE'); (2) report — padLine-formatted visitor lines from `utils/deviceSpecs.js` (`getDeviceSpecLines`, `getRegion`, `getBrowserName` — all throw-proof with in-fiction fallbacks); (3) login — holds at `IDENTIFY USER:` until any key/click, fake-types GUEST, then onDone. **There is intentionally no skip** — the owner wants it user-paced. Don't reintroduce sessionStorage gating.

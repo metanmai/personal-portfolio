@@ -17,11 +17,49 @@ const arrowCursorSvg = (fill) => '<svg xmlns="http://www.w3.org/2000/svg" width=
     + `<path d="M2 1 L2 19 L7 14.6 L10 21.4 L13.4 19.8 L10.6 13 L17 13 Z" fill="${fill}" stroke="#000" stroke-width="2"/>`
     + '</svg>';
 
-const reticleCursorSvg = (fill) => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" shape-rendering="crispEdges">'
-    + '<g fill="none" stroke="#000" stroke-width="4"><circle cx="12" cy="12" r="7"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></g>'
-    + `<g fill="none" stroke="${fill}" stroke-width="2"><circle cx="12" cy="12" r="7"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></g>`
-    + `<rect x="11" y="11" width="2" height="2" fill="${fill}"/>`
-    + '</svg>';
+// Pointing-glove pixel art ('.' empty, 'X' black outline, '#' phosphor fill),
+// drawn at 2px per cell. Hotspot sits on the index fingertip.
+const GLOVE_GRID = [
+    '....XX......',
+    '...X##X.....',
+    '...X##X.....',
+    '...X##X.....',
+    '...X##XXX...',
+    '...X##X##XX.',
+    '...X##X##X#X',
+    'XX.X##X##X#X',
+    'X#XX#######X',
+    'X##X#######X',
+    '.X#########X',
+    '.X#########X',
+    '..X########X',
+    '...X######X.',
+    '....XXXXXX..',
+];
+
+const gloveCursorSvg = (fill) => {
+    const px = 2;
+    let rects = '';
+    GLOVE_GRID.forEach((row, y) => {
+        // merge horizontal runs of the same cell into single rects
+        let x = 0;
+        while (x < row.length) {
+            const c = row[x];
+            if (c === '.') {
+                x += 1;
+                continue;
+            }
+            let end = x;
+            while (end + 1 < row.length && row[end + 1] === c) end += 1;
+            const color = c === 'X' ? '#000' : fill;
+            rects += `<rect x="${x * px}" y="${y * px}" width="${(end - x + 1) * px}" height="${px}" fill="${color}"/>`;
+            x = end + 1;
+        }
+    });
+    const w = GLOVE_GRID[0].length * px;
+    const h = GLOVE_GRID.length * px;
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges">${rects}</svg>`;
+};
 
 const cursorValue = (svg, x, y, fallback) => `url("data:image/svg+xml,${encodeURIComponent(svg)}") ${x} ${y}, ${fallback}`;
 
@@ -33,6 +71,6 @@ export function applyTheme(name) {
     root.style.setProperty('--bg', theme.bg);
     root.style.setProperty('--glow', theme.glow);
     root.style.setProperty('--cursor-default', cursorValue(arrowCursorSvg(theme.phosphor), 2, 1, 'default'));
-    root.style.setProperty('--cursor-pointer', cursorValue(reticleCursorSvg(theme.phosphor), 12, 12, 'pointer'));
+    root.style.setProperty('--cursor-pointer', cursorValue(gloveCursorSvg(theme.phosphor), 9, 0, 'pointer'));
     root.dataset.theme = THEMES[name] ? name : DEFAULT_THEME;
 }

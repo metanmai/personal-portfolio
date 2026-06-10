@@ -333,7 +333,7 @@ const CommandPrompt = () => {
         }
         if (lower === 'hack') {
             pushLines([echo, 'INITIATING SECURITY BYPASS…']);
-            navigate('/vault');
+            navigate('/personnel');
             close();
             return;
         }

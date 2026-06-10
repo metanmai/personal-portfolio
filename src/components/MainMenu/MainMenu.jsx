@@ -126,6 +126,20 @@ const Hint = styled.span`
     opacity: 0.6;
 `;
 
+// Pixel padlock — currentColor so it inverts with the row on hover/select
+const LockSvg = styled.svg`
+    width: 0.6em;
+    height: 0.75em;
+    margin: 0 0.35em;
+`;
+
+const LockIcon = () => (
+    <LockSvg viewBox="0 0 12 14" aria-label="restricted" role="img" shapeRendering="crispEdges">
+        <path d="M3 7 V4 a3 3 0 0 1 6 0 V7" fill="none" stroke="currentColor" strokeWidth="2" />
+        <rect x="1" y="7" width="10" height="7" fill="currentColor" />
+    </LockSvg>
+);
+
 const NoSelect = styled.main`
     user-select: none;
 `;
@@ -196,7 +210,10 @@ const MainMenu = () => {
                             >
                                 <Marker>{index === selected ? '► ' : '> '}</Marker>
                                 <RowLabel>
-                                    [{item.num}] {item.label} <Hint>...... {item.hint}</Hint>
+                                    [{item.num}] {item.label}
+                                    {item.locked && <LockIcon />}
+                                    {' '}
+                                    <Hint>...... {item.hint}</Hint>
                                 </RowLabel>
                             </Row>
                         </li>

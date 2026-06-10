@@ -9,9 +9,7 @@ import PersonnelFile from './components/screens/PersonnelFile.jsx';
 import CareerDossier from './components/screens/CareerDossier.jsx';
 import RecreationWing from './components/screens/RecreationWing.jsx';
 import OpenComms from './components/screens/OpenComms.jsx';
-import HolotapeArchive from './components/screens/HolotapeArchive.jsx';
 import SystemMonitor from './components/screens/SystemMonitor.jsx';
-import Vault from './components/screens/Vault.jsx';
 import CommandPrompt from './components/CommandPrompt/CommandPrompt.jsx';
 import SoundLayer from './components/SoundLayer.jsx';
 import FileCorrupted from './components/screens/FileCorrupted.jsx';
@@ -86,9 +84,7 @@ const TerminalApp = () => {
                             <Route path="/career" element={<CareerDossier />} />
                             <Route path="/recreation" element={<RecreationWing />} />
                             <Route path="/comms" element={<OpenComms />} />
-                            <Route path="/holotapes" element={<HolotapeArchive />} />
                             <Route path="/monitor" element={<SystemMonitor />} />
-                            <Route path="/vault" element={<Vault />} />
                             <Route path="*" element={<FileCorrupted />} />
                         </Routes>
                     </SystemFault>

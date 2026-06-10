@@ -1,12 +1,21 @@
 import styled from 'styled-components';
 import { useSettings } from '../../settings.jsx';
 import { THEME_ORDER, DEFAULT_THEME } from '../../theme.js';
+import { playConfirmBlip } from '../../hooks/useSound.js';
 
-const Button = styled.button`
+// Right/top offsets mirror the Terminal Shell padding so the cluster's edge
+// lines up with the content column instead of hugging the viewport corner.
+const Cluster = styled.div`
     position: fixed;
-    top: 10px;
-    right: 14px;
+    top: clamp(14px, 4vw, 56px);
+    right: clamp(14px, 4vw, 56px);
     z-index: 60;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+`;
+
+const ChromeButton = styled.button`
     font: inherit;
     background: color-mix(in srgb, var(--bg) 85%, var(--phosphor));
     border: 1px solid var(--dim);
@@ -27,8 +36,10 @@ const Button = styled.button`
     &:active {
         transform: translateY(1px);
     }
+`;
 
-    /* mobile: tiny tappable blob showing the current phosphor color */
+/* mobile: tiny tappable blob showing the current phosphor color */
+const PhosphorButton = styled(ChromeButton)`
     @media (max-width: 700px) {
         font-size: 0;
         width: 26px;
@@ -36,8 +47,32 @@ const Button = styled.button`
         padding: 0;
         border-radius: 50%;
         background: var(--phosphor);
-        top: 12px;
-        right: 12px;
+    }
+`;
+
+/* mobile: matching blob, icon only */
+const SoundButton = styled(ChromeButton)`
+    @media (max-width: 700px) {
+        width: 26px;
+        height: 26px;
+        padding: 0;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: ${({ $on }) => ($on ? 'var(--phosphor)' : 'var(--dim)')};
+    }
+`;
+
+const SoundLabel = styled.span`
+    @media (max-width: 700px) {
+        display: none;
+    }
+`;
+
+const SoundGlyph = styled.span`
+    @media (min-width: 701px) {
+        display: none;
     }
 `;
 
@@ -51,14 +86,35 @@ const PhosphorSwitch = () => {
         update({ theme: next });
     };
 
+    const toggleSound = () => {
+        const next = !settings.sound;
+        update({ sound: next });
+        // confirmation beep only when enabling — fires immediately so the
+        // user hears feedback the instant they turn sound on
+        if (next) {
+            try { playConfirmBlip(); } catch { /* ignore */ }
+        }
+    };
+
     return (
-        <Button
-            type="button"
-            onClick={cycle}
-            aria-label="cycle phosphor color"
-        >
-            [ PHOSPHOR: {current.toUpperCase()} ⟲ ]
-        </Button>
+        <Cluster>
+            <PhosphorButton
+                type="button"
+                onClick={cycle}
+                aria-label="cycle phosphor color"
+            >
+                [ PHOSPHOR: {current.toUpperCase()} ⟲ ]
+            </PhosphorButton>
+            <SoundButton
+                type="button"
+                onClick={toggleSound}
+                aria-label="toggle sound"
+                $on={settings.sound}
+            >
+                <SoundLabel>[ ♪ {settings.sound ? 'ON' : 'OFF'} ]</SoundLabel>
+                <SoundGlyph aria-hidden="true">♪</SoundGlyph>
+            </SoundButton>
+        </Cluster>
     );
 };
 

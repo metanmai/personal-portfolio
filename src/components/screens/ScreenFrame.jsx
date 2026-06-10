@@ -18,10 +18,10 @@ const Bar = styled.div`
     padding-bottom: 0.5rem;
     margin-bottom: 1.5rem;
 
-    /* Leave clearance for the fixed PhosphorSwitch blob (top-right) on mobile,
-       so the back link never collides with it. */
+    /* Leave clearance for the fixed PhosphorSwitch cluster (two 26px blobs +
+       gap, top-right) on mobile, so the back link never collides with it. */
     @media (max-width: 700px) {
-        padding-right: 44px;
+        padding-right: 72px;
     }
 `;
 
