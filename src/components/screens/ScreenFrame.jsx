@@ -17,6 +17,12 @@ const Bar = styled.div`
     border-bottom: 1px solid var(--dim);
     padding-bottom: 0.5rem;
     margin-bottom: 1.5rem;
+
+    /* Leave clearance for the fixed PhosphorSwitch blob (top-right) on mobile,
+       so the back link never collides with it. */
+    @media (max-width: 700px) {
+        padding-right: 44px;
+    }
 `;
 
 const Title = styled.h2`
@@ -28,11 +34,28 @@ const BackLink = styled(Link)`
     color: var(--dim);
     text-decoration: none;
     padding: 0.4rem 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover, &:focus-visible {
         background: var(--phosphor);
         color: var(--bg);
         text-shadow: none;
+    }
+
+    /* On desktop show the full label; hide the compact one. */
+    .back-compact { display: none; }
+    .back-full { display: inline; }
+
+    /* On mobile show only the compact label, with a 44px touch target. */
+    @media (max-width: 700px) {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 0.4rem 0.6rem;
+
+        .back-compact { display: inline; }
+        .back-full { display: none; }
     }
 `;
 
@@ -42,7 +65,10 @@ const ScreenFrame = ({ title, children }) => {
         <Frame>
             <Bar>
                 <Title>▸ {scrambledTitle}</Title>
-                <BackLink to="/">[ESC] MAIN MENU</BackLink>
+                <BackLink to="/" aria-label="back to main menu">
+                    <span className="back-full">[ESC] MAIN MENU</span>
+                    <span className="back-compact">[◂ BACK]</span>
+                </BackLink>
             </Bar>
             {children}
         </Frame>

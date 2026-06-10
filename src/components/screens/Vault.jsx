@@ -5,12 +5,18 @@ import HackMinigame from '../HackMinigame/HackMinigame.jsx';
 import { hackGame, vaultEntries } from '../../constants/index.js';
 import { usePageMeta } from '../../hooks/usePageMeta.js';
 
-const SESSION_KEY = 'termlink-vault-unlocked';
-
 const Intro = styled.p`
     color: var(--dim);
     margin-bottom: 1.5rem;
     line-height: 1.6;
+`;
+
+const RotationNotice = styled.p`
+    color: var(--dim);
+    opacity: 0.7;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.08em;
+    font-size: 0.9em;
 `;
 
 const Header = styled.p`
@@ -75,27 +81,15 @@ const RetryButton = styled.button`
     }
 `;
 
-const readUnlocked = () => {
-    try {
-        return typeof sessionStorage !== 'undefined'
-            && sessionStorage.getItem(SESSION_KEY) === 'true';
-    } catch {
-        return false;
-    }
-};
-
 const Vault = () => {
     usePageMeta('VAULT', 'Classified entries — eyes only.');
-    const [unlocked, setUnlocked] = useState(readUnlocked);
+    // Unlock state is intentionally NOT persisted — the vault re-locks on
+    // every visit, dealing a fresh puzzle each time.
+    const [unlocked, setUnlocked] = useState(false);
     const [lockedOut, setLockedOut] = useState(false);
     const [gameKey, setGameKey] = useState(0);
 
     const handleWin = useCallback(() => {
-        try {
-            sessionStorage.setItem(SESSION_KEY, 'true');
-        } catch {
-            // sessionStorage can throw in privacy modes — proceed anyway.
-        }
         setUnlocked(true);
     }, []);
 
@@ -126,6 +120,9 @@ const Vault = () => {
             <Intro>
                 {`UNAUTHORIZED ACCESS DETECTED. BYPASS SECURITY TO PROCEED. ${hackGame.attempts} ATTEMPTS BEFORE LOCKOUT.`}
             </Intro>
+            <RotationNotice>
+                {'SECURITY ROTATES CIPHERS AFTER EVERY SESSION. PREVIOUS BYPASSES VOID.'}
+            </RotationNotice>
             {lockedOut ? (
                 <LockoutBlock>
                     <LockoutMsg>{'> TERMINAL LOCKED — INTRUSION LOGGED.'}</LockoutMsg>
