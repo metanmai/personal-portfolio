@@ -1,10 +1,45 @@
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #00154d; /* Change this color */
-  scrollbar-gutter: auto;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-html.hovered, body.hovered {
-  overflow-y: auto;
+html {
+    /* applyTheme() overwrites these; amber defaults prevent a flash */
+    --phosphor: #ffb000;
+    --dim: #8a6200;
+    --bg: #160f01;
+    --glow: rgba(255, 176, 0, 0.55);
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--phosphor);
+    font-family: 'VT323', 'Courier New', monospace;
+}
+
+::selection {
+    background: var(--phosphor);
+    color: var(--bg);
+}
+
+:focus-visible {
+    outline: 2px solid var(--phosphor);
+    outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--dim);
+}
+
+a {
+    color: var(--phosphor);
 }
