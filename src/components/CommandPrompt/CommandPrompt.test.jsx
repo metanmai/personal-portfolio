@@ -75,6 +75,17 @@ describe('CommandPrompt', () => {
         expect(screen.getByTestId('loc')).toHaveTextContent('/career');
     });
 
+    it('clicking [X] close button closes the prompt', async () => {
+        const user = userEvent.setup();
+        renderPrompt('/');
+
+        await user.keyboard('{Control>}k{/Control}');
+        expect(screen.getByTestId('cmd-input')).toBeInTheDocument();
+
+        await user.click(screen.getByRole('button', { name: /close prompt/i }));
+        expect(screen.queryByTestId('cmd-input')).not.toBeInTheDocument();
+    });
+
     it('sudo prints PERMISSION DENIED and helpp suggests HELP', async () => {
         const user = userEvent.setup();
         renderPrompt('/');

@@ -77,6 +77,7 @@ const padRight = (text, len) => {
 
 const Overlay = styled.div`
     position: fixed;
+    /* anchor for the absolutely-positioned close button */
     left: 50%;
     transform: translateX(-50%);
     bottom: 2.2rem;
@@ -89,6 +90,31 @@ const Overlay = styled.div`
     font: inherit;
     padding: 0.6rem 0.8rem;
     box-shadow: 0 0 0 1px var(--bg), 0 0 18px var(--glow);
+`;
+
+const CloseButton = styled.button`
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    font: inherit;
+    color: var(--dim);
+    cursor: pointer;
+    padding: 0 0.6rem;
+    letter-spacing: 0.04em;
+
+    &:hover,
+    &:focus-visible {
+        color: var(--bg);
+        background: var(--phosphor);
+        outline: none;
+    }
 `;
 
 const Output = styled.div`
@@ -129,7 +155,8 @@ const FloatingButton = styled.button`
     position: fixed;
     bottom: 2.4rem;
     right: 14px;
-    z-index: 55;
+    /* Above the overlay (z=80) so tapping [CMD] while open can close it on mobile. */
+    z-index: 90;
     font: inherit;
     background: color-mix(in srgb, var(--bg) 85%, var(--phosphor));
     color: var(--phosphor);
@@ -249,6 +276,10 @@ const CommandPrompt = () => {
             pushLines([echo, 'THAT FILE DOES NOT EXIST. STOP ASKING.']);
             return;
         }
+        if (lower === 'close') {
+            close();
+            return;
+        }
 
         if (head === 'help') {
             const longest = commands.reduce((acc, c) => Math.max(acc, c.name.length), 0);
@@ -356,13 +387,22 @@ const CommandPrompt = () => {
         <>
             <FloatingButton
                 type="button"
-                onClick={() => setOpen(true)}
-                aria-label="open command prompt"
+                onClick={() => setOpen((prev) => !prev)}
+                aria-label={open ? 'close command prompt' : 'open command prompt'}
+                aria-expanded={open}
             >
                 [CMD]
             </FloatingButton>
             {open && (
                 <Overlay role="dialog" aria-label="command prompt">
+                    <CloseButton
+                        type="button"
+                        onClick={close}
+                        aria-label="close prompt"
+                        data-testid="cmd-close"
+                    >
+                        [X]
+                    </CloseButton>
                     <Output ref={outputRef} data-testid="cmd-output">
                         {scrollback.length === 0 ? (
                             <Line $dim>TYPE HELP FOR AVAILABLE COMMANDS · ESC TO CLOSE</Line>
