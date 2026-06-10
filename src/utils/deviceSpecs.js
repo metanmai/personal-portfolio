@@ -15,6 +15,46 @@ export const padLine = (label, value) => {
     return `${upperLabel} ${dots} ${upperValue}`;
 };
 
+export const getRegion = () => {
+    try {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (!tz || typeof tz !== 'string') return 'UNKNOWN';
+        return tz.toUpperCase();
+    } catch {
+        return 'UNKNOWN';
+    }
+};
+
+export const getBrowserName = () => {
+    try {
+        if (typeof navigator === 'undefined') return 'UNKNOWN AGENT';
+        // Prefer userAgentData.brands — pick the last meaningful brand
+        // (skip the spec's "Not?A_Brand" / "Not A;Brand" / "Not.A/Brand" greasers).
+        const brands = navigator.userAgentData?.brands;
+        if (Array.isArray(brands) && brands.length > 0) {
+            const meaningful = brands.filter(
+                (b) => b && typeof b.brand === 'string' && !/not.?a.?brand/i.test(b.brand),
+            );
+            if (meaningful.length > 0) {
+                const last = meaningful[meaningful.length - 1].brand;
+                if (last) return String(last).toUpperCase();
+            }
+        }
+
+        // Fallback: UA-string sniff. Order matters — Edge UA includes "Chrome",
+        // Chrome UA includes "Safari", so check the most specific brands first.
+        const ua = String(navigator.userAgent || '');
+        if (/Edg\//i.test(ua)) return 'EDGE';
+        if (/OPR\//i.test(ua) || /Opera/i.test(ua)) return 'OPERA';
+        if (/Firefox\//i.test(ua)) return 'FIREFOX';
+        if (/Chrome\//i.test(ua)) return 'CHROME';
+        if (/Safari\//i.test(ua)) return 'SAFARI';
+        return 'UNKNOWN AGENT';
+    } catch {
+        return 'UNKNOWN AGENT';
+    }
+};
+
 const safe = (fn, fallback) => {
     try {
         const v = fn();

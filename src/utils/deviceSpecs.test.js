@@ -1,5 +1,10 @@
-import { describe, it, expect } from 'vitest';
-import { padLine, getDeviceSpecLines } from './deviceSpecs.js';
+import { describe, it, expect, vi } from 'vitest';
+import {
+    padLine,
+    getDeviceSpecLines,
+    getRegion,
+    getBrowserName,
+} from './deviceSpecs.js';
 
 describe('padLine', () => {
     it('formats a short label with dots to a 28-char left segment then space + value', () => {
@@ -26,5 +31,36 @@ describe('getDeviceSpecLines', () => {
             expect(typeof line).toBe('string');
             expect(line).toContain('....');
         });
+    });
+});
+
+describe('getRegion', () => {
+    it('returns an uppercase string without throwing', () => {
+        let region;
+        expect(() => {
+            region = getRegion();
+        }).not.toThrow();
+        expect(typeof region).toBe('string');
+        expect(region.length).toBeGreaterThan(0);
+        expect(region).toBe(region.toUpperCase());
+    });
+});
+
+describe('getBrowserName', () => {
+    it('returns a non-empty string and uses the UA fallback when userAgentData is absent', () => {
+        // happy-dom does not expose userAgentData. Spy on userAgent to a known
+        // Firefox UA and assert the fallback chain selects FIREFOX.
+        const spy = vi
+            .spyOn(navigator, 'userAgent', 'get')
+            .mockReturnValue(
+                'Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0',
+            );
+        let name;
+        expect(() => {
+            name = getBrowserName();
+        }).not.toThrow();
+        expect(typeof name).toBe('string');
+        expect(name).toBe('FIREFOX');
+        spy.mockRestore();
     });
 });
