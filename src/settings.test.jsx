@@ -10,7 +10,7 @@ const Probe = () => {
             <span data-testid="theme">{settings.theme}</span>
             <span data-testid="sound">{String(settings.sound)}</span>
             <button onClick={() => update({ theme: 'amber' })}>go amber</button>
-            <button onClick={() => update({ sound: true })}>enable sound</button>
+            <button onClick={() => update({ sound: false })}>disable sound</button>
         </div>
     );
 };
@@ -36,15 +36,15 @@ describe('SettingsProvider', () => {
         expect(screen.getByTestId('theme')).toHaveTextContent('amber');
     });
 
-    it('defaults sound to false', () => {
+    it('defaults sound to true', () => {
         render(<SettingsProvider><Probe /></SettingsProvider>);
-        expect(screen.getByTestId('sound')).toHaveTextContent('false');
+        expect(screen.getByTestId('sound')).toHaveTextContent('true');
     });
 
     it('updates and persists sound to localStorage', async () => {
         render(<SettingsProvider><Probe /></SettingsProvider>);
-        await userEvent.click(screen.getByText('enable sound'));
-        expect(screen.getByTestId('sound')).toHaveTextContent('true');
-        expect(JSON.parse(localStorage.getItem('termlink-settings')).sound).toBe(true);
+        await userEvent.click(screen.getByText('disable sound'));
+        expect(screen.getByTestId('sound')).toHaveTextContent('false');
+        expect(JSON.parse(localStorage.getItem('termlink-settings')).sound).toBe(false);
     });
 });

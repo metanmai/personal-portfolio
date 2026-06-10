@@ -20,7 +20,15 @@ const Bar = styled.footer`
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+    flex-wrap: nowrap;
+    overflow: hidden;
     text-shadow: none;
+
+    @media (max-width: 600px) {
+        gap: 0.4rem;
+        font-size: 0.8em;
+        padding: 0.25rem 0.5rem;
+    }
 `;
 
 const Left = styled.span`
@@ -29,6 +37,10 @@ const Left = styled.span`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    @media (max-width: 600px) {
+        display: none;
+    }
 `;
 
 const Center = styled.nav`
@@ -37,6 +49,10 @@ const Center = styled.nav`
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
+
+    @media (max-width: 600px) {
+        gap: 0.4rem;
+    }
 `;
 
 const SocialLink = styled.a`
@@ -58,6 +74,17 @@ const Right = styled.div`
     align-items: center;
     justify-content: flex-end;
     flex: 1 1 0;
+
+    @media (max-width: 600px) {
+        gap: 0.4rem;
+        flex: 0 0 auto;
+    }
+`;
+
+const Clock = styled.span`
+    @media (max-width: 600px) {
+        display: none;
+    }
 `;
 
 const Hints = styled.span`
@@ -76,6 +103,7 @@ const LogoutButton = styled.button`
     cursor: pointer;
     padding: 0 0.25rem;
     text-shadow: none;
+    white-space: nowrap;
 
     &:hover,
     &:focus-visible {
@@ -135,7 +163,7 @@ const StatusBar = () => {
                     [♪ {settings.sound ? 'ON' : 'OFF'}]
                 </LogoutButton>
                 <LogoutButton type="button" onClick={logout}>[LOGOUT]</LogoutButton>
-                <span>{clock}</span>
+                <Clock>{clock}</Clock>
             </Right>
         </Bar>
     );

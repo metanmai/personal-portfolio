@@ -4,7 +4,7 @@ import { applyTheme, DEFAULT_THEME } from './theme.js';
 
 const STORAGE_KEY = 'termlink-settings';
 // eslint-disable-next-line react-refresh/only-export-components
-export const DEFAULT_SETTINGS = { theme: DEFAULT_THEME, sound: false };
+export const DEFAULT_SETTINGS = { theme: DEFAULT_THEME, sound: true };
 
 const SettingsContext = createContext(null);
 
