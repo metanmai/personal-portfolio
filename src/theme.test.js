@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { THEMES, DEFAULT_THEME, applyTheme } from './theme.js';
+import { THEMES, THEME_ORDER, DEFAULT_THEME, applyTheme } from './theme.js';
 
 describe('applyTheme', () => {
     it('sets CSS custom properties for the amber theme', () => {
@@ -16,5 +16,16 @@ describe('applyTheme', () => {
         applyTheme('plasma');
         expect(document.documentElement.style.getPropertyValue('--phosphor'))
             .toBe(THEMES[DEFAULT_THEME].phosphor);
+    });
+
+    it('defaults to green', () => {
+        expect(DEFAULT_THEME).toBe('green');
+    });
+
+    it('THEME_ORDER entries all exist in THEMES', () => {
+        expect(THEME_ORDER.length).toBeGreaterThan(0);
+        THEME_ORDER.forEach((name) => {
+            expect(THEMES[name]).toBeDefined();
+        });
     });
 });

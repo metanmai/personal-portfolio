@@ -8,7 +8,7 @@ const Probe = () => {
     return (
         <div>
             <span data-testid="theme">{settings.theme}</span>
-            <button onClick={() => update({ theme: 'green' })}>go green</button>
+            <button onClick={() => update({ theme: 'amber' })}>go amber</button>
         </div>
     );
 };
@@ -16,21 +16,21 @@ const Probe = () => {
 describe('SettingsProvider', () => {
     beforeEach(() => localStorage.clear());
 
-    it('defaults to amber theme', () => {
+    it('defaults to green theme', () => {
         render(<SettingsProvider><Probe /></SettingsProvider>);
-        expect(screen.getByTestId('theme')).toHaveTextContent('amber');
+        expect(screen.getByTestId('theme')).toHaveTextContent('green');
     });
 
     it('updates and persists to localStorage', async () => {
         render(<SettingsProvider><Probe /></SettingsProvider>);
-        await userEvent.click(screen.getByText('go green'));
-        expect(screen.getByTestId('theme')).toHaveTextContent('green');
-        expect(JSON.parse(localStorage.getItem('termlink-settings')).theme).toBe('green');
+        await userEvent.click(screen.getByText('go amber'));
+        expect(screen.getByTestId('theme')).toHaveTextContent('amber');
+        expect(JSON.parse(localStorage.getItem('termlink-settings')).theme).toBe('amber');
     });
 
     it('hydrates from localStorage', () => {
-        localStorage.setItem('termlink-settings', JSON.stringify({ theme: 'green' }));
+        localStorage.setItem('termlink-settings', JSON.stringify({ theme: 'amber' }));
         render(<SettingsProvider><Probe /></SettingsProvider>);
-        expect(screen.getByTestId('theme')).toHaveTextContent('green');
+        expect(screen.getByTestId('theme')).toHaveTextContent('amber');
     });
 });

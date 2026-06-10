@@ -126,21 +126,16 @@ const Hint = styled.span`
     opacity: 0.6;
 `;
 
-const Cursor = styled.span`
-    animation: blink 1s steps(1) infinite;
-
-    @keyframes blink {
-        50% { opacity: 0; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        animation: none;
-    }
+const NoSelect = styled.main`
+    user-select: none;
 `;
 
 const MainMenu = () => {
     const navigate = useNavigate();
     const [selected, setSelected] = useState(0);
+    const [operator] = useState(
+        () => (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('termlink-operator')) || 'GUEST'
+    );
     const rowRefs = useRef([]);
     usePageMeta('MAIN MENU', 'Operate the terminal: projects, experience, comms.');
 
@@ -172,11 +167,11 @@ const MainMenu = () => {
     }, [navigate, selected]);
 
     return (
-        <main>
+        <NoSelect>
             <Header>
                 TANMAI INDUSTRIES (TM) TERMLINK PROTOCOL
                 <br />
-                ENTER PASSWORD NOW — ACCESS GRANTED
+                OPERATOR: {operator} — ACCESS GRANTED
             </Header>
             <Title>
                 <VisuallyHidden>{personal.name}</VisuallyHidden>
@@ -206,15 +201,10 @@ const MainMenu = () => {
                             </Row>
                         </li>
                     ))}
-                    <li>
-                        <p style={{ marginTop: '1.5rem', padding: '0.4rem 0.6rem' }}>
-                            &gt; <Cursor>█</Cursor>
-                        </p>
-                    </li>
                 </Menu>
                 <StatusPanel />
             </Layout>
-        </main>
+        </NoSelect>
     );
 };
 

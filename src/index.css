@@ -5,11 +5,11 @@
 }
 
 html {
-    /* applyTheme() overwrites these; amber defaults prevent a flash */
-    --phosphor: #ffb000;
-    --dim: #8a6200;
-    --bg: #160f01;
-    --glow: rgba(255, 176, 0, 0.55);
+    /* applyTheme() overwrites these; green defaults prevent a flash */
+    --phosphor: #41ff7e;
+    --dim: #2aa85c;
+    --bg: #061206;
+    --glow: rgba(65, 255, 126, 0.55);
 }
 
 body {
