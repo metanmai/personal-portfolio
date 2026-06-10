@@ -59,8 +59,27 @@ const Right = styled.div`
 `;
 
 const Hints = styled.span`
-    @media (max-width: 600px) {
+    /* keyboard hints are meaningless on touch — hide below tablet width */
+    @media (max-width: 900px) {
         display: none;
+    }
+`;
+
+const LogoutButton = styled.button`
+    font: inherit;
+    font-size: 1em;
+    background: none;
+    border: none;
+    color: var(--dim);
+    cursor: pointer;
+    padding: 0 0.25rem;
+    text-shadow: none;
+
+    &:hover,
+    &:focus-visible {
+        background: var(--phosphor);
+        color: var(--bg);
+        outline: none;
     }
 `;
 
@@ -71,6 +90,12 @@ const StatusBar = () => {
     const hint = pathname === '/'
         ? `[↑↓ 1-${menuItems.length}] SELECT`
         : '[ESC] MENU';
+
+    const logout = () => {
+        sessionStorage.removeItem('termlink-operator');
+        // full reload lands on the login stage of the boot sequence
+        window.location.assign('/');
+    };
 
     return (
         <Bar>
@@ -89,6 +114,7 @@ const StatusBar = () => {
             </Center>
             <Right>
                 <Hints>{hint}</Hints>
+                <LogoutButton type="button" onClick={logout}>[LOGOUT]</LogoutButton>
                 <span>{clock}</span>
             </Right>
         </Bar>

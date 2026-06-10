@@ -27,6 +27,18 @@ const Button = styled.button`
     &:active {
         transform: translateY(1px);
     }
+
+    /* mobile: tiny tappable blob showing the current phosphor color */
+    @media (max-width: 700px) {
+        font-size: 0;
+        width: 26px;
+        height: 26px;
+        padding: 0;
+        border-radius: 50%;
+        background: var(--phosphor);
+        top: 12px;
+        right: 12px;
+    }
 `;
 
 const PhosphorSwitch = () => {
