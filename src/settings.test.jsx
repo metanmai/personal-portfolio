@@ -8,7 +8,9 @@ const Probe = () => {
     return (
         <div>
             <span data-testid="theme">{settings.theme}</span>
+            <span data-testid="sound">{String(settings.sound)}</span>
             <button onClick={() => update({ theme: 'amber' })}>go amber</button>
+            <button onClick={() => update({ sound: true })}>enable sound</button>
         </div>
     );
 };
@@ -32,5 +34,17 @@ describe('SettingsProvider', () => {
         localStorage.setItem('termlink-settings', JSON.stringify({ theme: 'amber' }));
         render(<SettingsProvider><Probe /></SettingsProvider>);
         expect(screen.getByTestId('theme')).toHaveTextContent('amber');
+    });
+
+    it('defaults sound to false', () => {
+        render(<SettingsProvider><Probe /></SettingsProvider>);
+        expect(screen.getByTestId('sound')).toHaveTextContent('false');
+    });
+
+    it('updates and persists sound to localStorage', async () => {
+        render(<SettingsProvider><Probe /></SettingsProvider>);
+        await userEvent.click(screen.getByText('enable sound'));
+        expect(screen.getByTestId('sound')).toHaveTextContent('true');
+        expect(JSON.parse(localStorage.getItem('termlink-settings')).sound).toBe(true);
     });
 });

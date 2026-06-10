@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { socials, menuItems } from '../../constants/index.js';
 import { useClock } from '../../hooks/useClock.js';
+import { useSettings } from '../../settings.jsx';
+import { playConfirmBlip } from '../../hooks/useSound.js';
 
 const Bar = styled.footer`
     position: fixed;
@@ -86,6 +88,7 @@ const LogoutButton = styled.button`
 const StatusBar = () => {
     const { pathname } = useLocation();
     const clock = useClock();
+    const { settings, update } = useSettings();
 
     const hint = pathname === '/'
         ? `[↑↓ 1-${menuItems.length}] SELECT`
@@ -95,6 +98,16 @@ const StatusBar = () => {
         sessionStorage.removeItem('termlink-operator');
         // full reload lands on the login stage of the boot sequence
         window.location.assign('/');
+    };
+
+    const toggleSound = () => {
+        const next = !settings.sound;
+        update({ sound: next });
+        // confirmation beep only when enabling — fires immediately so the
+        // user hears feedback the instant they turn sound on
+        if (next) {
+            try { playConfirmBlip(); } catch { /* ignore */ }
+        }
     };
 
     return (
@@ -114,6 +127,13 @@ const StatusBar = () => {
             </Center>
             <Right>
                 <Hints>{hint}</Hints>
+                <LogoutButton
+                    type="button"
+                    onClick={toggleSound}
+                    aria-label="toggle sound"
+                >
+                    [♪ {settings.sound ? 'ON' : 'OFF'}]
+                </LogoutButton>
                 <LogoutButton type="button" onClick={logout}>[LOGOUT]</LogoutButton>
                 <span>{clock}</span>
             </Right>
