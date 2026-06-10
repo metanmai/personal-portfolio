@@ -85,7 +85,7 @@ const formatUptime = (now) => {
 
 const StatusPanel = () => {
     const ctx = useSettings();
-    const settings = (ctx && ctx.settings) || { theme: 'amber', scanlines: 'full' };
+    const settings = (ctx && ctx.settings) || { theme: 'amber' };
     const [now, setNow] = useState(() => new Date());
     const [diagIndex, setDiagIndex] = useState(0);
 
@@ -119,10 +119,6 @@ const StatusPanel = () => {
             <Row>
                 <Label>PHOSPHOR</Label>
                 <Value>{String(settings.theme).toUpperCase()}</Value>
-            </Row>
-            <Row>
-                <Label>SCANLINES</Label>
-                <Value>{String(settings.scanlines).toUpperCase()}</Value>
             </Row>
             <Row>
                 <Label>SIGNAL</Label>

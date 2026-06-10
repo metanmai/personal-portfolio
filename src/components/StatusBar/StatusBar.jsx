@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { socials } from '../../constants/index.js';
 import { useClock } from '../../hooks/useClock.js';
+import { useSettings } from '../../settings.jsx';
 
 const Bar = styled.footer`
     position: fixed;
@@ -64,9 +65,28 @@ const Hints = styled.span`
     }
 `;
 
+const ThemeToggle = styled.button`
+    font: inherit;
+    background: none;
+    border: none;
+    color: var(--dim);
+    cursor: pointer;
+    padding: 0 0.25rem;
+    text-shadow: none;
+
+    &:hover,
+    &:focus-visible {
+        background: var(--phosphor);
+        color: var(--bg);
+        outline: none;
+    }
+`;
+
 const StatusBar = () => {
     const { pathname } = useLocation();
     const clock = useClock();
+    const { settings, update } = useSettings();
+    const theme = settings.theme;
 
     return (
         <Bar>
@@ -85,6 +105,13 @@ const StatusBar = () => {
             </Center>
             <Right>
                 <Hints>{'[ESC] MENU · [↑↓ 1-5] SELECT ·'}</Hints>
+                <ThemeToggle
+                    type="button"
+                    onClick={() => update({ theme: theme === 'amber' ? 'green' : 'amber' })}
+                    aria-label={`Switch phosphor to ${theme === 'amber' ? 'green' : 'amber'}`}
+                >
+                    [PHOSPHOR: {theme === 'amber' ? 'AMBER' : 'GREEN'}]
+                </ThemeToggle>
                 <span>{clock}</span>
             </Right>
         </Bar>

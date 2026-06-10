@@ -8,7 +8,6 @@ const Probe = () => {
     return (
         <div>
             <span data-testid="theme">{settings.theme}</span>
-            <span data-testid="scanlines">{settings.scanlines}</span>
             <button onClick={() => update({ theme: 'green' })}>go green</button>
         </div>
     );
@@ -17,10 +16,9 @@ const Probe = () => {
 describe('SettingsProvider', () => {
     beforeEach(() => localStorage.clear());
 
-    it('defaults to amber theme with full scanlines', () => {
+    it('defaults to amber theme', () => {
         render(<SettingsProvider><Probe /></SettingsProvider>);
         expect(screen.getByTestId('theme')).toHaveTextContent('amber');
-        expect(screen.getByTestId('scanlines')).toHaveTextContent('full');
     });
 
     it('updates and persists to localStorage', async () => {
@@ -34,6 +32,5 @@ describe('SettingsProvider', () => {
         localStorage.setItem('termlink-settings', JSON.stringify({ theme: 'green' }));
         render(<SettingsProvider><Probe /></SettingsProvider>);
         expect(screen.getByTestId('theme')).toHaveTextContent('green');
-        expect(screen.getByTestId('scanlines')).toHaveTextContent('full');
     });
 });

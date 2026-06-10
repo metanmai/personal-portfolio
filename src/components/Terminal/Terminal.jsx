@@ -1,6 +1,5 @@
-import styled, { css, keyframes } from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import PropTypes from 'prop-types';
-import { useSettings } from '../../settings.jsx';
 
 const powerOn = keyframes`
     0% { opacity: 0; }
@@ -30,7 +29,7 @@ const Shell = styled.div`
     background-color: var(--bg);
     color: var(--phosphor);
     font-family: 'VT323', 'Courier New', monospace;
-    font-size: calc(clamp(19px, 2.6vmin, 26px) * var(--font-scale, 1));
+    font-size: clamp(19px, 2.6vmin, 26px);
     text-shadow: 0 0 7px var(--glow);
     position: relative;
     padding: clamp(14px, 4vw, 56px);
@@ -49,16 +48,11 @@ const Overlay = styled.div`
 `;
 
 const Scanlines = styled(Overlay)`
-    ${({ $intensity }) =>
-        $intensity === 'off'
-            ? css`display: none;`
-            : css`
-                background: repeating-linear-gradient(
-                    0deg,
-                    transparent 0 3px,
-                    rgba(0, 0, 0, ${$intensity === 'low' ? 0.12 : 0.25}) 3px 5px
-                );
-            `}
+    background: repeating-linear-gradient(
+        0deg,
+        transparent 0 3px,
+        rgba(0, 0, 0, 0.25) 3px 5px
+    );
 `;
 
 const Vignette = styled(Overlay)`
@@ -77,18 +71,14 @@ const Sweep = styled(Overlay)`
     }
 `;
 
-const Terminal = ({ children }) => {
-    const { settings } = useSettings();
-
-    return (
-        <Shell>
-            {children}
-            <Scanlines $intensity={settings.scanlines} data-testid="scanlines" />
-            <Vignette />
-            {settings.sweep !== false && settings.scanlines !== 'off' && <Sweep />}
-        </Shell>
-    );
-};
+const Terminal = ({ children }) => (
+    <Shell>
+        {children}
+        <Scanlines data-testid="scanlines" />
+        <Vignette />
+        <Sweep />
+    </Shell>
+);
 
 Terminal.propTypes = {
     children: PropTypes.node.isRequired,
