@@ -13,6 +13,7 @@ import HolotapeArchive from './components/screens/HolotapeArchive.jsx';
 import SystemMonitor from './components/screens/SystemMonitor.jsx';
 import Vault from './components/screens/Vault.jsx';
 import CommandPrompt from './components/CommandPrompt/CommandPrompt.jsx';
+import SoundLayer from './components/SoundLayer.jsx';
 import FileCorrupted from './components/screens/FileCorrupted.jsx';
 import SystemFault from './components/SystemFault.jsx';
 import BootSequence from './components/BootSequence/BootSequence.jsx';
@@ -91,6 +92,7 @@ const TerminalApp = () => {
                 </RouteRedraw>
                 <StatusBar />
                 <CommandPrompt />
+                <SoundLayer />
             </Terminal>
         </BrowserRouter>
     );
