@@ -1,54 +1,91 @@
-import { useMemo, useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { hackGame } from '../../constants/index.js';
 
-const GARBAGE_CHARS = '{}[]()<>!@#$%^&*_-+=?/\\|;:,.';
-const ROWS = 16;
-const COLS = 2;
-const CELL_CHARS = 12;
+const CODE_LENGTH = 5;
+const MEMORIZE_SECONDS = 4;
+const TOTAL_ATTEMPTS = 3;
 
 const Wrap = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    max-width: 920px;
+    max-width: 540px;
     margin: 0 auto;
-    align-items: start;
-`;
-
-const GridBlock = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.4rem 1.2rem;
-    font-family: 'VT323', Menlo, Consolas, monospace;
-    font-size: 1.05rem;
-    line-height: 1.4;
-`;
-
-const Row = styled.div`
     display: flex;
-    gap: 0.7rem;
-    white-space: pre;
+    flex-direction: column;
+    gap: 1.4rem;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
 `;
 
-const Addr = styled.span`
+const Caption = styled.div`
     color: var(--dim);
+    letter-spacing: 0.18em;
+    font-size: 0.95rem;
 `;
 
-const Dump = styled.span`
+const CodeDisplay = styled.div`
     color: var(--phosphor);
+    font-family: 'VT323', Menlo, Consolas, monospace;
+    font-size: clamp(2.4rem, 12vw, 4.2rem);
+    letter-spacing: clamp(0.3rem, 3vw, 0.9rem);
+    text-shadow: 0 0 14px var(--glow);
+    padding: 0.4rem 0;
+    word-break: keep-all;
+    line-height: 1.1;
 `;
 
-const WordButton = styled.button`
+const Countdown = styled.div`
+    color: var(--dim);
+    letter-spacing: 0.15em;
+    font-size: 0.95rem;
+    min-height: 1.2em;
+`;
+
+const EntryForm = styled.form`
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    width: 100%;
+    max-width: 360px;
+`;
+
+const Prompt = styled.label`
+    color: var(--phosphor);
+    letter-spacing: 0.18em;
+    font-size: 1rem;
+`;
+
+const CodeInput = styled.input`
     background: transparent;
-    border: none;
+    border: 1px solid var(--phosphor);
+    color: var(--phosphor);
+    font-family: 'VT323', Menlo, Consolas, monospace;
+    font-size: clamp(1.6rem, 7vw, 2.4rem);
+    letter-spacing: clamp(0.4rem, 3vw, 0.8rem);
+    text-align: center;
+    text-shadow: 0 0 8px var(--glow);
+    padding: 0.4rem 0.8rem;
+    width: 100%;
+    max-width: 280px;
+    box-sizing: border-box;
+    outline: none;
+
+    &:focus-visible {
+        box-shadow: 0 0 0 2px var(--glow);
+    }
+`;
+
+const TransmitButton = styled.button`
+    background: transparent;
+    border: 1px solid var(--phosphor);
     color: var(--phosphor);
     font: inherit;
     text-shadow: inherit;
-    padding: 0 2px;
+    padding: 0.5rem 1.4rem;
+    letter-spacing: 0.15em;
     cursor: pointer;
-    text-transform: uppercase;
 
     &:hover:not(:disabled), &:focus-visible {
         background: var(--phosphor);
@@ -58,208 +95,163 @@ const WordButton = styled.button`
     }
 
     &:disabled {
-        color: var(--dim);
+        opacity: 0.4;
         cursor: not-allowed;
-        text-decoration: line-through;
     }
-`;
-
-const SidePanel = styled.aside`
-    border-left: 1px solid var(--dim);
-    padding-left: 1.2rem;
-    min-height: 200px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
 `;
 
 const AttemptsLine = styled.div`
-    letter-spacing: 0.15em;
     color: var(--phosphor);
-`;
-
-const Log = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-    font-family: 'VT323', Menlo, Consolas, monospace;
-    color: var(--phosphor);
-`;
-
-const LogLine = styled.div`
-    white-space: pre;
-`;
-
-const Flash = styled.div`
-    color: var(--phosphor);
-    font-size: 1.2rem;
     letter-spacing: 0.2em;
-    padding: 1rem 0;
-    text-align: center;
-    animation: hack-flash 0.4s steps(2) infinite;
-
-    @keyframes hack-flash {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.3; }
-    }
+    font-size: 0.95rem;
 `;
 
-// PRNG-ish helpers using Math.random (mockable in tests)
-const randInt = (max) => Math.floor(Math.random() * max);
-const randomChar = () => GARBAGE_CHARS[randInt(GARBAGE_CHARS.length)];
-const randomGarbage = (n) => {
-    let out = '';
-    for (let i = 0; i < n; i += 1) out += randomChar();
-    return out;
-};
+const Mismatch = styled.div`
+    color: var(--dim);
+    letter-spacing: 0.12em;
+    min-height: 1.2em;
+    font-size: 0.95rem;
+`;
 
-const likeness = (guess, secret) => {
-    let count = 0;
-    for (let i = 0; i < guess.length && i < secret.length; i += 1) {
-        if (guess[i] === secret[i]) count += 1;
+const Granted = styled.div`
+    color: var(--phosphor);
+    letter-spacing: 0.25em;
+    font-size: 1.4rem;
+    padding: 0.6rem 0;
+    text-shadow: 0 0 12px var(--glow);
+`;
+
+const generateCode = () => {
+    let code = '';
+    for (let i = 0; i < CODE_LENGTH; i += 1) {
+        code += String(Math.floor(Math.random() * 10));
     }
-    return count;
-};
-
-const buildBoard = (words) => {
-    const totalCells = ROWS * COLS;
-    const cells = new Array(totalCells).fill(null).map(() => ({ tokens: [] }));
-
-    // Pick one secret deterministically off Math.random for testability
-    const secretIdx = randInt(words.length);
-    const secret = words[secretIdx];
-
-    // Pre-fill garbage strings per cell
-    cells.forEach((c) => { c.garbage = randomGarbage(CELL_CHARS); });
-
-    // Place each word once across cells; track which cells already have a word
-    const cellHasWord = new Array(totalCells).fill(false);
-    const placements = words.map((w) => {
-        // find an open cell
-        let cellIdx = randInt(totalCells);
-        let safety = 0;
-        while (cellHasWord[cellIdx] && safety < totalCells * 2) {
-            cellIdx = (cellIdx + 1) % totalCells;
-            safety += 1;
-        }
-        cellHasWord[cellIdx] = true;
-        // pick a position inside the cell so the word fits
-        const maxStart = Math.max(0, CELL_CHARS - w.length);
-        const pos = randInt(maxStart + 1);
-        return { cellIdx, pos, word: w };
-    });
-
-    // Build token list per cell: alternating garbage / word button
-    cells.forEach((c, idx) => {
-        const placement = placements.find((p) => p.cellIdx === idx);
-        if (!placement) {
-            c.tokens = [{ type: 'garbage', text: c.garbage }];
-            return;
-        }
-        const before = c.garbage.slice(0, placement.pos);
-        const after = randomGarbage(Math.max(0, CELL_CHARS - placement.pos - placement.word.length));
-        c.tokens = [
-            { type: 'garbage', text: before },
-            { type: 'word', word: placement.word },
-            { type: 'garbage', text: after },
-        ];
-    });
-
-    // address column: pick a base hex address that increments per cell
-    const base = 0xF4A0 + randInt(0x100);
-    const addrs = cells.map((_, i) => `0x${(base + i * 12).toString(16).toUpperCase().padStart(4, '0')}`);
-
-    return { cells, addrs, secret };
+    return code;
 };
 
 const HackMinigame = ({ onWin, onLockout }) => {
-    const { cells, addrs, secret } = useMemo(() => buildBoard(hackGame.words), []);
-    const [attemptsLeft, setAttemptsLeft] = useState(hackGame.attempts);
-    const [guesses, setGuesses] = useState([]); // [{ word, likeness }]
-    const [granted, setGranted] = useState(false);
+    const [code, setCode] = useState(generateCode);
+    const [phase, setPhase] = useState('memorize'); // 'memorize' | 'entry' | 'granted'
+    const [secondsLeft, setSecondsLeft] = useState(MEMORIZE_SECONDS);
+    const [attemptsLeft, setAttemptsLeft] = useState(TOTAL_ATTEMPTS);
+    const [entry, setEntry] = useState('');
+    const [mismatch, setMismatch] = useState(false);
+
     const winFiredRef = useRef(false);
     const lockoutFiredRef = useRef(false);
+    const inputRef = useRef(null);
 
+    // Memorize countdown — ticks once per second, switches to entry at 0.
     useEffect(() => {
-        if (granted && !winFiredRef.current) {
+        if (phase !== 'memorize') return undefined;
+        const id = setInterval(() => {
+            setSecondsLeft((n) => {
+                if (n <= 1) {
+                    clearInterval(id);
+                    setPhase('entry');
+                    return 0;
+                }
+                return n - 1;
+            });
+        }, 1000);
+        return () => clearInterval(id);
+    }, [phase]);
+
+    // Autofocus the input when entering the entry phase.
+    useEffect(() => {
+        if (phase === 'entry' && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [phase]);
+
+    // Fire onWin once when the access is granted.
+    useEffect(() => {
+        if (phase === 'granted' && !winFiredRef.current) {
             winFiredRef.current = true;
             onWin();
         }
-    }, [granted, onWin]);
+    }, [phase, onWin]);
 
+    // Fire onLockout once when attempts are exhausted.
     useEffect(() => {
-        if (attemptsLeft <= 0 && !granted && !lockoutFiredRef.current) {
+        if (attemptsLeft <= 0 && phase !== 'granted' && !lockoutFiredRef.current) {
             lockoutFiredRef.current = true;
             if (onLockout) onLockout();
         }
-    }, [attemptsLeft, granted, onLockout]);
+    }, [attemptsLeft, phase, onLockout]);
 
-    const handleGuess = (word) => {
-        if (granted || attemptsLeft <= 0) return;
-        if (guesses.some((g) => g.word === word)) return;
-        if (word === secret) {
-            setGranted(true);
-            setGuesses((prev) => [...prev, { word, likeness: word.length, correct: true }]);
+    const handleSubmit = useCallback((e) => {
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
+        if (phase !== 'entry') return;
+        if (entry.length !== CODE_LENGTH) return;
+        if (entry === code) {
+            setPhase('granted');
             return;
         }
-        const score = likeness(word, secret);
-        setGuesses((prev) => [...prev, { word, likeness: score, correct: false }]);
-        setAttemptsLeft((n) => Math.max(0, n - 1));
+        // Wrong: consume an attempt, refresh the code, go back to memorize.
+        const nextAttempts = attemptsLeft - 1;
+        setAttemptsLeft(nextAttempts);
+        setEntry('');
+        setMismatch(true);
+        if (nextAttempts > 0) {
+            setCode(generateCode());
+            setSecondsLeft(MEMORIZE_SECONDS);
+            setPhase('memorize');
+        }
+    }, [phase, entry, code, attemptsLeft]);
+
+    const handleChange = (e) => {
+        const next = e.target.value.replace(/\D/g, '').slice(0, CODE_LENGTH);
+        setEntry(next);
     };
 
-    const attemptsBlocks = Array.from({ length: hackGame.attempts }, (_, i) => (i < attemptsLeft ? '▮' : '▯')).join(' ');
-
-    if (attemptsLeft <= 0 && !granted) {
-        // Render nothing — parent shows lockout UI via onLockout.
+    // Out of attempts and not granted — Vault renders the lockout UI.
+    if (attemptsLeft <= 0 && phase !== 'granted') {
         return null;
     }
 
+    const attemptsBlocks = Array.from({ length: TOTAL_ATTEMPTS }, (_, i) => (i < attemptsLeft ? '▮' : '▯')).join(' ');
+    const masked = Array.from({ length: CODE_LENGTH }, () => '█').join(' ');
+    const codeDisplay = phase === 'memorize'
+        ? code.split('').join(' ')
+        : masked;
+
     return (
         <Wrap>
-            <GridBlock aria-label="hack-dump">
-                {cells.map((cell, idx) => (
-                    <Row key={addrs[idx]}>
-                        <Addr>{addrs[idx]}</Addr>
-                        <Dump>
-                            {cell.tokens.map((tok, i) => {
-                                if (tok.type === 'garbage') {
-                                    return <span key={`g-${idx}-${i}`}>{tok.text}</span>;
-                                }
-                                const used = guesses.some((g) => g.word === tok.word);
-                                return (
-                                    <WordButton
-                                        key={`w-${idx}-${i}`}
-                                        type="button"
-                                        onClick={() => handleGuess(tok.word)}
-                                        disabled={used || granted}
-                                    >
-                                        {tok.word}
-                                    </WordButton>
-                                );
-                            })}
-                        </Dump>
-                    </Row>
-                ))}
-            </GridBlock>
-            <SidePanel>
-                <AttemptsLine>ATTEMPTS REMAINING: {attemptsBlocks}</AttemptsLine>
-                {granted && <Flash>ACCESS GRANTED</Flash>}
-                <Log aria-label="hack-log">
-                    {guesses.map((g, i) => (
-                        <div key={`${g.word}-${i}`}>
-                            <LogLine>{`> ${g.word}`}</LogLine>
-                            {g.correct ? (
-                                <LogLine>{'> ACCESS GRANTED'}</LogLine>
-                            ) : (
-                                <>
-                                    <LogLine>{'> ENTRY DENIED'}</LogLine>
-                                    <LogLine>{`> LIKENESS=${g.likeness}`}</LogLine>
-                                </>
-                            )}
-                        </div>
-                    ))}
-                </Log>
-            </SidePanel>
+            <AttemptsLine>{`ATTEMPTS REMAINING: ${attemptsBlocks}`}</AttemptsLine>
+            <Caption>INTERCEPTED ACCESS CODE</Caption>
+            <CodeDisplay aria-label="intercepted-code">{codeDisplay}</CodeDisplay>
+            {phase === 'memorize' && (
+                <>
+                    <Countdown>{`MEMORIZE — BURNS IN ${secondsLeft} SECONDS`}</Countdown>
+                    {mismatch && (
+                        <Mismatch>{'> CODE MISMATCH — NEW CODE INTERCEPTED'}</Mismatch>
+                    )}
+                </>
+            )}
+            {phase === 'entry' && (
+                <EntryForm onSubmit={handleSubmit}>
+                    <Prompt htmlFor="access-code-input">ENTER ACCESS CODE:</Prompt>
+                    <CodeInput
+                        id="access-code-input"
+                        ref={inputRef}
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="off"
+                        maxLength={CODE_LENGTH}
+                        value={entry}
+                        onChange={handleChange}
+                        aria-label="access-code"
+                    />
+                    <TransmitButton
+                        type="submit"
+                        disabled={entry.length !== CODE_LENGTH}
+                    >
+                        [ TRANSMIT ]
+                    </TransmitButton>
+                </EntryForm>
+            )}
+            {phase === 'granted' && <Granted>ACCESS GRANTED</Granted>}
         </Wrap>
     );
 };
