@@ -43,14 +43,14 @@ const BootSequence = ({ onDone }) => {
         }
         const id = setInterval(() => {
             setLineCount((n) => (n >= bootLines.length ? n : n + 1));
-        }, 180);
+        }, 110);
         return () => clearInterval(id);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
         if (lineCount >= bootLines.length) {
-            const t = setTimeout(finish, 700);
+            const t = setTimeout(finish, 400);
             return () => clearTimeout(t);
         }
         return undefined;
