@@ -31,8 +31,9 @@ npm run test:watch # Vitest watch mode
   quests), `/comms` (contact). Unknown routes → `404: FILE CORRUPTED`.
 - **Keyboard**: number keys or ↑/↓ + Enter on the menu, `Esc` back to menu,
   Tab reaches everything (roving tabindex on the menu).
-- **Theme**: `[PHOSPHOR: AMBER/GREEN]` toggle in the bottom status bar,
-  persisted in localStorage. CSS custom properties drive every color.
+- **Theme**: `[PHOSPHOR]` switch at the top right cycles 5 colors
+  (green default → amber → ice → white → alert), persisted in localStorage.
+  CSS custom properties drive every color.
 - **CRT effects** (scanlines, vignette, sweep, flicker) are pure CSS and
   respect `prefers-reduced-motion`.
 - **Contact form** posts to the Netlify function `functions/send-email.js`
