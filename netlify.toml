@@ -6,3 +6,8 @@
 
 [[plugins]]
   package = "netlify-plugin-inline-functions-env"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
