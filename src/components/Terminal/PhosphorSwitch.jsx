@@ -8,18 +8,24 @@ const Button = styled.button`
     right: 14px;
     z-index: 60;
     font: inherit;
-    background: none;
-    border: none;
+    background: color-mix(in srgb, var(--bg) 85%, var(--phosphor));
+    border: 1px solid var(--dim);
     color: var(--dim);
     cursor: pointer;
-    padding: 0.1rem 0.4rem;
+    padding: 0.35rem 0.9rem;
     text-shadow: none;
+    letter-spacing: 0.04em;
+    transition: transform 60ms ease-out;
 
     &:hover,
     &:focus-visible {
         background: var(--phosphor);
         color: var(--bg);
         outline: none;
+    }
+
+    &:active {
+        transform: translateY(1px);
     }
 `;
 
@@ -39,7 +45,7 @@ const PhosphorSwitch = () => {
             onClick={cycle}
             aria-label="cycle phosphor color"
         >
-            [PHOSPHOR: {current.toUpperCase()}]
+            [ PHOSPHOR: {current.toUpperCase()} ⟲ ]
         </Button>
     );
 };

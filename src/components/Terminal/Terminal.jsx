@@ -110,7 +110,7 @@ const Terminal = ({ children }) => {
         let cancelled = false;
 
         const schedule = () => {
-            const delay = 30000 + Math.random() * 60000; // avg ~1/min
+            const delay = 12000 + Math.random() * 16000; // avg ~1 per 20s
             timeoutId = setTimeout(() => {
                 if (cancelled) return;
                 setGlitching(true);

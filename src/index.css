@@ -10,6 +10,7 @@ html {
     --dim: #2aa85c;
     --bg: #061206;
     --glow: rgba(65, 255, 126, 0.55);
+    scrollbar-width: none;
 }
 
 body {
@@ -29,15 +30,9 @@ body {
 }
 
 ::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--bg);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--dim);
+    width: 0;
+    height: 0;
+    display: none;
 }
 
 a {
