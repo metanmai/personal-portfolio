@@ -67,6 +67,56 @@ const TickerLabel = styled.div`
 const EPOCH = new Date('2001-01-01T00:00:00Z').getTime();
 const pad = (n) => String(n).padStart(2, '0');
 
+const reducedMotion = () => {
+    try {
+        return typeof window !== 'undefined'
+            && window.matchMedia
+            && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch {
+        return false;
+    }
+};
+
+const SIGNAL_MIN = 2;
+const SIGNAL_MAX = 5;
+
+// Weighted random walk: bias upward so we live mostly at 4-5, dip to 3, rarely 2.
+const nextSignal = (current) => {
+    const r = Math.random();
+    if (current >= SIGNAL_MAX) {
+        // At top: stay or step down occasionally.
+        return r < 0.7 ? SIGNAL_MAX : SIGNAL_MAX - 1;
+    }
+    if (current <= SIGNAL_MIN) {
+        // At floor: strongly recover.
+        return r < 0.85 ? SIGNAL_MIN + 1 : SIGNAL_MIN;
+    }
+    if (current === SIGNAL_MAX - 1) {
+        // 4 bars: usually climb back to 5, sometimes hold, rarely drop.
+        if (r < 0.55) return SIGNAL_MAX;
+        if (r < 0.9) return current;
+        return current - 1;
+    }
+    // Middle (3): bias upward.
+    if (r < 0.55) return current + 1;
+    if (r < 0.9) return current;
+    return current - 1;
+};
+
+const renderBar = (strength) => {
+    const filled = '▮'.repeat(strength);
+    const empty = '░'.repeat(SIGNAL_MAX - strength);
+    return `${filled}${empty}`;
+};
+
+const formatSignalPct = (strength) => {
+    // Each bar ~20%, jitter ±3% so it doesn't look quantized; clamp 0-100.
+    const base = strength * 20;
+    const jitter = Math.floor(Math.random() * 7) - 3;
+    const pct = Math.max(0, Math.min(100, base + jitter));
+    return `${pct}%`;
+};
+
 const formatTime = (date) => `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
 
 const formatUptime = (now) => {
@@ -88,6 +138,8 @@ const StatusPanel = () => {
     const settings = (ctx && ctx.settings) || { theme: 'amber' };
     const [now, setNow] = useState(() => new Date());
     const [diagIndex, setDiagIndex] = useState(0);
+    const [signal, setSignal] = useState(4);
+    const [signalReadout, setSignalReadout] = useState('80%');
 
     useEffect(() => {
         const id = setInterval(() => setNow(new Date()), 1000);
@@ -100,6 +152,26 @@ const StatusPanel = () => {
         }, 2500);
         return () => clearInterval(id);
     }, []);
+
+    useEffect(() => {
+        if (reducedMotion()) return undefined;
+        let timeoutId;
+        const tick = () => {
+            setSignal((prev) => {
+                const next = nextSignal(prev);
+                setSignalReadout(formatSignalPct(next));
+                return next;
+            });
+            // Re-schedule with jittered interval 1000-1500ms.
+            timeoutId = setTimeout(tick, 1000 + Math.random() * 500);
+        };
+        timeoutId = setTimeout(tick, 1000 + Math.random() * 500);
+        return () => clearTimeout(timeoutId);
+    }, []);
+
+    const motionless = reducedMotion();
+    const signalBar = motionless ? '▮▮▮▮░' : renderBar(signal);
+    const signalText = motionless ? '80%' : signalReadout;
 
     return (
         <Panel>
@@ -122,7 +194,7 @@ const StatusPanel = () => {
             </Row>
             <Row>
                 <Label>SIGNAL</Label>
-                <Value>▮▮▮▮░</Value>
+                <Value>{signalBar} {signalText}</Value>
             </Row>
             <Row>
                 <Label>NODE</Label>
