@@ -19,32 +19,38 @@ npm test           # Vitest, happy-dom environment
 ### App Structure
 
 ```
-App.jsx                       boot gate (plain useState, boots EVERY visit) + providers + routes
-├── BootSequence/             stage machine: uplink → visitor report → login (user-paced)
+App.jsx                       boot gate (plain useState, boots EVERY visit: credentials login → 4s loading boot) + routes
+├── BootSequence/             stage machine: login form → loading bar + visitor report → WELCOME <name>
 │   ├── AsciiGlobe.jsx        rotating <pre> wireframe sphere
-│   └── (uses utils/deviceSpecs.js + api.ipify.org for the live report)
+│   └── (uses utils/deviceSpecs.js + api.ipify.org; writes sessionStorage 'termlink-operator')
 └── BrowserRouter
-    └── Terminal/             CRT shell: scanlines, vignette, sweep, flicker (no settings dep)
+    └── Terminal/             CRT shell: scanlines, vignette, sweep, flicker, ~20s random glitch
+        ├── PhosphorSwitch    fixed top-right, cycles THEME_ORDER (blob on mobile)
         ├── EscToMenu         global Esc → navigate('/')
         ├── RouteRedraw       keyed clip-path wipe on every navigation
         ├── SystemFault.jsx   error boundary
         │   ├── /             MainMenu/  (ascii banner, roving-tabindex menu, StatusPanel)
-        │   ├── /personnel    screens/PersonnelFile    (journey timeline, NOT a CV)
-        │   ├── /career       screens/CareerDossier    (ALL work: experience, projects, testimonials, resume)
-        │   ├── /recreation   screens/RecreationWing   (games, music, photography, side quests)
-        │   ├── /comms        screens/OpenComms        (contact form + socials)
+        │   ├── /personnel    screens/PersonnelFile    (journey accordion + portrait, NOT a CV)
+        │   ├── /career       screens/CareerDossier    (ALL work: experience+loadout, projects, testimonials, resume link)
+        │   ├── /recreation   screens/RecreationWing   (live Steam + Last.fm feeds, photos, side quests)
+        │   ├── /holotapes    screens/HolotapeArchive  (log entries, typed playback)
+        │   ├── /monitor      screens/SystemMonitor    (live GitHub + LeetCode telemetry)
+        │   ├── /comms        screens/OpenComms        (contact form, JS-validated in-fiction)
+        │   ├── /vault        screens/Vault            (HackMinigame gate → vaultEntries; sessionStorage 'termlink-vault-unlocked')
         │   └── *             screens/FileCorrupted    (404)
-        └── StatusBar/        fixed footer: path · socials · [PHOSPHOR] toggle · clock
+        ├── StatusBar/        fixed footer: path · socials · [♪] sound · [LOGOUT] · clock (hints hidden <900px)
+        ├── CommandPrompt/    Ctrl+K or '>' summonable prompt; commands data in constants; [CMD] button <900px
+        └── SoundLayer        WebAudio key clicks + hum when settings.sound (off by default)
 ```
 
-Shared: `screens/ScreenFrame.jsx` (scramble-decode title + back link), `PhosphorImage/` (duotone image + VIEW RAW lightbox).
+Shared: `screens/ScreenFrame.jsx` (scramble-decode title + back link), `PhosphorImage/` (duotone image + VIEW RAW lightbox), `HackMinigame/` (Fallout word-guess, props onWin/onLockout).
 
 ### Boot sequence contract
 `BootSequence({ onDone })`, default export. Stages: (1) uplink — local header lines + AsciiGlobe + IP fetch (api.ipify.org, 3s AbortController timeout, fallback 'UNTRACEABLE'); (2) report — padLine-formatted visitor lines from `utils/deviceSpecs.js` (`getDeviceSpecLines`, `getRegion`, `getBrowserName` — all throw-proof with in-fiction fallbacks); (3) login — holds at `IDENTIFY USER:` until any key/click, fake-types GUEST, then onDone. **There is intentionally no skip** — the owner wants it user-paced. Don't reintroduce sessionStorage gating.
 
 ### Theming & settings
 - `src/theme.js` — amber/green palettes → CSS custom properties (`--phosphor`, `--dim`, `--bg`, `--glow`) + `data-theme`.
-- `src/settings.jsx` — context persisting `{ theme }` ONLY (localStorage `termlink-settings`). The owner explicitly killed all other toggles (scanlines/text-size/sweep/boot were removed). The only control is the `[PHOSPHOR]` button in StatusBar.
+- `src/settings.jsx` — context persisting `{ theme, sound }` (localStorage `termlink-settings`). The owner explicitly killed all other toggles (scanlines/text-size/sweep/boot were removed). Controls: top-right PhosphorSwitch + `[♪]` in StatusBar.
 - styled-components consume `var(--...)`; never hard-code colors.
 
 ### Hooks
