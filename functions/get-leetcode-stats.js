@@ -8,7 +8,7 @@ exports.handler = async (event) => {
 
     const username = process.env.LEETCODE_USERNAME || 'metanmai';
 
-    const query = 'query userProblemsSolved($username: String!) { matchedUser(username: $username) { submitStatsGlobal { acSubmissionNum { difficulty count } } profile { ranking } } }';
+    const query = 'query userProblemsSolved($username: String!) { allQuestionsCount { difficulty count } matchedUser(username: $username) { submitStatsGlobal { acSubmissionNum { difficulty count } } profile { ranking } } }';
 
     try {
         const response = await fetch('https://leetcode.com/graphql', {
@@ -61,13 +61,29 @@ exports.handler = async (event) => {
             ? matched.profile.ranking
             : null;
 
+        const totalRows = (json.data && Array.isArray(json.data.allQuestionsCount))
+            ? json.data.allQuestionsCount
+            : [];
+
+        const findTotal = (difficulty) => {
+            const row = totalRows.find((entry) => entry && entry.difficulty === difficulty);
+            return row && typeof row.count === 'number' ? row.count : 0;
+        };
+
+        const totals = {
+            easy: findTotal('Easy'),
+            medium: findTotal('Medium'),
+            hard: findTotal('Hard'),
+            all: findTotal('All')
+        };
+
         return {
             statusCode: 200,
             headers: {
                 'Content-Type': 'application/json',
                 'Cache-Control': 'public, max-age=3600'
             },
-            body: JSON.stringify({ solved, ranking })
+            body: JSON.stringify({ solved, totals, ranking })
         };
     } catch (error) {
         console.error('get-leetcode-stats failed:', error);
