@@ -10,7 +10,7 @@ const decrypt = keyframes`
 const Wrap = styled.figure`
     position: relative;
     background-color: var(--phosphor);
-    max-width: 480px;
+    max-width: 720px;
 `;
 
 const Img = styled.img`

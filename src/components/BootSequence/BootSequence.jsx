@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { bootLines } from '../../constants/index.js';
+import { getDeviceSpecLines } from '../../utils/deviceSpecs.js';
 
 const Screen = styled.div`
     min-height: 100dvh;
@@ -28,6 +29,16 @@ const BootSequence = ({ onDone }) => {
     const [lineCount, setLineCount] = useState(0);
     const doneRef = useRef(false);
 
+    const lines = useMemo(() => {
+        // Header: first 3 lines from constants (TERMLINK header + INITIALIZING).
+        const header = bootLines.slice(0, 3);
+        // The remaining static lines, with the fake hardware ones filtered out.
+        const rest = bootLines.slice(3).filter(
+            (l) => !l.startsWith('CPU:') && !l.startsWith('MEMORY CHECK:'),
+        );
+        return [...header, ...getDeviceSpecLines(), ...rest];
+    }, []);
+
     const finish = () => {
         if (!doneRef.current) {
             doneRef.current = true;
@@ -37,19 +48,19 @@ const BootSequence = ({ onDone }) => {
 
     useEffect(() => {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            setLineCount(bootLines.length);
+            setLineCount(lines.length);
             const t = setTimeout(finish, 400);
             return () => clearTimeout(t);
         }
         const id = setInterval(() => {
-            setLineCount((n) => (n >= bootLines.length ? n : n + 1));
+            setLineCount((n) => (n >= lines.length ? n : n + 1));
         }, 110);
         return () => clearInterval(id);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        if (lineCount >= bootLines.length) {
+        if (lineCount >= lines.length) {
             const t = setTimeout(finish, 400);
             return () => clearTimeout(t);
         }
@@ -66,7 +77,7 @@ const BootSequence = ({ onDone }) => {
 
     return (
         <Screen onClick={finish} role="status" aria-label="Terminal booting — press any key to skip">
-            {bootLines.slice(0, lineCount).map((line, i) => (
+            {lines.slice(0, lineCount).map((line, i) => (
                 <Line key={i}>{line || ' '}</Line>
             ))}
             <Line>█</Line>

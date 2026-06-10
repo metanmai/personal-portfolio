@@ -31,8 +31,8 @@ const FileRow = styled.button`
 
 const Detail = styled.div`
     display: grid;
-    grid-template-columns: minmax(220px, 1fr) 2fr;
-    gap: 1.2rem;
+    grid-template-columns: minmax(320px, 1.2fr) 1fr;
+    gap: 1.6rem;
     padding: 1rem 0.4rem 1.6rem;
 
     @media (max-width: 700px) {
