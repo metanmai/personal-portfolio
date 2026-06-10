@@ -22,11 +22,10 @@ const bootLines = [
 ];
 
 const menuItems = [
-    { num: '01', label: 'PERSONNEL FILE', hint: 'about', path: '/personnel' },
-    { num: '02', label: 'PROJECT ARCHIVES', hint: 'work', path: '/archives' },
-    { num: '03', label: 'FIELD COMMENDATIONS', hint: 'testimonials', path: '/commendations' },
+    { num: '01', label: 'PERSONNEL FILE', hint: 'my journey', path: '/personnel' },
+    { num: '02', label: 'CAREER DOSSIER', hint: 'work', path: '/career' },
+    { num: '03', label: 'RECREATION WING', hint: 'off duty', path: '/recreation' },
     { num: '04', label: 'OPEN COMMS CHANNEL', hint: 'contact', path: '/comms' },
-    { num: '05', label: 'TERMINAL CALIBRATION', hint: 'settings', path: '/calibration' },
 ];
 
 // PLACEHOLDER — owner must replace with real experience timeline
@@ -44,6 +43,34 @@ const experience = [
         summary: 'Built the original version of this terminal, among other things.',
     },
 ];
+
+// PLACEHOLDER content — owner must personalize every entry marked UPDATE ME
+const journey = [
+    { year: '2001', title: 'SUBJECT INITIALIZED', note: 'UPDATE ME — where it all began.' },
+    { year: '2013', title: 'FIRST CONTACT WITH A COMPUTER', note: 'UPDATE ME — the machine that started it.' },
+    { year: '2019', title: 'ENROLLED: B.TECH COMPUTER SCIENCE', note: 'UPDATE ME — college era, first real programs.' },
+    { year: '2022', title: 'BUILT THIS TERMINAL (V1)', note: 'The original portfolio this terminal replaced.' },
+    { year: '2023', title: 'WENT PROFESSIONAL', note: 'UPDATE ME — first role, what changed.' },
+    { year: 'NOW', title: 'ONGOING OPERATIONS', note: 'UPDATE ME — current chapter.' },
+];
+
+const recreation = {
+    games: {
+        nowPlaying: 'UPDATE ME',
+        allTimers: ['FALLOUT: NEW VEGAS', 'UPDATE ME', 'UPDATE ME'],
+    },
+    music: {
+        genres: ['UPDATE ME'],
+        currentRotation: ['UPDATE ME — artist or album', 'UPDATE ME'],
+    },
+    photography: {
+        blurb: 'UPDATE ME — what you like shooting.',
+        shots: [
+            { src: 'img/blocktopia.png', caption: 'PLACEHOLDER SHOT — replace with real photos in public/img/' },
+        ],
+    },
+    tinkering: ['UPDATE ME — side quests, builds, experiments'],
+};
 
 const skills = [
     { name: 'python', level: 90 },
@@ -147,6 +174,8 @@ export {
     bootLines,
     menuItems,
     experience,
+    journey,
+    recreation,
     skills,
     projects,
     testimonials,

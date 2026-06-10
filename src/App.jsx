@@ -2,14 +2,13 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import PropTypes from 'prop-types';
-import { SettingsProvider, useSettings } from './settings.jsx';
+import { SettingsProvider } from './settings.jsx';
 import Terminal from './components/Terminal/Terminal.jsx';
 import MainMenu from './components/MainMenu/MainMenu.jsx';
 import PersonnelFile from './components/screens/PersonnelFile.jsx';
-import ProjectArchives from './components/screens/ProjectArchives.jsx';
-import Commendations from './components/screens/Commendations.jsx';
+import CareerDossier from './components/screens/CareerDossier.jsx';
+import RecreationWing from './components/screens/RecreationWing.jsx';
 import OpenComms from './components/screens/OpenComms.jsx';
-import Calibration from './components/screens/Calibration.jsx';
 import FileCorrupted from './components/screens/FileCorrupted.jsx';
 import SystemFault from './components/SystemFault.jsx';
 import BootSequence from './components/BootSequence/BootSequence.jsx';
@@ -57,8 +56,7 @@ RouteRedraw.propTypes = {
 };
 
 const TerminalApp = () => {
-    const { settings } = useSettings();
-    const [booted, setBooted] = useState(settings.boot === 'quick');
+    const [booted, setBooted] = useState(false);
 
     const handleBootDone = () => {
         setBooted(true);
@@ -77,10 +75,9 @@ const TerminalApp = () => {
                         <Routes>
                             <Route path="/" element={<MainMenu />} />
                             <Route path="/personnel" element={<PersonnelFile />} />
-                            <Route path="/archives" element={<ProjectArchives />} />
-                            <Route path="/commendations" element={<Commendations />} />
+                            <Route path="/career" element={<CareerDossier />} />
+                            <Route path="/recreation" element={<RecreationWing />} />
                             <Route path="/comms" element={<OpenComms />} />
-                            <Route path="/calibration" element={<Calibration />} />
                             <Route path="*" element={<FileCorrupted />} />
                         </Routes>
                     </SystemFault>
