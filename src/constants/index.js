@@ -27,8 +27,65 @@ const menuItems = [
     { num: '01', label: 'PERSONNEL FILE', hint: 'my journey', path: '/personnel' },
     { num: '02', label: 'CAREER DOSSIER', hint: 'work', path: '/career' },
     { num: '03', label: 'RECREATION WING', hint: 'off duty', path: '/recreation' },
-    { num: '04', label: 'OPEN COMMS CHANNEL', hint: 'contact', path: '/comms' },
+    { num: '04', label: 'HOLOTAPE ARCHIVE', hint: 'logs', path: '/holotapes' },
+    { num: '05', label: 'SYSTEM MONITOR', hint: 'diagnostics', path: '/monitor' },
+    { num: '06', label: 'OPEN COMMS CHANNEL', hint: 'contact', path: '/comms' },
+    { num: '??', label: '◼◼ REDACTED ◼◼', hint: '████████', path: '/vault' },
 ];
+
+const commands = [
+    { name: 'help', desc: 'LIST AVAILABLE COMMANDS' },
+    { name: 'ls', desc: 'LIST TERMINAL SCREENS' },
+    { name: 'open', desc: 'OPEN <SCREEN> — E.G. OPEN CAREER' },
+    { name: 'theme', desc: 'CYCLE PHOSPHOR COLOR' },
+    { name: 'whoami', desc: 'IDENTIFY CURRENT OPERATOR' },
+    { name: 'clear', desc: 'CLEAR PROMPT OUTPUT' },
+    { name: 'hack', desc: 'ATTEMPT SECURITY BYPASS' },
+    { name: 'logout', desc: 'END SESSION' },
+];
+
+const hackGame = {
+    attempts: 4,
+    // all words must share the same length (Fallout rules)
+    words: [
+        'GRANTED', 'JOURNEY', 'VISITOR', 'CONSOLE', 'NETWORK', 'PROGRAM',
+        'MACHINE', 'SYSTEMS', 'DOSSIER', 'ARCHIVE', 'UPLINKS', 'GAMEPAD',
+    ],
+};
+
+// PLACEHOLDER — owner should replace with real off-resume facts
+const vaultEntries = [
+    'SUBJECT ONCE SPENT AN ENTIRE WEEKEND SPEEDRUNNING A GAME INSTEAD OF STUDYING FOR FINALS. PASSED ANYWAY. UPDATE ME.',
+    'THE FIRST PROGRAM SUBJECT EVER WROTE CRASHED THE FAMILY COMPUTER. UPDATE ME.',
+    'CLASSIFIED PLAYLIST: UPDATE ME WITH THE SONGS YOU PRETEND NOT TO LIKE.',
+];
+
+// PLACEHOLDER — owner should replace with real log entries (newest first)
+const holotapes = [
+    {
+        id: 'LOG-003',
+        date: '2026-06-10',
+        title: 'TERMINAL REBUILT',
+        body: 'Tore the old portfolio down to the studs and rebuilt it as the machine you are reading this on. UPDATE ME with real notes.',
+    },
+    {
+        id: 'LOG-002',
+        date: 'UPDATE ME',
+        title: 'UPDATE ME — A THING I LEARNED',
+        body: 'UPDATE ME — write about something you figured out recently.',
+    },
+    {
+        id: 'LOG-001',
+        date: 'UPDATE ME',
+        title: 'UPDATE ME — FIRST ENTRY',
+        body: 'UPDATE ME — why this log exists.',
+    },
+];
+
+const monitor = {
+    githubUser: 'metanmai',
+    leetcodeUser: 'metanmai',
+};
 
 // PLACEHOLDER — owner must replace with real experience timeline
 const experience = [
@@ -213,4 +270,9 @@ export {
     socials,
     asciiBanner,
     diagnostics,
+    commands,
+    hackGame,
+    vaultEntries,
+    holotapes,
+    monitor,
 };
