@@ -35,7 +35,9 @@ const detectGpu = () => {
         if (!ext) return 'CLASSIFIED';
         const renderer = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL);
         if (!renderer) return 'CLASSIFIED';
-        return String(renderer);
+        // raw strings can be huge, e.g. "ANGLE (Google, Vulkan 1.3.0 (SwiftShader...))"
+        const name = String(renderer);
+        return name.length > 48 ? `${name.slice(0, 48)}…` : name;
     } catch {
         return 'CLASSIFIED';
     }
