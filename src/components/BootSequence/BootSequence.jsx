@@ -8,6 +8,7 @@ import {
     padLine,
 } from '../../utils/deviceSpecs.js';
 import { useClock } from '../../hooks/useClock.js';
+import { generatePuzzle } from '../../utils/loginPuzzle.js';
 import AsciiGlobe from './AsciiGlobe.jsx';
 
 // Static lines shown on the LOGIN screen and at the top of BOOT screen.
@@ -188,6 +189,27 @@ const Hint = styled.p`
     opacity: 0.85;
 `;
 
+// Inline label + bright phosphor prompt for the rotating security challenge.
+const ChallengeLabel = styled.span`
+    color: var(--dim);
+    letter-spacing: 0.05em;
+`;
+
+const ChallengePrompt = styled.span`
+    color: var(--phosphor);
+    text-shadow: 0 0 8px var(--glow);
+    margin-left: 0.5em;
+`;
+
+// Same family as --phosphor but dimmed — reads as a soft warning without
+// introducing a new red color into the palette.
+const ErrorLine = styled(Line)`
+    color: var(--dim);
+    margin-top: 0.6rem;
+    letter-spacing: 0.05em;
+    opacity: 0.95;
+`;
+
 const Bar = styled(Line)`
     margin-top: 0.75rem;
     letter-spacing: 0.05em;
@@ -196,7 +218,9 @@ const Bar = styled(Line)`
 const BootSequence = ({ onDone }) => {
     const [stage, setStage] = useState('login'); // 'login' | 'boot' | 'granted'
     const [operatorId, setOperatorId] = useState('');
-    const [passcode, setPasscode] = useState('');
+    const [challengeInput, setChallengeInput] = useState('');
+    const [puzzle, setPuzzle] = useState(() => generatePuzzle());
+    const [challengeError, setChallengeError] = useState(false);
     const [operator, setOperator] = useState('GUEST');
     const [ip, setIp] = useState(null); // null while pending
     const [bootLineCount, setBootLineCount] = useState(0);
@@ -206,14 +230,14 @@ const BootSequence = ({ onDone }) => {
     const clock = useClock();
     const doneRef = useRef(false);
     const operatorIdRef = useRef(null);
-    const passcodeRef = useRef(null);
+    const challengeRef = useRef(null);
     const submitRef = useRef(null);
 
-    // ArrowDown: OPERATOR ID → PASSCODE → AUTHENTICATE; ArrowUp reverses.
+    // ArrowDown: OPERATOR ID → CHALLENGE → AUTHENTICATE; ArrowUp reverses.
     // preventDefault keeps the caret from jumping to start/end of the input.
     const handleFormKeyDown = (event) => {
         if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
-        const order = [operatorIdRef.current, passcodeRef.current, submitRef.current];
+        const order = [operatorIdRef.current, challengeRef.current, submitRef.current];
         const idx = order.indexOf(event.target);
         if (idx === -1) return;
         const next = event.key === 'ArrowDown' ? idx + 1 : idx - 1;
@@ -331,6 +355,14 @@ const BootSequence = ({ onDone }) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        if (challengeInput.trim() !== puzzle.answer) {
+            // Wrong answer: rotate the puzzle, surface a soft error, refocus.
+            setPuzzle(generatePuzzle());
+            setChallengeInput('');
+            setChallengeError(true);
+            if (challengeRef.current) challengeRef.current.focus();
+            return;
+        }
         const cleaned = (operatorId.trim() || 'GUEST').toUpperCase();
         try {
             sessionStorage.setItem(SESSION_KEY, cleaned);
@@ -356,10 +388,6 @@ const BootSequence = ({ onDone }) => {
         }
         return <Line key={`b-${i}`}>{line || ' '}</Line>;
     };
-
-    // Reference passcode to silence unused-var lint while keeping a controlled
-    // input — the field is theater, no validation ever happens.
-    void passcode;
 
     return (
         <Screen
@@ -392,20 +420,31 @@ const BootSequence = ({ onDone }) => {
                             autoFocus
                         />
 
-                        <Label htmlFor="passcode">PASSCODE:</Label>
+                        <Label htmlFor="challenge">
+                            <ChallengeLabel>SECURITY CHALLENGE:</ChallengeLabel>
+                            <ChallengePrompt>{puzzle.prompt}</ChallengePrompt>
+                        </Label>
                         <Field
-                            id="passcode"
-                            name="passcode"
-                            type="password"
-                            value={passcode}
-                            onChange={(e) => setPasscode(e.target.value)}
+                            id="challenge"
+                            name="challenge"
+                            type="text"
+                            inputMode="numeric"
+                            value={challengeInput}
+                            onChange={(e) => setChallengeInput(e.target.value)}
                             autoComplete="off"
-                            ref={passcodeRef}
+                            spellCheck={false}
+                            ref={challengeRef}
+                            aria-label={`Security challenge: ${puzzle.prompt}`}
                         />
 
                         <Submit type="submit" ref={submitRef}>[ AUTHENTICATE ]</Submit>
                     </Form>
-                    <Hint>UNREGISTERED OPERATORS ARE ISSUED GUEST CLEARANCE ON FIRST LOGIN.</Hint>
+                    {challengeError && (
+                        <ErrorLine role="alert">
+                            {'> VERIFICATION FAILED — CHALLENGE ROTATED'}
+                        </ErrorLine>
+                    )}
+                    <Hint>COGNITION CHECK REQUIRED. ALL OPERATORS WELCOME.</Hint>
                 </LoginColumn>
             ) : (
                 <>
