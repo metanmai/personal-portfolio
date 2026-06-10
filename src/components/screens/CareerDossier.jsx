@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import ScreenFrame from './ScreenFrame.jsx';
 import PhosphorImage from '../PhosphorImage/PhosphorImage.jsx';
-import { experience, projects, testimonials } from '../../constants/index.js';
+import { experience, projects, skills, testimonials } from '../../constants/index.js';
 import { usePageMeta } from '../../hooks/usePageMeta.js';
 
 const SectionTitle = styled.h3`
@@ -15,6 +15,22 @@ const SectionTitle = styled.h3`
     }
 `;
 
+const TopGrid = styled.div`
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: start;
+
+    @media (max-width: 800px) {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+`;
+
+const Column = styled.div`
+    min-width: 0;
+`;
+
 const Entry = styled.div`
     border-left: 2px solid var(--dim);
     padding-left: 1rem;
@@ -23,6 +39,20 @@ const Entry = styled.div`
 
 const Period = styled.p`
     color: var(--dim);
+`;
+
+const ResumeLine = styled.p`
+    color: var(--dim);
+    margin-top: 1.4rem;
+    font-size: 0.9em;
+`;
+
+const SkillRow = styled.p`
+    display: flex;
+    gap: 1rem;
+    max-width: 360px;
+    justify-content: space-between;
+    font-size: 0.9em;
 `;
 
 const FileRow = styled.button`
@@ -91,9 +121,10 @@ const TestimonialAttribution = styled.p`
     font-size: 0.9em;
 `;
 
-const ExportLine = styled.p`
-    margin-top: 1rem;
-`;
+const renderBar = (level) => {
+    const filled = Math.round(level / 10);
+    return '▮'.repeat(filled) + '░'.repeat(10 - filled);
+};
 
 const CareerDossier = () => {
     const [openId, setOpenId] = useState(null);
@@ -101,14 +132,30 @@ const CareerDossier = () => {
 
     return (
         <ScreenFrame title="CAREER DOSSIER">
-            <SectionTitle>{'// SERVICE RECORD'}</SectionTitle>
-            {experience.map((job) => (
-                <Entry key={job.period}>
-                    <Period>{job.period}</Period>
-                    <p>{job.title} — {job.org}</p>
-                    <p>{job.summary}</p>
-                </Entry>
-            ))}
+            <TopGrid>
+                <Column>
+                    <SectionTitle>{'// SERVICE RECORD'}</SectionTitle>
+                    {experience.map((job) => (
+                        <Entry key={job.period}>
+                            <Period>{job.period}</Period>
+                            <p>{job.title} — {job.org}</p>
+                            <p>{job.summary}</p>
+                        </Entry>
+                    ))}
+                    <ResumeLine>
+                        &gt; FULL RECORD: <a href="/resume.pdf" target="_blank" rel="noreferrer">RESUME [PDF]</a>
+                    </ResumeLine>
+                </Column>
+                <Column>
+                    <SectionTitle>{'// CURRENT LOADOUT'}</SectionTitle>
+                    {skills.map((skill) => (
+                        <SkillRow key={skill.name}>
+                            <span>{skill.name}</span>
+                            <span aria-label={`${skill.level} percent`}>{renderBar(skill.level)} {skill.level}</span>
+                        </SkillRow>
+                    ))}
+                </Column>
+            </TopGrid>
 
             <SectionTitle>{'// PROJECT ARCHIVES'}</SectionTitle>
             <RecordsCount>
@@ -149,11 +196,6 @@ const CareerDossier = () => {
                     </TestimonialCard>
                 ))}
             </TestimonialGrid>
-
-            <SectionTitle>{'// EXPORT'}</SectionTitle>
-            <ExportLine>
-                &gt; <a href="/resume.pdf" download>EXPORT DOSSIER [RESUME.PDF]</a>
-            </ExportLine>
         </ScreenFrame>
     );
 };

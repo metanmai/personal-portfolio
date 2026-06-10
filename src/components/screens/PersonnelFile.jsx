@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import ScreenFrame from './ScreenFrame.jsx';
-import { personal, journey, skills } from '../../constants/index.js';
+import { personal, journey } from '../../constants/index.js';
 import { useTypewriter } from '../../hooks/useTypewriter.js';
 import { usePageMeta } from '../../hooks/usePageMeta.js';
 
@@ -50,25 +50,6 @@ const Note = styled.p`
     }
 `;
 
-const SkillRow = styled.p`
-    display: flex;
-    gap: 1rem;
-    max-width: 360px;
-    justify-content: space-between;
-    font-size: 0.9em;
-`;
-
-const SeeAlso = styled.p`
-    color: var(--dim);
-    margin-top: 2.4rem;
-    font-size: 0.9em;
-`;
-
-const renderBar = (level) => {
-    const filled = Math.round(level / 10);
-    return '▮'.repeat(filled) + '░'.repeat(10 - filled);
-};
-
 const PersonnelFile = () => {
     const { output } = useTypewriter(personal.bio, 90);
     usePageMeta('PERSONNEL FILE', 'Tanmai Nuthi — the journey so far.');
@@ -87,18 +68,6 @@ const PersonnelFile = () => {
                     <Note>{entry.note}</Note>
                 </TimelineEntry>
             ))}
-
-            <SectionTitle>{'// CURRENT LOADOUT'}</SectionTitle>
-            {skills.map((skill) => (
-                <SkillRow key={skill.name}>
-                    <span>{skill.name}</span>
-                    <span aria-label={`${skill.level} percent`}>{renderBar(skill.level)} {skill.level}</span>
-                </SkillRow>
-            ))}
-
-            <SeeAlso>
-                {'> SEE ALSO: [02] CAREER DOSSIER · [03] RECREATION WING'}
-            </SeeAlso>
         </ScreenFrame>
     );
 };

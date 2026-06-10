@@ -1,14 +1,20 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import ScreenFrame from './ScreenFrame.jsx';
-import { socials } from '../../constants/index.js';
 import { usePageMeta } from '../../hooks/usePageMeta.js';
+
+const Wrapper = styled.div`
+    display: flex;
+    justify-content: center;
+`;
 
 const Form = styled.form`
     display: flex;
     flex-direction: column;
     gap: 0.9rem;
     max-width: 560px;
+    width: 100%;
+    margin: 0 auto;
 `;
 
 const Field = styled.label`
@@ -66,13 +72,6 @@ const Output = styled.p`
     min-height: 1.4em;
 `;
 
-const Links = styled.p`
-    display: flex;
-    gap: 1.4rem;
-    flex-wrap: wrap;
-    margin-top: 2rem;
-`;
-
 const OpenComms = () => {
     const [status, setStatus] = useState('idle');
     usePageMeta('OPEN COMMS CHANNEL', 'Contact Tanmai Nuthi.');
@@ -98,39 +97,33 @@ const OpenComms = () => {
 
     return (
         <ScreenFrame title="OPEN COMMS CHANNEL">
-            <Form id="form" onSubmit={handleSubmit}>
-                <Field>
-                    CALLSIGN (NAME)
-                    <Input name="name" required autoComplete="name" />
-                </Field>
-                <Field>
-                    RETURN FREQUENCY (EMAIL)
-                    <Input name="email" type="email" required autoComplete="email" />
-                </Field>
-                <Field>
-                    SUBJECT
-                    <Input name="subject" required />
-                </Field>
-                <Field>
-                    MESSAGE
-                    <TextArea name="message" required />
-                </Field>
-                <Submit type="submit" disabled={status === 'sending'}>
-                    {status === 'sending' ? 'TRANSMITTING...' : '[ TRANSMIT MESSAGE ]'}
-                </Submit>
-                <Output role="status">
-                    {status === 'sent' && '> TRANSMISSION SENT ✓'}
-                    {status === 'failed' && '> RELAY FAILURE — RETRY'}
-                </Output>
-            </Form>
-            <Links>
-                {socials.map((social) => (
-                    <a key={social.name} href={social.link} target="_blank" rel="noreferrer">
-                        [{social.name}]
-                    </a>
-                ))}
-                <a href="/resume.pdf" download>[EXPORT DOSSIER — RESUME]</a>
-            </Links>
+            <Wrapper>
+                <Form id="form" onSubmit={handleSubmit}>
+                    <Field>
+                        CALLSIGN (NAME)
+                        <Input name="name" required autoComplete="name" />
+                    </Field>
+                    <Field>
+                        RETURN FREQUENCY (EMAIL)
+                        <Input name="email" type="email" required autoComplete="email" />
+                    </Field>
+                    <Field>
+                        SUBJECT
+                        <Input name="subject" required />
+                    </Field>
+                    <Field>
+                        MESSAGE
+                        <TextArea name="message" required />
+                    </Field>
+                    <Submit type="submit" disabled={status === 'sending'}>
+                        {status === 'sending' ? 'TRANSMITTING...' : '[ TRANSMIT MESSAGE ]'}
+                    </Submit>
+                    <Output role="status">
+                        {status === 'sent' && '> TRANSMISSION SENT ✓'}
+                        {status === 'failed' && '> RELAY FAILURE — RETRY'}
+                    </Output>
+                </Form>
+            </Wrapper>
         </ScreenFrame>
     );
 };
