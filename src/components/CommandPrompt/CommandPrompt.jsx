@@ -166,8 +166,10 @@ const FloatingButton = styled.button`
     text-shadow: none;
     letter-spacing: 0.04em;
 
-    @media (min-width: 900px) {
-        display: none;
+    &:hover, &:focus-visible {
+        background: var(--phosphor);
+        color: var(--bg);
+        outline: none;
     }
 `;
 

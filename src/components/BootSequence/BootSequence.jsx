@@ -73,14 +73,8 @@ const Screen = styled.div`
     font-size: clamp(15px, 2.2vmin, 20px);
     text-shadow: 0 0 7px var(--glow);
     padding: clamp(14px, 4vw, 56px);
-    cursor: default;
-
-    ${({ $centered }) => $centered && css`
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    `}
+    display: flex;
+    flex-direction: column;
 
     ${({ $blink }) => $blink && css`
         animation: ${screenBlink} ${BLINK_MS}ms steps(2, end) forwards;
@@ -93,18 +87,28 @@ const Screen = styled.div`
 `;
 
 // Wraps the centered login column so the header text + form + hint share a
-// common left edge in the middle of the viewport.
+// common left edge in the middle of the viewport. `margin: auto` centers like
+// justify/align center but degrades safely when content overflows small screens.
 const LoginColumn = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     width: min(560px, 92vw);
+    margin: auto;
+`;
+
+const BootColumn = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: auto;
 `;
 
 const Line = styled.p`
     white-space: pre-wrap;
     min-height: 1em;
     margin: 0;
+    visibility: ${({ $hidden }) => ($hidden ? 'hidden' : 'visible')};
 `;
 
 const Bright = styled(Line)`
@@ -386,19 +390,21 @@ const BootSequence = ({ onDone }) => {
     };
 
     // Render boot lines, intercepting the LOCAL TIME placeholder so the live
-    // clock value can be slotted in as JSX (seconds visibly advance).
-    const renderBootLine = (line, i) => {
+    // clock value can be slotted in as JSX (seconds visibly advance). Untyped
+    // lines render invisible to reserve their height — the centered column
+    // would otherwise re-center (jiggle) on every typed line.
+    const renderBootLine = (line, i, hidden) => {
         if (line === 'LOCAL_TIME_PLACEHOLDER') {
             // Mirror padLine layout: "LOCAL TIME .................. <value>"
             const prefix = padLine('LOCAL TIME', '');
             return (
-                <Line key={`b-${i}`}>
+                <Line key={`b-${i}`} $hidden={hidden}>
                     {prefix}
                     {clock}
                 </Line>
             );
         }
-        return <Line key={`b-${i}`}>{line || ' '}</Line>;
+        return <Line key={`b-${i}`} $hidden={hidden}>{line || ' '}</Line>;
     };
 
     return (
@@ -406,7 +412,6 @@ const BootSequence = ({ onDone }) => {
             role="status"
             aria-label="Terminal login sequence"
             $blink={blink}
-            $centered={stage === 'login'}
         >
             {stage === 'login' ? (
                 <LoginColumn>
@@ -459,28 +464,24 @@ const BootSequence = ({ onDone }) => {
                     <Hint>COGNITION CHECK REQUIRED. ALL OPERATORS WELCOME.</Hint>
                 </LoginColumn>
             ) : (
-                <>
+                <BootColumn>
                     {HEADER_LINES.map((line, i) => (
                         <Line key={`h-${i}`}>{line || ' '}</Line>
                     ))}
                     <GlobeWrap>
                         <AsciiGlobe />
                     </GlobeWrap>
-                    {bootLines.slice(0, bootLineCount).map((line, i) => renderBootLine(line, i))}
-                    {stage === 'boot' && (
-                        <Bar aria-label="Boot progress">
-                            {buildBar(progress)}
-                            <Caret>█</Caret>
-                        </Bar>
-                    )}
-                    {stage === 'granted' && (
-                        <>
-                            <Line>{' '}</Line>
-                            <Line>{'ACCESS LEVEL: VISITOR ......... GRANTED'}</Line>
-                            <Bright>{`WELCOME, ${operator}`}</Bright>
-                        </>
-                    )}
-                </>
+                    {bootLines.map((line, i) => renderBootLine(line, i, i >= bootLineCount))}
+                    <Bar aria-label="Boot progress">
+                        {buildBar(progress)}
+                        <Caret>█</Caret>
+                    </Bar>
+                    {/* GRANTED lines reserve their space during boot so the
+                        centered column doesn't shift when they appear */}
+                    <Line $hidden={stage !== 'granted'}>{' '}</Line>
+                    <Line $hidden={stage !== 'granted'}>{'ACCESS LEVEL: VISITOR ......... GRANTED'}</Line>
+                    <Bright $hidden={stage !== 'granted'}>{`WELCOME, ${operator}`}</Bright>
+                </BootColumn>
             )}
         </Screen>
     );

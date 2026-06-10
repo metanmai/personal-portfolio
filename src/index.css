@@ -38,3 +38,15 @@ body {
 a {
     color: var(--phosphor);
 }
+
+/* theme-tinted pixel cursors (set by applyTheme); desktop pointers only —
+   !important beats per-component `cursor: pointer` in styled-components */
+@media (pointer: fine) {
+    body {
+        cursor: var(--cursor-default, default);
+    }
+
+    a, button:enabled, [role='button'], summary, label {
+        cursor: var(--cursor-pointer, pointer) !important;
+    }
+}
