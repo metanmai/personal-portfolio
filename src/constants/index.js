@@ -46,12 +46,7 @@ const commands = [
 ];
 
 const hackGame = {
-    attempts: 4,
-    // all words must share the same length (Fallout rules)
-    words: [
-        'GRANTED', 'JOURNEY', 'VISITOR', 'CONSOLE', 'NETWORK', 'PROGRAM',
-        'MACHINE', 'SYSTEMS', 'DOSSIER', 'ARCHIVE', 'UPLINKS', 'GAMEPAD',
-    ],
+    attempts: 3,
 };
 
 // PLACEHOLDER — owner should replace with real off-resume facts

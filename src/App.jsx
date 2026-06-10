@@ -64,6 +64,9 @@ const TerminalApp = () => {
     const [booted, setBooted] = useState(false);
 
     const handleBootDone = () => {
+        // every login lands on the main menu, even from deep links —
+        // rewrite the URL before BrowserRouter mounts and reads it
+        window.history.replaceState(null, '', '/');
         setBooted(true);
     };
 

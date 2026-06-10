@@ -135,6 +135,13 @@ const Form = styled.form`
     align-items: center;
     width: 100%;
     margin: 1.5rem 0 0;
+
+    /* phones: labels stack above full-width inputs — the two-column grid
+       (label ~9rem + 80vw input) is wider than the viewport */
+    @media (max-width: 700px) {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.35rem;
+    }
 `;
 
 const Label = styled.label`
@@ -152,6 +159,11 @@ const Field = styled.input`
     padding: 0.7rem 0.9rem;
     width: min(420px, 80vw);
     outline: none;
+
+    @media (max-width: 700px) {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
     caret-color: var(--phosphor);
 
     &:focus, &:focus-visible {
