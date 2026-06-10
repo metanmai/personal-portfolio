@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { asciiBanner, menuItems, personal } from '../../constants/index.js';
@@ -85,10 +85,14 @@ const Row = styled.button`
     cursor: pointer;
     padding: 0.4rem 0.6rem;
 
-    &:hover, &:focus-visible, &[data-active='true'] {
+    &:hover,
+    &[data-active='true'] {
         background: var(--phosphor);
         color: var(--bg);
         text-shadow: none;
+    }
+
+    &:focus-visible {
         outline: none;
     }
 
@@ -137,6 +141,7 @@ const Cursor = styled.span`
 const MainMenu = () => {
     const navigate = useNavigate();
     const [selected, setSelected] = useState(0);
+    const rowRefs = useRef([]);
     usePageMeta('MAIN MENU', 'Operate the terminal: projects, experience, comms.');
 
     useEffect(() => {
@@ -146,9 +151,17 @@ const MainMenu = () => {
             if (digit >= 1 && digit <= menuItems.length) {
                 navigate(menuItems[digit - 1].path);
             } else if (event.key === 'ArrowDown') {
-                setSelected((s) => (s + 1) % menuItems.length);
+                setSelected((s) => {
+                    const next = (s + 1) % menuItems.length;
+                    rowRefs.current[next]?.focus();
+                    return next;
+                });
             } else if (event.key === 'ArrowUp') {
-                setSelected((s) => (s - 1 + menuItems.length) % menuItems.length);
+                setSelected((s) => {
+                    const next = (s - 1 + menuItems.length) % menuItems.length;
+                    rowRefs.current[next]?.focus();
+                    return next;
+                });
             } else if (event.key === 'Enter' && event.target.tagName !== 'BUTTON' && event.target.tagName !== 'A') {
                 navigate(menuItems[selected].path);
             }
@@ -177,7 +190,12 @@ const MainMenu = () => {
                     {menuItems.map((item, index) => (
                         <li key={item.path}>
                             <Row
+                                ref={(el) => {
+                                    rowRefs.current[index] = el;
+                                }}
                                 data-active={index === selected}
+                                tabIndex={index === selected ? 0 : -1}
+                                onFocus={() => setSelected(index)}
                                 onMouseEnter={() => setSelected(index)}
                                 onClick={() => navigate(item.path)}
                             >
