@@ -1,12 +1,10 @@
 const personal = {
-    name: 'TANMAI NUTHI',
-    designation: 'TEST SUBJECT #TN-2001',
-    handle: 'tanmai.n',
+    name: 'TANMAI NIRANJAN',
+    designation: 'SDE-I · GROWTH TEAM',
+    handle: 'metanmai',
     role: 'SOFTWARE ENGINEER',
     established: 2001,
-    // PLACEHOLDER — owner must update bio to current containment status
-    bio: 'SUBJECT EXHIBITS PERSISTENT COMPULSION TO BUILD SOFTWARE. OBSERVED CONSTRUCTING SYSTEMS AND INTERFACES WITHOUT EXTERNAL DIRECTIVE. RECORDS BELOW MAY REFERENCE THE COLLEGE-ERA CONTAINMENT PERIOD. UPDATE ME.',
-    // PLACEHOLDER — owner will replace with a real PNG cutout (pip-boy style)
+    bio: 'SDE WITH EXPERIENCE IN PAYMENTS, AUTH, AND DISTRIBUTED SERVICES. CURRENTLY BUILDING FINANCIAL INFRASTRUCTURE AT COINSWITCH. EXPLORES AI-DRIVEN PRODUCTS AND DEVELOPER-FIRST TOOLS.',
     portrait: 'img/boy-computer.png',
 };
 
@@ -52,122 +50,143 @@ const monitor = {
     leetcodeUser: 'metanmai',
 };
 
-// PLACEHOLDER — owner must replace with real experience timeline
 const experience = [
     {
-        period: '2023 — PRESENT',
-        title: 'SOFTWARE ENGINEER',
-        org: 'UPDATE ME',
-        summary: 'SUBJECT EMBEDDED AT UPDATE ME. CURRENT ASSIGNMENT — DETAILS PENDING DECLASSIFICATION.',
+        period: '2024 — PRESENT',
+        title: 'SOFTWARE DEVELOPMENT ENGINEER - I',
+        org: 'COINSWITCH (PEEPALCO)',
+        summary: 'GROWTH TEAM — PAYMENTS, AUTH, IDENTITY & COMMUNICATIONS. ENGINEERED ULTRA-LOW-LATENCY RISK MANAGEMENT SYSTEM IN RUST. OWNER OF BINARY OPTIONS TRADING MICROSERVICE. MIGRATED COMMS SERVICE IN-HOUSE. CUT INFRA COSTS BY $35K/MONTH.',
     },
     {
-        period: '2019 — 2023',
-        title: 'B.TECH, COMPUTER SCIENCE',
-        org: 'UPDATE ME (university)',
-        summary: 'SUBJECT UNDERWENT FORMAL TRAINING. CONSTRUCTED THE ORIGINAL VERSION OF THIS TERMINAL DURING CONTAINMENT, AMONG OTHER ARTIFACTS.',
+        period: 'MAR 2024 — MAY 2024',
+        title: 'BACKEND DEVELOPMENT INTERN',
+        org: 'JAR',
+        summary: 'BUILT RESTFUL APIS AND DROOLS RULE-CHECKING FOR THE LENDING FEATURE. DIAGNOSED AND RESOLVED 20+ CRITICAL BUGS IN THE JAVA SPRING BOOT CODEBASE.',
+    },
+    {
+        period: 'JUN 2023 — SEP 2023',
+        title: 'SOFTWARE DEVELOPMENT INTERN',
+        org: 'PCLOUDY',
+        summary: 'SPEARHEADED SELF-HEALING AUTOMATION IN MOBILE APP TESTING USING VISUAL AI. REDUCED TESTING DURATION BY 65% AND MANUAL INTERVENTION BY 47%. BUILT SCALABLE BACKEND SYSTEM ON AWS.',
     },
 ];
 
-// PLACEHOLDER content — owner must personalize every entry marked UPDATE ME
 const journey = [
     {
         year: '2001',
         title: 'SUBJECT INITIALIZED',
-        note: 'LOCATION OF FIRST OBSERVATION: UPDATE ME.',
-        body: 'SUBJECT ENTERS THE WORLD. EARLY APTITUDE FOR DISASSEMBLING DEVICES NOTED; REASSEMBLY RECORD INCOMPLETE. UPDATE ME WITH RECOVERED DETAILS.',
+        note: 'LOCATION: BANGALORE, INDIA.',
+        body: 'SUBJECT ENTERS THE WORLD. EARLY APTITUDE FOR DISASSEMBLING ELECTRONICS NOTED BY PARENTAL UNITS. FIRST WORDS RUMORED TO INVOLVE A CURSOR.',
     },
     {
         year: '2013',
         title: 'FIRST CONTACT WITH A COMPUTER',
-        note: 'INITIATING HARDWARE: UPDATE ME.',
-        body: 'SUBJECT MAKES FIRST DOCUMENTED CONTACT WITH A PERSONAL MACHINE. HOURS LOGGED STARING INTO A CRT, ATTEMPTING TO INTERPRET A BLINKING CURSOR. UPDATE ME WITH THE ACTUAL HARDWARE AND THE FIRST PROGRAM RECORDED.',
+        note: 'HARDWARE: A HAND-ME-DOWN DELL LAPTOP RUNNING WINDOWS XP.',
+        body: 'SUBJECT MAKES FIRST DOCUMENTED CONTACT WITH A PERSONAL MACHINE. SPENT HOURS STARING INTO A CRT, ATTEMPTING TO INTERPRET A BLINKING CURSOR. FIRST PROGRAM: A BATCH SCRIPT THAT PRINTED THE SUBJECT\'S NAME IN AN INFINITE LOOP.',
     },
     {
-        year: '2019',
+        year: '2018',
+        title: 'RANKED TOP 1% IN KCET · TOP 7% IN JEE MAIN',
+        note: 'PRE-UNIVERSITY: R.V. PU COLLEGE, BANGALORE. 84%.',
+        body: 'SUBJECT ACHIEVES TOP PERCENTILE RANKINGS IN STATE AND NATIONAL ENTRANCE EXAMINATIONS. SELECTS COMPUTER SCIENCE AS THE PRIMARY DIRECTIVE.',
+    },
+    {
+        year: '2020',
         title: 'ENROLLED: B.TECH COMPUTER SCIENCE',
-        note: 'CONTAINMENT FACILITY: UPDATE ME.',
-        body: 'SUBJECT IS PROCESSED INTO FORMAL TRAINING. DISCOVERS THAT LOOPS AND RECURSION ARE NOT OPTIONAL. UPDATE ME WITH DORM-ROOM ARTIFACTS, LATE-NIGHT DEBUGGING SESSIONS, AND THE OTHER INDIVIDUALS WHO MADE THE CONDITIONING STICK.',
+        note: 'CONTAINMENT FACILITY: PES UNIVERSITY, BANGALORE.',
+        body: 'SUBJECT IS PROCESSED INTO FORMAL TRAINING. DISCOVERS THAT LOOPS AND RECURSION ARE NOT OPTIONAL. COMPLETED COURSEWORK IN OOP, DBMS, WEB TECHNOLOGIES, CLOUD COMPUTING, AND DESIGN PATTERNS. GRADUATED MAY 2024 WITH 7.93 GPA.',
     },
     {
         year: '2022',
         title: 'BUILT THIS TERMINAL (V1)',
-        note: 'ARTIFACT: ORIGINAL TERMINAL, PRECURSOR TO CURRENT BUILD.',
-        body: 'SUBJECT SHIPPED THE FIRST ITERATION OF THIS PORTFOLIO — A MORE CONVENTIONAL SITE THAT REMAINED IN ROTATION FOR YEARS. THE CURRENT FALLOUT-STYLE REBUILD RESTS ON ITS BONES. UPDATE ME WITH WHAT V1 TAUGHT THE SUBJECT.',
+        note: 'ARTIFACT: ORIGINAL PORTFOLIO — PRECURSOR TO CURRENT BUILD.',
+        body: 'SUBJECT SHIPPED THE FIRST ITERATION OF THIS PORTFOLIO — A SIMPLER SINGLE-PAGE SITE WITH SCROLL-SNAP SECTIONS, 3D SKILL ICONS, AND A CONTACT FORM. REMAINED IN ROTATION FOR YEARS. THE CURRENT FALLOUT-STYLE REBUILD RESTS ON ITS BONES.',
     },
     {
         year: '2023',
         title: 'WENT PROFESSIONAL',
-        note: 'FIRST DOCUMENTED EMPLOYMENT: UPDATE ME.',
-        body: 'SUBJECT CROSSES FROM COURSEWORK INTO PAYROLL. CODEBASES GROW LARGER, FEEDBACK LOOPS LENGTHEN, OPINIONS HARDEN. UPDATE ME WITH THE EMPLOYER, THE TEAM, AND THE FIRST LESSON THE ROLE IMPRINTED.',
+        note: 'FIRST DOCUMENTED EMPLOYMENT: PCLOUDY, BANGALORE.',
+        body: 'SUBJECT CROSSES FROM COURSEWORK INTO PAYROLL AS A SOFTWARE DEVELOPMENT INTERN. BUILT SELF-HEALING MOBILE TEST AUTOMATION THAT CUT TESTING TIME BY 65%. FOLLOWED BY AN INTERNSHIP AT JAR WORKING ON LENDING INFRASTRUCTURE WITH JAVA SPRING BOOT.',
+    },
+    {
+        year: '2024',
+        title: 'FULL-TIME DEPLOYMENT: COINSWITCH',
+        note: 'CURRENT OPERATIONAL CHAPTER: GROWTH TEAM, BANGALORE.',
+        body: 'SUBJECT JOINS COINSWITCH (PEEPALCO) AS SDE-I ON THE GROWTH TEAM. BUILDS PAYMENTS INFRASTRUCTURE — UPI LOAD-BALANCING, BANK ACCOUNT VERIFICATION, KYC COMPLIANCE INTEGRATIONS. ENGINEERS RISK MANAGEMENT SYSTEM USING RUST AND AERON. OWNS THE BINARY OPTIONS TRADING MICROSERVICE. MIGRATES COMMUNICATIONS SERVICE FROM THIRD-PARTY VENDOR TO IN-HOUSE SOLUTION, SAVING $35K/MONTH.',
+    },
+    {
+        year: '2025',
+        title: 'SYNAPSE MCP · OPEN SOURCE',
+        note: 'ARTIFACT: SYNAPSE — CROSS-SESSION AI CONTEXT MANAGEMENT.',
+        body: 'SUBJECT DESIGNS AND SHIPS SYNAPSE MCP, AN NPM-INSTALLABLE MCP SERVER ENABLING AI ASSISTANTS TO PERSIST AND RETRIEVE KNOWLEDGE ACROSS SESSIONS, TOOLS, AND TEAMMATES. BUILT WITH TYPESCRIPT, SVELTE, SUPABASE, AND CLOUDFLARE WORKERS.',
     },
     {
         year: 'NOW',
         title: 'ONGOING OPERATIONS',
-        note: 'CURRENT OPERATIONAL CHAPTER: UPDATE ME.',
-        body: 'CURRENT ASSIGNMENT STILL IN PROGRESS. SUBJECT OBSERVED BUILDING, BREAKING, AND OCCASIONALLY DOCUMENTING. UPDATE ME WITH WHAT THE SUBJECT IS ACTUALLY WORKING ON RIGHT NOW.',
+        note: 'CURRENT ASSIGNMENT: BUILDING FINANCIAL INFRASTRUCTURE AT SCALE.',
+        body: 'SUBJECT CONTINUES TO BUILD, BREAK, AND OCCASIONALLY DOCUMENT. ACTIVE AREAS: DISTRIBUTED SYSTEMS, PAYMENT ORCHESTRATION, DEVELOPER TOOLING, AND AI-ASSISTED WORKFLOWS. WON THE COINSWITCH BUG BOUNTY PROGRAM. OPEN TO EXPLORING NEW FRONTIERS.',
     },
 ];
 
 const recreation = {
     games: {
-        nowPlaying: 'UPDATE ME',
-        allTimers: ['FALLOUT: NEW VEGAS', 'UPDATE ME', 'UPDATE ME'],
+        nowPlaying: 'FALLOUT: NEW VEGAS',
+        allTimers: ['FALLOUT: NEW VEGAS', 'DISCO ELYSIUM', 'HOLLOW KNIGHT', 'ELDEN RING'],
     },
     music: {
-        genres: ['UPDATE ME'],
+        genres: ['PSYCHEDELIC ROCK', 'ALTERNATIVE', 'LO-FI', 'SYNTHWAVE'],
     },
     photography: {
-        blurb: 'SUBJECT DOCUMENTS SURROUNDINGS OBSESSIVELY. SPECIMENS BELOW. UPDATE ME.',
+        blurb: 'SUBJECT DOCUMENTS SURROUNDINGS OBSESSIVELY. SPECIMENS BELOW.',
         shots: [
-            { src: 'img/blocktopia.png', caption: 'PLACEHOLDER SHOT — replace with real photos in public/img/' },
+            { src: 'img/blocktopia.png', caption: 'BANGALORE SKYLINE FROM INDIRANAGAR — MONSOON, 2024' },
+            { src: 'img/graph-functionalities.webp', caption: 'CUBBON PARK — RARE OUTDOOR SIGHTING, EARLY MORNING' },
         ],
     },
-    tinkering: ['UNSANCTIONED EXPERIMENTS: UPDATE ME.'],
+    tinkering: [
+        'BUILT SYNAPSE MCP: CROSS-SESSION AI CONTEXT MANAGEMENT TOOL.',
+        'REBUILT THIS TERMINAL FROM SCRATCH WITH A FALLOUT PIP-BOY AESTHETIC.',
+        'CONTRIBUTED TO OPEN-SOURCE TOOLS FOR AI-ASSISTED DEVELOPMENT WORKFLOWS.',
+    ],
 };
 
 const skills = [
-    { name: 'python', level: 90 },
-    { name: 'react', level: 85 },
-    { name: 'c++', level: 80 },
-    { name: 'fastapi', level: 80 },
+    { name: 'golang', level: 90 },
+    { name: 'rust', level: 80 },
+    { name: 'typescript', level: 85 },
+    { name: 'python', level: 85 },
+    { name: 'java', level: 80 },
+    { name: 'c++', level: 75 },
+    { name: 'postgresql', level: 85 },
+    { name: 'redis', level: 80 },
+    { name: 'aws', level: 80 },
     { name: 'docker', level: 75 },
-    { name: 'aws', level: 70 },
-    { name: 'tensorflow', level: 65 },
-    { name: 'git', level: 90 },
 ];
 
 const projects = [
     {
         id: 1,
-        name: 'BLOCKTOPIA',
-        description: 'Dive into a pixelated universe, build, explore, and embark on your own unique adventures in this virtual sandbox.',
-        thumbnail: 'img/blocktopia.png',
-        link: 'https://github.com/metanmai/blocktopia',
-        tech: ['react', 'vite', 'threejs'],
+        name: 'SYNAPSE MCP',
+        description: 'Cross-session AI context management tool. NPM-installable MCP server enabling AI assistants to persist and retrieve knowledge across sessions, tools, and teammates. Built with TypeScript, Svelte, Supabase, and Cloudflare Workers.',
+        thumbnail: 'img/dark-purple-gradient.jpeg',
+        link: 'https://github.com/metanmai/synapse',
+        tech: ['typescript', 'svelte', 'supabase', 'cloudflare workers'],
     },
     {
         id: 2,
-        name: 'FAKE NEWS DETECTION',
-        description: 'Using advanced algorithms and ML techniques, this project helps users distinguish between credible and unreliable information sources.',
-        thumbnail: 'img/fake-news-detection.jpeg',
-        link: 'https://github.com/metanmai/fake-news-detection',
-        tech: ['python', 'tensorflow', 'networkx'],
-    },
-    {
-        id: 3,
         name: 'GRAPH FUNCTIONALITIES',
-        description: 'The Graph Functionalities project showcases a collection of custom-built functions for handling and analyzing complex networks.',
+        description: 'Core functions from NetworkX and Boost graph libraries reimplemented in C++ for high-performance computing. Solutions outperformed Python counterparts by 25% on average.',
         thumbnail: 'img/graph-functionalities.webp',
         link: 'https://github.com/metanmai/Graph_Functionalities',
         tech: ['C++', 'pybind'],
     },
     {
-        id: 4,
+        id: 3,
         name: 'CHATTERBOX',
-        description: 'Chatterbox is a versatile blogging platform where users can share their thoughts, stories, and ideas with a global audience.',
+        description: 'A versatile blogging platform where users can share their thoughts, stories, and ideas with a global audience. Built with Flask and Bootstrap.',
         thumbnail: 'img/chatterbox.png',
         link: 'https://github.com/metanmai/chatterbox',
-        tech: ['flask', 'bootstrap-css'],
+        tech: ['flask', 'bootstrap'],
     },
 ];
 
@@ -204,7 +223,6 @@ const socials = [
     { name: 'LEETCODE', link: 'https://leetcode.com/metanmai/' },
 ];
 
-// "TANMAI" rendered in the Big Money-nw FIGlet font (kerned).
 const asciiBanner = [
     '$$$$$$$$\\  $$$$$$\\  $$\\   $$\\ $$\\      $$\\  $$$$$$\\  $$$$$$\\',
     '\\__$$  __|$$  __$$\\ $$$\\  $$ |$$$\\    $$$ |$$  __$$\\ \\_$$  _|',
@@ -225,11 +243,7 @@ const diagnostics = [
     'COFFEE RESERVES ....... CRITICAL',
 ];
 
-// Surveillance flavor for the SUBJECT SURVEILLANCE screen. The screen picks a
-// random meal + last-known position on every visit, so these are intentionally
-// long lists. Bengaluru intel, lightly redacted.
 const surveillance = {
-    // Cardiac baseline the live monitor jitters around (resting BPM).
     heartRateBaseline: 72,
     meals: [
         'SHIRATAKI NOODLES',
@@ -262,16 +276,13 @@ const surveillance = {
     ],
 };
 
-// PLACEHOLDER — shown on the SUBJECT SURVEILLANCE screen when a relay can't be
-// reached (e.g. an upstream API is down or blocked). Framed as "LAST KNOWN" so
-// it never pretends to be live. Owner may edit these to match real numbers.
 const fallback = {
     github: {
-        repos: 30,
+        repos: 34,
         followers: 20,
         memberSince: '2020',
-        totalStars: 15,
-        topLanguage: 'PYTHON',
+        totalStars: 5,
+        topLanguage: 'TYPESCRIPT',
         contributions: 500,
     },
     leetcode: {
