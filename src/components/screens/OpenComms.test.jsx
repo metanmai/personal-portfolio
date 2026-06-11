@@ -19,7 +19,7 @@ describe('OpenComms', () => {
         vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true }));
         render(<MemoryRouter><OpenComms /></MemoryRouter>);
         await fillAndSubmit();
-        expect(fetch).toHaveBeenCalledWith('/.netlify/functions/send-email', expect.objectContaining({
+        expect(fetch).toHaveBeenCalledWith('/', expect.objectContaining({
             method: 'POST',
         }));
         expect(await screen.findByText(/TRANSMISSION SENT/)).toBeInTheDocument();

@@ -7,6 +7,7 @@ import Terminal from './components/Terminal/Terminal.jsx';
 import MainMenu from './components/MainMenu/MainMenu.jsx';
 import PersonnelFile from './components/screens/PersonnelFile.jsx';
 import CareerDossier from './components/screens/CareerDossier.jsx';
+import FieldOperations from './components/screens/FieldOperations.jsx';
 import OpenComms from './components/screens/OpenComms.jsx';
 import SystemMonitor from './components/screens/SystemMonitor.jsx';
 import CommandPrompt from './components/CommandPrompt/CommandPrompt.jsx';
@@ -103,6 +104,7 @@ const TerminalApp = () => {
                             <Route path="/" element={<MainMenu />} />
                             <Route path="/personnel" element={<PersonnelFile />} />
                             <Route path="/career" element={<CareerDossier />} />
+                            <Route path="/projects" element={<FieldOperations />} />
                             <Route path="/comms" element={<OpenComms />} />
                             <Route path="/monitor" element={<SystemMonitor />} />
                             <Route path="*" element={<FileCorrupted />} />

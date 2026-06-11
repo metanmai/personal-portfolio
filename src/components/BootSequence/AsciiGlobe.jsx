@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { reducedMotion } from '../../utils/reducedMotion.js';
 
 // Rotating ASCII Earth — pure DOM, no canvas/webgl.
 // Hand-crafted equirectangular land/sea bitmap (72 cols × 36 rows),
@@ -90,16 +91,6 @@ const seaChar = (z) => {
     const t = Math.sqrt(Math.max(0, Math.min(1, z)));
     const idx = Math.min(SEA_RAMP.length - 1, Math.floor(t * SEA_RAMP.length));
     return SEA_RAMP[idx];
-};
-
-const reducedMotion = () => {
-    try {
-        return typeof window !== 'undefined'
-            && window.matchMedia
-            && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch {
-        return false;
-    }
 };
 
 // Per-cell static geometry: nx, ny, nz on the unit sphere (rotation-independent

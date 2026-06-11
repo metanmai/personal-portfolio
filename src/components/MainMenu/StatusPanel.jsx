@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { diagnostics } from '../../constants/index.js';
 import { useSettings } from '../../settings.jsx';
+import { reducedMotion } from '../../utils/reducedMotion.js';
 
 const Panel = styled.aside`
     border: 1px solid var(--dim);
@@ -66,16 +67,6 @@ const TickerLabel = styled.div`
 
 const EPOCH = new Date('2001-01-01T00:00:00Z').getTime();
 const pad = (n) => String(n).padStart(2, '0');
-
-const reducedMotion = () => {
-    try {
-        return typeof window !== 'undefined'
-            && window.matchMedia
-            && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch {
-        return false;
-    }
-};
 
 const SIGNAL_MIN = 2;
 const SIGNAL_MAX = 5;

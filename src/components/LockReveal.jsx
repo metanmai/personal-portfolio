@@ -1,20 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import PropTypes from 'prop-types';
+import { reducedMotion } from '../utils/reducedMotion.js';
 
 // Centered padlock that pops open when the personnel security gate is bypassed.
 // Holds locked briefly, swings the shackle open, beats a short pause, then
 // hands control back to the caller (which swaps in the unlocked record).
-
-const reducedMotion = () => {
-    try {
-        return typeof window !== 'undefined'
-            && window.matchMedia
-            && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch {
-        return false;
-    }
-};
 
 const flash = keyframes`
     0%   { opacity: 0; transform: scale(0.96); filter: brightness(0.6); }

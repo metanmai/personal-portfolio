@@ -1,77 +1,100 @@
 # TANMAI INDUSTRIES (TM) TERMLINK PROTOCOL
 
-[**Website Link**](https://metanmai.netlify.app)
+[**Live site →**](https://metanmai.com)
 
-Personal site of Tanmai Nuthi, built as a Fallout-style CRT terminal. Not a
-resume site — a place: the journey, the hobbies, the work (one section), and
-a way to reach me. Amber phosphor by default (New Vegas), green toggle.
-Fully keyboard-operable, responsive at every display size.
+The personal site of Tanmai Niranjan, built as a Fallout-style CRT terminal.
+It's deliberately not a plain résumé — it's a place you *operate*: boot in,
+work the numbered menu, bypass a security gate, and read the dossier on the
+"subject." React 18 + Vite, deployed on Netlify. Fully keyboard-operable and
+responsive at every size; honors `prefers-reduced-motion` throughout.
 
 ## Commands
 
 ```bash
-npm run dev        # Vite dev server
-npm run build      # production build → dist/
-npm run preview    # preview the production build
-npm run lint       # ESLint, zero-warnings policy
-npm test           # Vitest (happy-dom)
-npm run test:watch # Vitest watch mode
+npm run dev         # Vite dev server (also serves the Netlify functions locally)
+npm run build       # production build → dist/
+npm run preview     # preview the production build
+npm run lint        # ESLint (zero-warnings policy)
+npm test            # Vitest (happy-dom)
+npm run test:watch  # Vitest watch mode
 ```
 
 ## How it works
 
-- **Login boot** on every visit: uplink + rotating ASCII globe, then a live
-  visitor report (public IP via api.ipify.org, region from your timezone,
-  browser/CPU/memory/display/GPU from browser APIs), then it **holds** at
-  `IDENTIFY USER:` until any key/tap logs you in as GUEST. User-paced — no
-  skip, no timeout.
-- **Paged terminal screens** — the numbered menu IS the navigation. Real URLs:
-  `/personnel` (the journey), `/career` (all work: experience, projects,
-  testimonials, resume), `/recreation` (games, music, photography, side
-  quests), `/comms` (contact). Unknown routes → `404: FILE CORRUPTED`.
-- **Keyboard**: number keys or ↑/↓ + Enter on the menu, `Esc` back to menu,
-  Tab reaches everything (roving tabindex on the menu).
-- **Theme**: `[PHOSPHOR]` switch at the top right cycles 5 colors
-  (green default → amber → ice → white → alert), persisted in localStorage.
-  CSS custom properties drive every color.
-- **CRT effects** (scanlines, vignette, sweep, flicker) are pure CSS and
-  respect `prefers-reduced-motion`.
-- **Contact form** posts to the Netlify function `functions/send-email.js`
-  (needs `EMAIL_USERNAME`/`EMAIL_PASSWORD` env vars in Netlify).
+- **Boot + login on every visit.** A login screen (rotating ASCII globe,
+  `OPERATOR NAME`, and a small security challenge) gates entry. Solving it plays
+  an unlock animation, then a ~4s boot with a live visitor report (public IP via
+  `api.ipify.org`, region from your timezone, browser/CPU/memory/display/GPU
+  from browser APIs) before landing on the main menu.
+- **Numbered menu = navigation.** Each screen is a real route. Number keys or
+  `↑/↓ + Enter` select; `Esc` returns to the menu; `Ctrl+K` (or typing `>`)
+  opens a command prompt (`help`, `open <screen>`, `theme`, `sound`, `whoami`,
+  `hack`, `logout`, …). Unknown routes render `404: FILE CORRUPTED`.
 
-### Live data
+  | # | Screen | Route | What's there |
+  |---|--------|-------|--------------|
+  | 01 | CAREER DOSSIER | `/career` | Service record (experience), current loadout (skills), field commendations (testimonials), résumé link |
+  | 02 | FIELD OPERATIONS | `/projects` | Project card grid — CRT thumbnails, tech tags, source links |
+  | 03 | PERSONNEL FILE | `/personnel` | Locked: a Fallout-style hack ("ICE BREACH") gates a life-timeline of photo "captures" |
+  | 04 | SUBJECT SURVEILLANCE | `/monitor` | Live vitals/ECG, last-known position, GitHub + LeetCode telemetry, intercepted game + music feeds |
+  | 05 | OPEN COMMS CHANNEL | `/comms` | Contact form (Netlify Forms) |
 
-The RECREATION WING pulls two live feeds via Netlify functions, each cached
-for 5 minutes (`Cache-Control: public, max-age=300`):
-
-- `functions/get-recent-tracks.js` — Last.fm recent tracks. Requires
-  `LASTFM_API_KEY` and `LASTFM_USERNAME`.
-- `functions/get-steam-games.js` — Steam recently-played (last 14 days).
-  Requires `STEAM_API_KEY` and `STEAM_ID64`.
-- `functions/get-leetcode-stats.js` — LeetCode solved counts via GraphQL proxy, no key required (`LEETCODE_USERNAME` env optional override), cached 1h.
-
-If env vars are missing the function returns `500 NOT CONFIGURED`; if the
-upstream is unreachable it returns `502 UPSTREAM FAILURE`. The UI degrades
-in-fiction to `SIGNAL LOST — <RELAY> UNREACHABLE`. Functions don't run under
-`vite dev`, so locally you'll always see the SIGNAL LOST state.
+- **Theme:** the `[PHOSPHOR]` switch cycles phosphor colors (amber / green / ice
+  / white / alert), persisted in `localStorage`; CSS custom properties
+  (`--phosphor`, `--dim`, `--bg`, `--glow`) drive every color.
+- **Sound:** WebAudio keystroke/blip SFX, toggled via `[♪]` or the `sound`
+  command (persisted).
+- **CRT effects** (scanlines, vignette, sweep, occasional glitch) are pure CSS.
 
 ## Content lives in one place
 
-All copy and data: `src/constants/index.js`.
+All copy and data is in **`src/constants/index.js`** — `personal`, `experience`,
+`skills`, `projects`, `testimonials`, `journey` (the personnel timeline),
+`recreation`, `surveillance`, `fallback`, `socials`, `menuItems`, `commands`,
+`hackGame`, `monitor`, `asciiBanner`, `diagnostics`.
 
-### PLACEHOLDERS the owner must update
+### Assets to add (in `public/`)
 
-- `journey` — the life timeline (entries marked `UPDATE ME`)
-- `recreation` — now playing / all-timer games, music rotation, photography
-  blurb + real photos (drop them in `public/img/`, darker shots look best
-  under the phosphor tint), side quests
-- `personal.bio`, `experience` — bio and work history
-- Projects are still the college-era four
-- Drop `resume.pdf` into `public/` for the `EXPORT DOSSIER` link
+- `img/timeline-1.png … timeline-5.png` — the five Personnel File "captures"
+  (each falls back to `personal.portrait` until added). Darker images read best
+  under the phosphor duotone.
+- Project thumbnails referenced by `projects[].thumbnail`.
+- `resume.pdf` for the Career Dossier résumé link.
 
-## Planned (not built)
+## Live data (Netlify functions)
 
-Phase 2: command prompt, hacking minigame + hidden VAULT screen, sound
-design, SYSTEM MONITOR (live GitHub/LeetCode), HOLOTAPE LOGS.
-Phase 3: guestbook.
-Spec + amendments: `docs/superpowers/specs/2026-06-10-fallout-terminal-portfolio-design.md`.
+The Subject Surveillance screen pulls live feeds. GitHub contributions are
+fetched directly in the browser; the rest go through serverless functions:
+
+| Function | Source | Env required | Cache |
+|----------|--------|--------------|-------|
+| `get-leetcode-stats.js` | LeetCode GraphQL | none (`LEETCODE_USERNAME` optional) | 1h |
+| `get-steam-games.js` | Steam recently-played | `STEAM_API_KEY`, `STEAM_ID64` | 5m |
+| `get-recent-tracks.js` | Last.fm recent tracks | `LASTFM_API_KEY`, `LASTFM_USERNAME` | 5m |
+
+Missing env → `500 NOT CONFIGURED`; unreachable upstream → `502 UPSTREAM
+FAILURE`. The UI degrades in-fiction (`RELAY OFFLINE · LAST KNOWN READOUT`) using
+the `fallback` data in constants. `vite dev` serves these functions locally via
+a small plugin in `vite.config.js`, so they work in development too.
+
+## Contact form (Netlify Forms)
+
+The form posts to **Netlify Forms** — no API keys, no SMTP. A hidden static
+`<form name="comms" data-netlify="true">` in `index.html` lets Netlify detect
+the form at build time; the React form posts URL-encoded data (with
+`form-name: comms`) to `/`.
+
+To receive submissions: deploy, then in the Netlify dashboard go to
+**Forms → comms → form notifications** and add an email notification to your
+inbox. Note: Netlify Forms only works on the deployed site, not under
+`vite dev`.
+
+## Deploy
+
+Netlify, configured by `netlify.toml` (functions dir, SPA catch-all redirect).
+Set the function env vars above in **Site settings → Environment variables**.
+
+## Architecture notes
+
+See [`AGENTS.md`](./AGENTS.md) for the component map, boot-sequence contract,
+hooks, and non-obvious gotchas.

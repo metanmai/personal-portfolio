@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import PropTypes from 'prop-types';
+import { reducedMotion } from '../utils/reducedMotion.js';
 
 // Terminal-style shutdown shown when an operator logs out. Reveals a short
 // teardown log line-by-line, holds, blinks the screen, then hands control
@@ -19,16 +20,6 @@ const LINE_INTERVAL_MS = 260;
 const HOLD_MS = 650;
 const BLINK_MS = 250;
 const REDUCED_HOLD_MS = 500;
-
-const reducedMotion = () => {
-    try {
-        return typeof window !== 'undefined'
-            && window.matchMedia
-            && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch {
-        return false;
-    }
-};
 
 const screenBlink = keyframes`
     0%   { opacity: 1; }

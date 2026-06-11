@@ -9,6 +9,7 @@ import {
 } from '../../utils/deviceSpecs.js';
 import { useClock } from '../../hooks/useClock.js';
 import { generatePuzzle } from '../../utils/loginPuzzle.js';
+import { reducedMotion } from '../../utils/reducedMotion.js';
 import AsciiGlobe from './AsciiGlobe.jsx';
 
 // Static lines shown on the LOGIN screen and at the top of BOOT screen.
@@ -29,16 +30,6 @@ const IP_TIMEOUT_MS = 3000;
 const BAR_CELLS = 20;
 
 const SESSION_KEY = 'termlink-operator';
-
-const reducedMotion = () => {
-    try {
-        return typeof window !== 'undefined'
-            && window.matchMedia
-            && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch {
-        return false;
-    }
-};
 
 const fetchIp = (signal) => fetch('https://api.ipify.org?format=json', { signal })
     .then((r) => r.json())

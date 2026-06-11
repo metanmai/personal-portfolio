@@ -5,6 +5,7 @@ import ScreenFrame from './ScreenFrame.jsx';
 import { monitor, surveillance, recreation, fallback } from '../../constants/index.js';
 import { usePageMeta } from '../../hooks/usePageMeta.js';
 import { useRemoteData } from '../../hooks/useRemoteData.js';
+import { reducedMotion } from '../../utils/reducedMotion.js';
 
 const Grid = styled.div`
     display: grid;
@@ -550,15 +551,6 @@ const EcgLine = styled.pre`
     text-shadow: 0 0 6px var(--glow);
 `;
 
-const reducedMotion = () => {
-    try {
-        return typeof window !== 'undefined'
-            && window.matchMedia
-            && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch {
-        return false;
-    }
-};
 
 const pickRandom = (list) => list[Math.floor(Math.random() * list.length)];
 

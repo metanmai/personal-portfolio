@@ -133,10 +133,13 @@ const OpenComms = () => {
         setStatus('sending');
 
         try {
-            const response = await fetch('/.netlify/functions/send-email', {
+            // Netlify Forms: post URL-encoded data (incl. the form-name) to the
+            // site root. Netlify captures the submission and emails the inbox
+            // configured under dashboard → Forms → notifications.
+            const response = await fetch('/', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ 'form-name': 'comms', ...data }).toString(),
             });
             if (!response.ok) throw new Error('relay failure');
             setStatus('sent');

@@ -17,6 +17,16 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Hidden static form so Netlify detects the "comms" form at build time.
+         The real (React) form posts to it. Submissions appear under
+         Netlify dashboard → Forms; enable an email notification to receive them. -->
+    <form name="comms" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="text" name="subject" />
+      <textarea name="message"></textarea>
+      <input name="bot-field" />
+    </form>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
