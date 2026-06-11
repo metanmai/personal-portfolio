@@ -1,108 +1,97 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { act, render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import HackMinigame from './HackMinigame.jsx';
 
-// Each digit is generated via Math.floor(Math.random() * 10).
-// random=0 -> 0, random=0.15 -> 1, etc. Use 0.05 buckets so we land
-// safely inside each digit's slot.
-const digitToRandom = (d) => d * 0.1 + 0.05;
-const queueRandomDigits = (digits) => {
-    const seq = digits.split('').map((d) => digitToRandom(Number(d)));
-    let i = 0;
-    return vi.spyOn(Math, 'random').mockImplementation(() => {
-        const v = seq[i % seq.length];
-        i += 1;
-        return v;
-    });
-};
+// Deterministic puzzle injected via the test seam: password VAULT, four duds,
+// one "replenish" bracket (b0) and one "dud" bracket (b1).
+const makePuzzle = () => ({
+    password: 'VAULT',
+    words: [
+        { id: 'w0', text: 'VAULT' },
+        { id: 'w1', text: 'CODES' },
+        { id: 'w2', text: 'LOCKS' },
+        { id: 'w3', text: 'BYTES' },
+        { id: 'w4', text: 'CORES' },
+    ],
+    columns: [
+        [
+            { addr: '0x8000', segs: [{ type: 'junk', text: '##' }, { type: 'word', id: 'w0', text: 'VAULT' }] },
+            { addr: '0x800C', segs: [{ type: 'word', id: 'w1', text: 'CODES' }] },
+            { addr: '0x8018', segs: [{ type: 'word', id: 'w2', text: 'LOCKS' }] },
+            { addr: '0x8024', segs: [{ type: 'bracket', id: 'b0', text: '<#>', effect: 'replenish' }] },
+        ],
+        [
+            { addr: '0x8030', segs: [{ type: 'word', id: 'w3', text: 'BYTES' }] },
+            { addr: '0x803C', segs: [{ type: 'word', id: 'w4', text: 'CORES' }] },
+            { addr: '0x8048', segs: [{ type: 'bracket', id: 'b1', text: '(#)', effect: 'dud' }] },
+        ],
+    ],
+});
 
-const setMathRandomSequence = (codes) => {
-    // Flatten an array of codes into a single sequence so the spy
-    // returns digits in order across multiple code generations.
-    const all = codes.join('');
-    return queueRandomDigits(all);
-};
-
-describe('HackMinigame (CODE INTERCEPT)', () => {
-    beforeEach(() => {
-        vi.useFakeTimers();
-    });
-
-    afterEach(() => {
-        vi.useRealTimers();
-        vi.restoreAllMocks();
-    });
-
-    it('shows a 5-digit code during memorize then masks it after the countdown', () => {
-        setMathRandomSequence(['73194']);
-        render(<HackMinigame onWin={vi.fn()} />);
-
-        // Big code visible.
-        expect(screen.getByLabelText('intercepted-code')).toHaveTextContent('7 3 1 9 4');
-        expect(screen.getByText(/MEMORIZE — BURNS IN 4 SECONDS/)).toBeInTheDocument();
-
-        // Tick the countdown to zero.
-        act(() => {
-            vi.advanceTimersByTime(4000);
-        });
-
-        // Code is masked, entry prompt visible.
-        expect(screen.getByLabelText('intercepted-code')).toHaveTextContent('█ █ █ █ █');
-        expect(screen.getByText('ENTER ACCESS CODE:')).toBeInTheDocument();
-        expect(screen.getByLabelText('access-code')).toBeInTheDocument();
+describe('HackMinigame (ICE BREACH)', () => {
+    it('renders the protocol rules and a full attempts bar', () => {
+        render(<HackMinigame onWin={vi.fn()} initialPuzzle={makePuzzle()} />);
+        expect(screen.getByText(/ICE BREACH PROTOCOL/)).toBeInTheDocument();
+        // 4 attempts, all filled
+        expect(screen.getByText(/ATTEMPTS:\s*▮ ▮ ▮ ▮/)).toBeInTheDocument();
     });
 
-    it('calls onWin when the correct code is entered', () => {
-        setMathRandomSequence(['12345']);
+    it('calls onWin when the password is selected', () => {
         const onWin = vi.fn();
-        render(<HackMinigame onWin={onWin} />);
+        render(<HackMinigame onWin={onWin} initialPuzzle={makePuzzle()} />);
 
-        act(() => { vi.advanceTimersByTime(4000); });
-
-        const input = screen.getByLabelText('access-code');
-        fireEvent.change(input, { target: { value: '12345' } });
-        fireEvent.click(screen.getByRole('button', { name: /TRANSMIT/ }));
+        fireEvent.click(screen.getByRole('button', { name: 'VAULT' }));
 
         expect(onWin).toHaveBeenCalledTimes(1);
         expect(screen.getByText('ACCESS GRANTED')).toBeInTheDocument();
     });
 
-    it('on a wrong code, shows CODE MISMATCH, decrements attempts, and presents a fresh memorize phase', () => {
-        setMathRandomSequence(['12345', '67890']);
-        render(<HackMinigame onWin={vi.fn()} />);
+    it('reports likeness and decrements attempts on a wrong guess', () => {
+        const onWin = vi.fn();
+        render(<HackMinigame onWin={onWin} initialPuzzle={makePuzzle()} />);
 
-        // Initial state: 3 attempts blocks filled.
-        expect(screen.getByText(/ATTEMPTS REMAINING:.*▮ ▮ ▮/)).toBeInTheDocument();
+        fireEvent.click(screen.getByRole('button', { name: 'CODES' }));
 
-        // Burn first code.
-        act(() => { vi.advanceTimersByTime(4000); });
-
-        // Wrong entry.
-        const input = screen.getByLabelText('access-code');
-        fireEvent.change(input, { target: { value: '99999' } });
-        fireEvent.click(screen.getByRole('button', { name: /TRANSMIT/ }));
-
-        // One attempt depleted; back to memorize with NEW code visible.
-        expect(screen.getByText(/ATTEMPTS REMAINING:.*▮ ▮ ▯/)).toBeInTheDocument();
-        expect(screen.getByText(/CODE MISMATCH — NEW CODE INTERCEPTED/)).toBeInTheDocument();
-        expect(screen.getByText(/MEMORIZE — BURNS IN 4 SECONDS/)).toBeInTheDocument();
-        expect(screen.getByLabelText('intercepted-code')).toHaveTextContent('6 7 8 9 0');
+        expect(onWin).not.toHaveBeenCalled();
+        const logEl = screen.getByLabelText('breach log');
+        // CODES vs VAULT share no positions -> 0/5
+        expect(within(logEl).getByText(/ENTRY DENIED · LIKENESS 0\/5/)).toBeInTheDocument();
+        expect(screen.getByText(/ATTEMPTS:\s*▮ ▮ ▮ ▯/)).toBeInTheDocument();
     });
 
-    it('calls onLockout after three wrong codes', () => {
-        setMathRandomSequence(['11111', '22222', '33333']);
+    it('replenish bracket restores attempts', () => {
+        render(<HackMinigame onWin={vi.fn()} initialPuzzle={makePuzzle()} />);
+
+        fireEvent.click(screen.getByRole('button', { name: 'CODES' })); // -> 3 left
+        expect(screen.getByText(/ATTEMPTS:\s*▮ ▮ ▮ ▯/)).toBeInTheDocument();
+
+        const brackets = screen.getAllByRole('button', { name: 'bonus bracket' });
+        fireEvent.click(brackets[0]); // b0 = replenish
+
+        const logEl = screen.getByLabelText('breach log');
+        expect(within(logEl).getByText(/ALLOWANCE REPLENISHED/)).toBeInTheDocument();
+        expect(screen.getByText(/ATTEMPTS:\s*▮ ▮ ▮ ▮/)).toBeInTheDocument();
+    });
+
+    it('dud bracket removes a dud', () => {
+        render(<HackMinigame onWin={vi.fn()} initialPuzzle={makePuzzle()} />);
+        const brackets = screen.getAllByRole('button', { name: 'bonus bracket' });
+        fireEvent.click(brackets[1]); // b1 = dud
+        const logEl = screen.getByLabelText('breach log');
+        expect(within(logEl).getByText(/DUD REMOVED/)).toBeInTheDocument();
+    });
+
+    it('locks out after exhausting attempts on wrong guesses', () => {
         const onWin = vi.fn();
         const onLockout = vi.fn();
-        render(<HackMinigame onWin={onWin} onLockout={onLockout} />);
+        render(<HackMinigame onWin={onWin} onLockout={onLockout} initialPuzzle={makePuzzle()} />);
 
-        for (let i = 0; i < 3; i += 1) {
-            act(() => { vi.advanceTimersByTime(4000); });
-            const input = screen.getByLabelText('access-code');
-            fireEvent.change(input, { target: { value: '00000' } });
-            fireEvent.click(screen.getByRole('button', { name: /TRANSMIT/ }));
-        }
+        ['CODES', 'LOCKS', 'BYTES', 'CORES'].forEach((w) => {
+            fireEvent.click(screen.getByRole('button', { name: w }));
+        });
 
         expect(onLockout).toHaveBeenCalledTimes(1);
         expect(onWin).not.toHaveBeenCalled();
+        expect(screen.getByText('TERMINAL LOCKED')).toBeInTheDocument();
     });
 });

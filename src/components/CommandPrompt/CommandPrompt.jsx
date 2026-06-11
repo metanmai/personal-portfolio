@@ -190,6 +190,12 @@ const CommandPrompt = () => {
         themeRef.current = settings.theme;
     }, [settings.theme]);
 
+    // Same for sound, so the `sound` command toggles against the live value
+    const soundRef = useRef(settings.sound);
+    useEffect(() => {
+        soundRef.current = settings.sound;
+    }, [settings.sound]);
+
     // Global open: Ctrl+K or plain `>` (when not typing in another input)
     useEffect(() => {
         const onKey = (event) => {
@@ -317,6 +323,12 @@ const CommandPrompt = () => {
             pushLines([echo, `PHOSPHOR → ${next.toUpperCase()}`]);
             return;
         }
+        if (lower === 'sound' || lower === 'audio' || lower === 'mute') {
+            const next = !soundRef.current;
+            update({ sound: next });
+            pushLines([echo, `AUDIO → ${next ? 'ON' : 'OFF'}`]);
+            return;
+        }
         if (lower === 'whoami') {
             let operator = 'GUEST';
             try {
@@ -338,9 +350,10 @@ const CommandPrompt = () => {
             return;
         }
         if (lower === 'logout') {
-            try { sessionStorage.removeItem('termlink-operator'); } catch { /* noop */ }
             pushLines([echo, 'SESSION TERMINATED.']);
-            window.location.assign('/');
+            close();
+            // hand off to the app-level shutdown animation (clears session + reloads)
+            window.dispatchEvent(new Event('termlink-logout'));
             return;
         }
 

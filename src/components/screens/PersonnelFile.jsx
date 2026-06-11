@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import ScreenFrame from './ScreenFrame.jsx';
 import HackMinigame from '../HackMinigame/HackMinigame.jsx';
+import LockReveal from '../LockReveal.jsx';
 import { personal, journey, hackGame } from '../../constants/index.js';
 import { useTypewriter } from '../../hooks/useTypewriter.js';
 import { usePageMeta } from '../../hooks/usePageMeta.js';
@@ -263,10 +264,17 @@ const PersonnelFile = () => {
     // Unlock state is intentionally NOT persisted — the record re-locks on
     // every visit, dealing a fresh access code each time.
     const [unlocked, setUnlocked] = useState(false);
+    const [revealing, setRevealing] = useState(false);
     const [lockedOut, setLockedOut] = useState(false);
     const [gameKey, setGameKey] = useState(0);
 
+    // On a successful bypass, play the lock-open animation first; the record
+    // is only revealed once that animation reports back.
     const handleWin = useCallback(() => {
+        setRevealing(true);
+    }, []);
+
+    const handleRevealDone = useCallback(() => {
         setUnlocked(true);
     }, []);
 
@@ -281,6 +289,14 @@ const PersonnelFile = () => {
 
     if (unlocked) {
         return <PersonnelRecord />;
+    }
+
+    if (revealing) {
+        return (
+            <ScreenFrame title="SECURITY LAYER">
+                <LockReveal onComplete={handleRevealDone} />
+            </ScreenFrame>
+        );
     }
 
     return (

@@ -100,11 +100,20 @@ const LoginColumn = styled.div`
     margin: auto;
 `;
 
+// Fixed width (matching the login column) so the block is centered on a stable
+// measure rather than on whatever the widest diagnostic line happens to be
+// (e.g. a long GPU string would otherwise drag the whole block off-center).
+// Children are capped to the column width and wrap instead of stretching it.
 const BootColumn = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    width: min(560px, 92vw);
     margin: auto;
+
+    & > * {
+        max-width: 100%;
+    }
 `;
 
 const Line = styled.p`
@@ -133,6 +142,7 @@ const Caret = styled.span`
 
 const GlobeWrap = styled.div`
     margin: 0.75rem 0;
+    align-self: center;
 `;
 
 const Form = styled.form`
@@ -208,16 +218,20 @@ const Hint = styled.p`
     opacity: 0.85;
 `;
 
-// Inline label + bright phosphor prompt for the rotating security challenge.
+// Stacked label + bright phosphor prompt for the rotating security challenge.
+// The prompt sits on its own line directly beneath the "SECURITY CHALLENGE:"
+// caption rather than running inline beside it.
 const ChallengeLabel = styled.span`
+    display: block;
     color: var(--dim);
     letter-spacing: 0.05em;
 `;
 
 const ChallengePrompt = styled.span`
+    display: block;
     color: var(--phosphor);
     text-shadow: 0 0 8px var(--glow);
-    margin-left: 0.5em;
+    margin-top: 0.3rem;
 `;
 
 // Same family as --phosphor but dimmed — reads as a soft warning without
@@ -234,8 +248,29 @@ const Bar = styled(Line)`
     letter-spacing: 0.05em;
 `;
 
+// "ACCESS GRANTED" flourish shown the instant the challenge is solved, just
+// before the boot diagnostics begin.
+const unlockPop = keyframes`
+    0%   { opacity: 0; transform: scale(0.94); filter: brightness(0.5); }
+    55%  { opacity: 1; transform: scale(1.05); filter: brightness(1.7); }
+    100% { opacity: 1; transform: scale(1); filter: brightness(1.3); }
+`;
+
+const UnlockBanner = styled.p`
+    margin: 1.4rem 0 0;
+    color: var(--phosphor);
+    letter-spacing: 0.14em;
+    text-shadow: 0 0 10px var(--glow), 0 0 18px var(--glow);
+    animation: ${unlockPop} 0.6s ease-out 0.25s both;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+        opacity: 1;
+    }
+`;
+
 const BootSequence = ({ onDone }) => {
-    const [stage, setStage] = useState('login'); // 'login' | 'boot' | 'granted'
+    const [stage, setStage] = useState('login'); // 'login' | 'unlock' | 'boot' | 'granted'
     const [operatorId, setOperatorId] = useState('');
     const [challengeInput, setChallengeInput] = useState('');
     const [puzzle, setPuzzle] = useState(() => generatePuzzle());
@@ -252,7 +287,7 @@ const BootSequence = ({ onDone }) => {
     const challengeRef = useRef(null);
     const submitRef = useRef(null);
 
-    // ArrowDown: OPERATOR ID → CHALLENGE → AUTHENTICATE; ArrowUp reverses.
+    // ArrowDown: OPERATOR NAME → CHALLENGE → AUTHENTICATE; ArrowUp reverses.
     // preventDefault keeps the caret from jumping to start/end of the input.
     const handleFormKeyDown = (event) => {
         if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
@@ -285,6 +320,15 @@ const BootSequence = ({ onDone }) => {
         if (stage === 'login' && operatorIdRef.current) {
             operatorIdRef.current.focus();
         }
+    }, [stage]);
+
+    // UNLOCK stage: hold the "access granted" flourish briefly, then kick off
+    // the boot diagnostics.
+    useEffect(() => {
+        if (stage !== 'unlock') return undefined;
+        const delay = reducedMotion() ? 350 : 1000;
+        const t = setTimeout(() => setStage('boot'), delay);
+        return () => clearTimeout(t);
     }, [stage]);
 
     // Build the boot lines once we are on the BOOT stage. IP may still be
@@ -389,7 +433,8 @@ const BootSequence = ({ onDone }) => {
             // sessionStorage can throw in privacy modes — never block boot.
         }
         setOperator(cleaned);
-        setStage('boot');
+        setChallengeError(false);
+        setStage('unlock');
     };
 
     // Render boot lines, intercepting the LOCAL TIME placeholder so the live
@@ -426,16 +471,17 @@ const BootSequence = ({ onDone }) => {
                         onKeyDown={handleFormKeyDown}
                         aria-label="Authentication"
                     >
-                        <Label htmlFor="operator-id">OPERATOR ID:</Label>
+                        <Label htmlFor="operator-id">OPERATOR NAME:</Label>
                         <Field
                             id="operator-id"
                             name="operator-id"
                             type="text"
                             value={operatorId}
-                            onChange={(e) => setOperatorId(e.target.value)}
+                            onChange={(e) => setOperatorId(e.target.value.toUpperCase())}
                             autoComplete="off"
                             autoCapitalize="characters"
                             spellCheck={false}
+                            style={{ textTransform: 'uppercase' }}
                             ref={operatorIdRef}
                             autoFocus
                         />
@@ -465,6 +511,15 @@ const BootSequence = ({ onDone }) => {
                         </ErrorLine>
                     )}
                     <Hint>COGNITION CHECK REQUIRED. ALL OPERATORS WELCOME.</Hint>
+                </LoginColumn>
+            ) : stage === 'unlock' ? (
+                <LoginColumn>
+                    {HEADER_LINES.map((line, i) => (
+                        <Line key={`h-${i}`}>{line || ' '}</Line>
+                    ))}
+                    <Line>{'> SECURITY CHALLENGE VERIFIED'}</Line>
+                    <Line>{'> DISENGAGING TERMINAL LOCKS...'}</Line>
+                    <UnlockBanner>[ ACCESS GRANTED ]</UnlockBanner>
                 </LoginColumn>
             ) : (
                 <BootColumn>

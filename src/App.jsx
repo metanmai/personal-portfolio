@@ -7,7 +7,6 @@ import Terminal from './components/Terminal/Terminal.jsx';
 import MainMenu from './components/MainMenu/MainMenu.jsx';
 import PersonnelFile from './components/screens/PersonnelFile.jsx';
 import CareerDossier from './components/screens/CareerDossier.jsx';
-import RecreationWing from './components/screens/RecreationWing.jsx';
 import OpenComms from './components/screens/OpenComms.jsx';
 import SystemMonitor from './components/screens/SystemMonitor.jsx';
 import CommandPrompt from './components/CommandPrompt/CommandPrompt.jsx';
@@ -15,6 +14,7 @@ import SoundLayer from './components/SoundLayer.jsx';
 import FileCorrupted from './components/screens/FileCorrupted.jsx';
 import SystemFault from './components/SystemFault.jsx';
 import BootSequence from './components/BootSequence/BootSequence.jsx';
+import LogoutSequence from './components/LogoutSequence.jsx';
 import StatusBar from './components/StatusBar/StatusBar.jsx';
 
 const EscToMenu = () => {
@@ -61,6 +61,7 @@ RouteRedraw.propTypes = {
 
 const TerminalApp = () => {
     const [booted, setBooted] = useState(false);
+    const [loggingOut, setLoggingOut] = useState(false);
 
     const handleBootDone = () => {
         // every login lands on the main menu, even from deep links —
@@ -68,6 +69,25 @@ const TerminalApp = () => {
         window.history.replaceState(null, '', '/');
         setBooted(true);
     };
+
+    // Logout is triggered from a couple of places (the status bar button and
+    // the `logout` command). Both dispatch a window event so the shutdown
+    // animation can play once, here, above the whole tree.
+    useEffect(() => {
+        const onLogout = () => setLoggingOut(true);
+        window.addEventListener('termlink-logout', onLogout);
+        return () => window.removeEventListener('termlink-logout', onLogout);
+    }, []);
+
+    const finishLogout = () => {
+        try { sessionStorage.removeItem('termlink-operator'); } catch { /* noop */ }
+        // full reload drops us back at the login stage of the boot sequence
+        window.location.assign('/');
+    };
+
+    if (loggingOut) {
+        return <LogoutSequence onDone={finishLogout} />;
+    }
 
     if (!booted) {
         return <BootSequence onDone={handleBootDone} />;
@@ -83,7 +103,6 @@ const TerminalApp = () => {
                             <Route path="/" element={<MainMenu />} />
                             <Route path="/personnel" element={<PersonnelFile />} />
                             <Route path="/career" element={<CareerDossier />} />
-                            <Route path="/recreation" element={<RecreationWing />} />
                             <Route path="/comms" element={<OpenComms />} />
                             <Route path="/monitor" element={<SystemMonitor />} />
                             <Route path="*" element={<FileCorrupted />} />
@@ -92,7 +111,6 @@ const TerminalApp = () => {
                 </RouteRedraw>
                 <StatusBar />
                 <CommandPrompt />
-                <SoundLayer />
             </Terminal>
         </BrowserRouter>
     );
@@ -101,6 +119,9 @@ const TerminalApp = () => {
 function App() {
     return (
         <SettingsProvider>
+            {/* mounted at the root so keystroke/click sfx + CRT hum are present
+                on the login screen and during the logout animation too */}
+            <SoundLayer />
             <TerminalApp />
         </SettingsProvider>
     );

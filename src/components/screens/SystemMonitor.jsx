@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { useEffect, useRef, useState } from 'react';
+import styled, { keyframes } from 'styled-components';
 import PropTypes from 'prop-types';
 import ScreenFrame from './ScreenFrame.jsx';
-import { monitor } from '../../constants/index.js';
+import { monitor, surveillance, recreation, fallback } from '../../constants/index.js';
 import { usePageMeta } from '../../hooks/usePageMeta.js';
 import { useRemoteData } from '../../hooks/useRemoteData.js';
-import { useClock } from '../../hooks/useClock.js';
-import { useSettings } from '../../settings.jsx';
 
 const Grid = styled.div`
     display: grid;
@@ -175,23 +173,6 @@ const LegendCells = styled.div`
     gap: 2px;
 `;
 
-const EPOCH = new Date('2001-01-01T00:00:00Z').getTime();
-const pad = (n) => String(n).padStart(2, '0');
-
-const formatUptime = (now) => {
-    let diffSeconds = Math.max(0, Math.floor((now - EPOCH) / 1000));
-    const secondsPerYear = 365.25 * 24 * 3600;
-    const years = Math.floor(diffSeconds / secondsPerYear);
-    diffSeconds -= Math.floor(years * secondsPerYear);
-    const days = Math.floor(diffSeconds / (24 * 3600));
-    diffSeconds -= days * 24 * 3600;
-    const hh = Math.floor(diffSeconds / 3600);
-    diffSeconds -= hh * 3600;
-    const mm = Math.floor(diffSeconds / 60);
-    const ss = diffSeconds - mm * 60;
-    return `${years}Y ${days}D ${pad(hh)}:${pad(mm)}:${pad(ss)}`;
-};
-
 const BAR_MAX_CELLS = 20;
 
 // Level → opacity percent used by the heatmap CSS var.
@@ -355,23 +336,20 @@ const GithubPanel = () => {
             </Panel>
         );
     }
-    if (userStatus === 'failed' && contribStatus === 'failed') {
-        return (
-            <Panel className="full">
-                <Title>{'// GITHUB UPLINK'}</Title>
-                <StatusLine>SIGNAL LOST — GITHUB RELAY UNREACHABLE</StatusLine>
-            </Panel>
-        );
-    }
-
-    const repos = (userData && typeof userData.public_repos === 'number') ? userData.public_repos : 0;
-    const followers = (userData && typeof userData.followers === 'number') ? userData.followers : 0;
+    const gh = fallback.github;
+    const userOk = userData && typeof userData.public_repos === 'number';
+    const repos = userOk ? userData.public_repos : gh.repos;
+    const followers = (userData && typeof userData.followers === 'number') ? userData.followers : gh.followers;
     const memberSince = (userData && typeof userData.created_at === 'string')
         ? userData.created_at.slice(0, 4)
-        : '----';
+        : gh.memberSince;
     const profileUrl = (userData && typeof userData.html_url === 'string')
         ? userData.html_url
         : `https://github.com/${monitor.githubUser}`;
+    const totalStars = repoAggregates.ready ? repoAggregates.totalStars : gh.totalStars;
+    const topLanguage = (repoAggregates.ready && repoAggregates.topLanguage)
+        ? repoAggregates.topLanguage
+        : gh.topLanguage;
 
     const contributions = (contribData && Array.isArray(contribData.contributions))
         ? contribData.contributions
@@ -380,9 +358,13 @@ const GithubPanel = () => {
         ? contribData.total.lastYear
         : 0;
 
+    // Nothing live came back — render the archived readout rather than a dead line.
+    const offline = userStatus === 'failed' && contribStatus === 'failed' && !repoAggregates.ready;
+
     return (
         <Panel className="full">
             <Title>{'// GITHUB UPLINK'}</Title>
+            {offline && <StatusLine>RELAY OFFLINE · LAST KNOWN READOUT</StatusLine>}
             <StatGrid>
                 <Row>
                     <Label>PUBLIC REPOS</Label>
@@ -396,23 +378,21 @@ const GithubPanel = () => {
                     <Label>MEMBER SINCE</Label>
                     <Value>{memberSince}</Value>
                 </Row>
-                {repoAggregates.ready && (
-                    <Row>
-                        <Label>TOTAL STARS</Label>
-                        <Value>{repoAggregates.totalStars}</Value>
-                    </Row>
-                )}
-                {repoAggregates.ready && repoAggregates.topLanguage && (
+                <Row>
+                    <Label>TOTAL STARS</Label>
+                    <Value>{totalStars}</Value>
+                </Row>
+                {topLanguage && (
                     <Row>
                         <Label>PRIMARY LANG</Label>
-                        <Value>{String(repoAggregates.topLanguage).toUpperCase()}</Value>
+                        <Value>{String(topLanguage).toUpperCase()}</Value>
                     </Row>
                 )}
             </StatGrid>
             {contribStatus === 'ready' && contributions.length > 0 ? (
                 <ContributionHeatmap contributions={contributions} total={totalYear} />
             ) : (
-                <StatusLine>CONTRIBUTION RELAY UNREACHABLE</StatusLine>
+                <StatusLine>{`${gh.contributions} TRANSMISSIONS LOGGED (ARCHIVED)`}</StatusLine>
             )}
             <InspectLink href={profileUrl} target="_blank" rel="noopener noreferrer">
                 &gt; INSPECT SOURCE [GITHUB PROFILE]
@@ -426,24 +406,20 @@ const LeetcodePanel = () => {
 
     if (status === 'loading') {
         return (
-            <Panel>
+            <Panel className="full">
                 <Title>{'// LEETCODE GRINDSTONE'}</Title>
                 <StatusLine>POLLING LEETCODE RELAY...</StatusLine>
             </Panel>
         );
     }
-    if (status === 'failed') {
-        return (
-            <Panel>
-                <Title>{'// LEETCODE GRINDSTONE'}</Title>
-                <StatusLine>SIGNAL LOST — LEETCODE RELAY UNREACHABLE</StatusLine>
-            </Panel>
-        );
-    }
+    // On failure, fall back to an archived readout instead of a dead line.
+    const live = status === 'ready' && data;
+    const offline = !live;
+    const src = live ? data : fallback.leetcode;
 
-    const solved = (data && data.solved) || { easy: 0, medium: 0, hard: 0, total: 0 };
-    const totals = (data && data.totals) || null;
-    const ranking = (data && typeof data.ranking === 'number') ? data.ranking : null;
+    const solved = (src && src.solved) || { easy: 0, medium: 0, hard: 0, total: 0 };
+    const totals = (src && src.totals) || null;
+    const ranking = (src && typeof src.ranking === 'number') ? src.ranking : null;
 
     // If we got per-difficulty totals from the function, render proportional
     // solved/available bars. Otherwise fall back to the older max-solved scale
@@ -469,8 +445,9 @@ const LeetcodePanel = () => {
         : null;
 
     return (
-        <Panel>
+        <Panel className="full">
             <Title>{'// LEETCODE GRINDSTONE'}</Title>
+            {offline && <StatusLine>RELAY OFFLINE · LAST KNOWN READOUT</StatusLine>}
             <BarRow>
                 <BarLabel>EASY</BarLabel>
                 <BarTrack>
@@ -525,45 +502,397 @@ const LeetcodePanel = () => {
     );
 };
 
-const LocalTelemetryPanel = () => {
-    const ctx = useSettings();
-    const settings = (ctx && ctx.settings) || { theme: 'amber' };
-    const localTime = useClock();
-    const [uptime, setUptime] = useState(() => formatUptime(Date.now()));
+// --- SUBJECT VITALS (biometric surveillance flavor) -----------------------
+
+const heartbeat = keyframes`
+    0%, 100% { transform: scale(1); filter: brightness(1); }
+    18%      { transform: scale(1.35); filter: brightness(1.5); }
+    32%      { transform: scale(1); filter: brightness(1); }
+`;
+
+const Heart = styled.span`
+    color: var(--phosphor);
+    margin-right: 0.45em;
+    display: inline-block;
+    animation: ${heartbeat} 0.85s ease-in-out infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
+`;
+
+const Bpm = styled.span`
+    color: var(--phosphor);
+    font-size: 1.15em;
+    letter-spacing: 0.04em;
+`;
+
+const EcgStrip = styled.div`
+    margin-top: 0.6rem;
+    border: 1px solid var(--dim);
+    overflow: hidden;
+    width: fit-content;
+    max-width: 100%;
+    padding: 0.4rem 0.55rem;
+`;
+
+// The trace is a small multi-row line plot drawn with box-drawing glyphs
+// (│ verticals, ─ flats). A monospace stack that carries them at a uniform
+// width keeps the grid aligned; line-height 1 lets verticals join cleanly.
+const EcgLine = styled.pre`
+    margin: 0;
+    font-family: Menlo, Consolas, 'Courier New', monospace;
+    font-size: 0.8em;
+    line-height: 1;
+    letter-spacing: 0;
+    white-space: pre;
+    color: var(--phosphor);
+    text-shadow: 0 0 6px var(--glow);
+`;
+
+const reducedMotion = () => {
+    try {
+        return typeof window !== 'undefined'
+            && window.matchMedia
+            && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch {
+        return false;
+    }
+};
+
+const pickRandom = (list) => list[Math.floor(Math.random() * list.length)];
+
+// Live ECG: a scrolling buffer of amplitude levels (0 = bottom row). The trace
+// rests at ECG_BASELINE and a PQRST beat is injected periodically, its cadence
+// tied loosely to the current BPM. Rendered as a multi-row line plot so the
+// QRS actually spikes above a flat baseline instead of looking like bars.
+const ECG_ROWS = 5;
+const ECG_COLS = 72;
+const ECG_TICK_MS = 55;
+const ECG_BASELINE = 1;
+//                 P  P  -  Q  R  S  -  T  T  T  -
+const ECG_BEAT = [2, 2, 1, 0, 4, 0, 1, 2, 3, 2, 1];
+
+// Turn the level buffer into ECG_ROWS lines. A flat run draws '─'; a single-step
+// change draws a diagonal ('╱' rising, '╲' falling) so the gentle P/T waves
+// slope; a steep change (the QRS) fills the spanned rows with '│' as a sharp
+// spike. Together they read as a connected ECG trace.
+const renderEcg = (buf) => {
+    const grid = [];
+    for (let r = 0; r < ECG_ROWS; r += 1) {
+        grid.push(new Array(ECG_COLS).fill(' '));
+    }
+    const rowOf = (lv) => (ECG_ROWS - 1) - lv;
+    for (let c = 0; c < ECG_COLS; c += 1) {
+        const b = buf[c];
+        const a = c > 0 ? buf[c - 1] : buf[c];
+        const lo = Math.min(a, b);
+        const hi = Math.max(a, b);
+        if (a === b) {
+            grid[rowOf(b)][c] = '─';
+        } else if (hi - lo === 1) {
+            grid[rowOf(hi)][c] = b > a ? '╱' : '╲';
+        } else {
+            for (let lv = lo; lv <= hi; lv += 1) {
+                grid[rowOf(lv)][c] = '│';
+            }
+        }
+    }
+    return grid.map((row) => row.join('')).join('\n');
+};
+
+const EcgMonitor = ({ bpm }) => {
+    const [frame, setFrame] = useState(() => renderEcg(new Array(ECG_COLS).fill(ECG_BASELINE)));
+    const bufRef = useRef(null);
+    const tRef = useRef(0);
+    const beatStartRef = useRef(null);
+    const nextBeatRef = useRef(6);
+    const bpmRef = useRef(bpm);
+
+    if (bufRef.current === null) {
+        bufRef.current = new Array(ECG_COLS).fill(ECG_BASELINE);
+    }
 
     useEffect(() => {
-        const id = setInterval(() => setUptime(formatUptime(Date.now())), 1000);
+        bpmRef.current = bpm;
+    }, [bpm]);
+
+    useEffect(() => {
+        if (reducedMotion()) return undefined;
+        const id = setInterval(() => {
+            const t = tRef.current;
+            let v = ECG_BASELINE;
+            // continue an in-progress beat
+            if (beatStartRef.current !== null) {
+                const k = t - beatStartRef.current;
+                if (k < ECG_BEAT.length) {
+                    v = ECG_BEAT[k];
+                } else {
+                    beatStartRef.current = null;
+                }
+            }
+            // otherwise start one when due
+            if (beatStartRef.current === null && t >= nextBeatRef.current) {
+                beatStartRef.current = t;
+                v = ECG_BEAT[0];
+                const period = Math.max(
+                    ECG_BEAT.length + 6,
+                    Math.round((60 / bpmRef.current) / (ECG_TICK_MS / 1000)),
+                );
+                nextBeatRef.current = t + period;
+            }
+            const buf = bufRef.current;
+            buf.shift();
+            buf.push(v);
+            setFrame(renderEcg(buf));
+            tRef.current = t + 1;
+        }, ECG_TICK_MS);
         return () => clearInterval(id);
     }, []);
 
     return (
-        <Panel>
-            <Title>{'// LOCAL TELEMETRY'}</Title>
+        <EcgStrip aria-hidden="true">
+            <EcgLine>{frame}</EcgLine>
+        </EcgStrip>
+    );
+};
+
+EcgMonitor.propTypes = { bpm: PropTypes.number.isRequired };
+
+const HR_MIN = 58;
+const HR_MAX = 98;
+
+const BiometricPanel = () => {
+    const baseline = (surveillance && surveillance.heartRateBaseline) || 72;
+    const [bpm, setBpm] = useState(baseline);
+    // last meal + last position are sampled ONCE per visit (per mount)
+    const [meal] = useState(() => pickRandom(surveillance.meals));
+    const [position] = useState(() => pickRandom(surveillance.locations));
+
+    useEffect(() => {
+        if (reducedMotion()) return undefined;
+        const id = setInterval(() => {
+            setBpm((prev) => {
+                // gentle ±1-2 wander, biased back toward baseline at the edges
+                const step = 1 + Math.floor(Math.random() * 2); // 1 or 2
+                let dir = Math.random() < 0.5 ? -1 : 1;
+                if (prev >= baseline + 8) dir = -1;
+                else if (prev <= baseline - 8) dir = 1;
+                const next = prev + dir * step;
+                return Math.max(HR_MIN, Math.min(HR_MAX, next));
+            });
+        }, 3200);
+        return () => clearInterval(id);
+    }, [baseline]);
+
+    let cardiacState = 'NOMINAL';
+    if (bpm >= 88) cardiacState = 'ELEVATED';
+    else if (bpm <= 64) cardiacState = 'RESTING';
+
+    return (
+        <Panel className="full">
+            <Title>{'// SUBJECT VITALS'}</Title>
             <Row>
-                <Label>TERMINAL UPTIME</Label>
-                <Value>{uptime}</Value>
+                <Label>CARDIAC SIGNAL</Label>
+                <Value>
+                    <Heart aria-hidden="true">♥</Heart>
+                    <Bpm>{bpm} BPM</Bpm>
+                </Value>
+            </Row>
+            <EcgMonitor bpm={bpm} />
+            <Row>
+                <Label>RHYTHM</Label>
+                <Value>{cardiacState}</Value>
             </Row>
             <Row>
-                <Label>PHOSPHOR</Label>
-                <Value>{String(settings.theme).toUpperCase()}</Value>
+                <Label>LAST MEAL INTAKE</Label>
+                <Value>{meal}</Value>
             </Row>
             <Row>
-                <Label>VISITOR LOCAL TIME</Label>
-                <Value>{localTime}</Value>
+                <Label>LAST KNOWN POSITION</Label>
+                <Value>{position}</Value>
             </Row>
+            <StatusLine>BIOMETRIC FEED LIVE — SUBJECT UNAWARE</StatusLine>
+        </Panel>
+    );
+};
+
+// --- INTERCEPTED ACTIVITY FEEDS (games + music) ---------------------------
+
+const FeedList = styled.ul`
+    list-style: none;
+    padding: 0;
+    margin: 0.4rem 0 0;
+`;
+
+const FeedRow = styled.li`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.3rem 0;
+    color: var(--phosphor);
+`;
+
+// CRT-treated cover art: grayscale + multiply over a phosphor swatch so the
+// thumbnail reads in the terminal's monochrome palette.
+const Cover = styled.span`
+    flex: 0 0 auto;
+    display: inline-block;
+    line-height: 0;
+    overflow: hidden;
+    background: var(--phosphor);
+    border: 1px solid var(--dim);
+    width: ${({ $w }) => $w}px;
+    height: ${({ $h }) => $h}px;
+
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(1) contrast(1.05);
+        mix-blend-mode: multiply;
+    }
+`;
+
+const FeedPrimary = styled.span`
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &::before {
+        content: '${(props) => props.$marker || '>'} ';
+        color: var(--dim);
+    }
+`;
+
+const FeedMeta = styled.span`
+    color: var(--dim);
+    flex: 0 0 auto;
+    letter-spacing: 0.04em;
+    font-size: 0.9em;
+`;
+
+const SubLine = styled.p`
+    margin: 0 0 0.2rem;
+
+    & > span {
+        color: var(--dim);
+        letter-spacing: 0.06em;
+    }
+`;
+
+const relativeTime = (uts) => {
+    if (!uts) return '';
+    const diffSec = Math.max(0, Math.floor(Date.now() / 1000 - uts));
+    if (diffSec < 60) return 'JUST NOW';
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return `${diffMin} MIN AGO`;
+    const diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return `${diffHr} HR${diffHr === 1 ? '' : 'S'} AGO`;
+    const diffDay = Math.floor(diffHr / 24);
+    return `${diffDay} DAY${diffDay === 1 ? '' : 'S'} AGO`;
+};
+
+const GameLogPanel = () => {
+    const { status, data } = useRemoteData('/.netlify/functions/get-steam-games');
+    const { games } = recreation;
+
+    const renderFeed = () => {
+        if (status === 'loading') return <StatusLine>QUERYING STEAM RELAY...</StatusLine>;
+        const liveList = (status === 'ready' && data && Array.isArray(data.games)) ? data.games : [];
+        if (status === 'ready' && liveList.length === 0) {
+            return <StatusLine>NO ACTIVITY LOGGED IN THE LAST 14 DAYS</StatusLine>;
+        }
+        const offline = status !== 'ready';
+        const list = offline ? fallback.steam : liveList;
+        return (
+            <>
+                {offline && <StatusLine>RELAY OFFLINE · LAST KNOWN ACTIVITY</StatusLine>}
+                <FeedList>
+                    {list.slice(0, 6).map((game, i) => (
+                        <FeedRow key={game.appid || `g-${i}`}>
+                            <Cover $w={76} $h={36}>
+                                {game.header ? <img src={game.header} alt="" loading="lazy" /> : null}
+                            </Cover>
+                            <FeedPrimary $marker=">">{game.name}</FeedPrimary>
+                            <FeedMeta>{game.hours2w} HRS / {game.hoursTotal} HRS TOTAL</FeedMeta>
+                        </FeedRow>
+                    ))}
+                </FeedList>
+            </>
+        );
+    };
+
+    return (
+        <Panel className="full">
+            <Title>{'// GAME LOG'}</Title>
+            <SubLine><span>NOW PLAYING:</span> {games.nowPlaying}</SubLine>
+            <SubLine><span>FIELD ACTIVITY — LAST 14 DAYS:</span></SubLine>
+            {renderFeed()}
+        </Panel>
+    );
+};
+
+const AudioLogPanel = () => {
+    const { status, data } = useRemoteData('/.netlify/functions/get-recent-tracks');
+    const { music } = recreation;
+
+    const renderFeed = () => {
+        if (status === 'loading') return <StatusLine>TUNING RECEIVER...</StatusLine>;
+        const liveTracks = (status === 'ready' && data && Array.isArray(data.tracks)) ? data.tracks : [];
+        if (status === 'ready' && liveTracks.length === 0) {
+            return <StatusLine>NO TRACKS LOGGED</StatusLine>;
+        }
+        const offline = status !== 'ready';
+        const tracks = offline ? fallback.tracks : liveTracks;
+        return (
+            <>
+                {offline && <StatusLine>RELAY OFFLINE · LAST KNOWN ROTATION</StatusLine>}
+                <FeedList>
+                    {tracks.slice(0, 8).map((track, index) => (
+                        <FeedRow key={`${track.name}-${track.playedAt || 'live'}-${index}`}>
+                            <Cover $w={42} $h={42}>
+                                {track.art ? <img src={track.art} alt="" loading="lazy" /> : null}
+                            </Cover>
+                            <FeedPrimary $marker="▶">{track.name} — {track.artist}</FeedPrimary>
+                            <FeedMeta>
+                                {offline ? 'ARCHIVED' : (track.nowPlaying ? 'NOW PLAYING' : relativeTime(track.playedAt))}
+                            </FeedMeta>
+                        </FeedRow>
+                    ))}
+                </FeedList>
+            </>
+        );
+    };
+
+    return (
+        <Panel className="full">
+            <Title>{'// AUDIO LOG'}</Title>
+            <SubLine><span>GENRES:</span> {music.genres.join(' · ')}</SubLine>
+            <SubLine><span>ON ROTATION:</span></SubLine>
+            {renderFeed()}
         </Panel>
     );
 };
 
 const SystemMonitor = () => {
-    usePageMeta('SYSTEM MONITOR', 'Live diagnostics: GitHub uplink, LeetCode grindstone, local telemetry.');
+    usePageMeta(
+        'SUBJECT SURVEILLANCE',
+        'Live surveillance feed: subject vitals, last known position, intercepted activity, and digital footprint.',
+    );
 
     return (
-        <ScreenFrame title="SYSTEM MONITOR">
+        <ScreenFrame title="SUBJECT SURVEILLANCE">
             <Grid>
+                <BiometricPanel />
                 <GithubPanel />
                 <LeetcodePanel />
-                <LocalTelemetryPanel />
+                <GameLogPanel />
+                <AudioLogPanel />
             </Grid>
         </ScreenFrame>
     );

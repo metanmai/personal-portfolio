@@ -26,10 +26,9 @@ const bootLines = [
 
 const menuItems = [
     { num: '01', label: 'CAREER DOSSIER', hint: 'work', path: '/career' },
-    { num: '02', label: 'RECREATION WING', hint: 'off duty', path: '/recreation' },
-    { num: '03', label: 'PERSONNEL FILE', hint: 'classified', path: '/personnel', locked: true },
-    { num: '04', label: 'SYSTEM MONITOR', hint: 'diagnostics', path: '/monitor' },
-    { num: '05', label: 'OPEN COMMS CHANNEL', hint: 'contact', path: '/comms' },
+    { num: '02', label: 'PERSONNEL FILE', hint: 'classified', path: '/personnel', locked: true },
+    { num: '03', label: 'SUBJECT SURVEILLANCE', hint: 'live feed', path: '/monitor' },
+    { num: '04', label: 'OPEN COMMS CHANNEL', hint: 'contact', path: '/comms' },
 ];
 
 const commands = [
@@ -37,6 +36,7 @@ const commands = [
     { name: 'ls', desc: 'LIST TERMINAL SCREENS' },
     { name: 'open', desc: 'OPEN <SCREEN> — E.G. OPEN CAREER' },
     { name: 'theme', desc: 'CYCLE PHOSPHOR COLOR' },
+    { name: 'sound', desc: 'TOGGLE AUDIO ON/OFF' },
     { name: 'whoami', desc: 'IDENTIFY CURRENT OPERATOR' },
     { name: 'clear', desc: 'CLEAR PROMPT OUTPUT' },
     { name: 'hack', desc: 'ATTEMPT SECURITY BYPASS' },
@@ -44,7 +44,7 @@ const commands = [
 ];
 
 const hackGame = {
-    attempts: 3,
+    attempts: 4,
 };
 
 const monitor = {
@@ -204,13 +204,16 @@ const socials = [
     { name: 'LEETCODE', link: 'https://leetcode.com/metanmai/' },
 ];
 
+// "TANMAI" rendered in the Big Money-nw FIGlet font (kerned).
 const asciiBanner = [
-    '████████╗ █████╗ ███╗   ██╗███╗   ███╗ █████╗ ██╗',
-    '╚══██╔══╝██╔══██╗████╗  ██║████╗ ████║██╔══██╗██║',
-    '   ██║   ███████║██╔██╗ ██║██╔████╔██║███████║██║',
-    '   ██║   ██╔══██║██║╚██╗██║██║╚██╔╝██║██╔══██║██║',
-    '   ██║   ██║  ██║██║ ╚████║██║ ╚═╝ ██║██║  ██║██║',
-    '   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝',
+    '$$$$$$$$\\  $$$$$$\\  $$\\   $$\\ $$\\      $$\\  $$$$$$\\  $$$$$$\\',
+    '\\__$$  __|$$  __$$\\ $$$\\  $$ |$$$\\    $$$ |$$  __$$\\ \\_$$  _|',
+    '   $$ |   $$ /  $$ |$$$$\\ $$ |$$$$\\  $$$$ |$$ /  $$ |  $$ |',
+    '   $$ |   $$$$$$$$ |$$ $$\\$$ |$$\\$$\\$$ $$ |$$$$$$$$ |  $$ |',
+    '   $$ |   $$  __$$ |$$ \\$$$$ |$$ \\$$$  $$ |$$  __$$ |  $$ |',
+    '   $$ |   $$ |  $$ |$$ |\\$$$ |$$ |\\$  /$$ |$$ |  $$ |  $$ |',
+    '   $$ |   $$ |  $$ |$$ | \\$$ |$$ | \\_/ $$ |$$ |  $$ |$$$$$$\\',
+    '   \\__|   \\__|  \\__|\\__|  \\__|\\__|     \\__|\\__|  \\__|\\______|',
 ];
 
 const diagnostics = [
@@ -221,6 +224,73 @@ const diagnostics = [
     'INTRUSION COUNTER ..... 0 ATTEMPTS',
     'COFFEE RESERVES ....... CRITICAL',
 ];
+
+// Surveillance flavor for the SUBJECT SURVEILLANCE screen. The screen picks a
+// random meal + last-known position on every visit, so these are intentionally
+// long lists. Bengaluru intel, lightly redacted.
+const surveillance = {
+    // Cardiac baseline the live monitor jitters around (resting BPM).
+    heartRateBaseline: 72,
+    meals: [
+        'SHIRATAKI NOODLES',
+        'WHEY PROTEIN SHAKE',
+        'OVERNIGHT OATS',
+        'BERRY GREEK YOGHURT',
+        'PANEER WRAP',
+        'PANEER SALAD',
+        'TILAPIA WRAP',
+        'PROTEIN PASTA',
+        'GREEK FETA SALAD',
+    ],
+    locations: [
+        'STUCK AT SILK BOARD JUNCTION',
+        'PURPLE LINE, NAMMA METRO',
+        'GRIDLOCKED ON OUTER RING ROAD',
+        'KORAMANGALA, 5TH BLOCK',
+        'INDIRANAGAR, 100 FT ROAD',
+        'STUCK IN TRAFFIC NEAR MARATHAHALLI',
+        'ELECTRONIC CITY FLYOVER (CRAWLING)',
+        'WHITEFIELD, PRE-METRO TRAUMA',
+        'HSR LAYOUT, SECTOR 2',
+        'IBBALUR SIGNAL — 40 MIN AND COUNTING',
+        'BEHIND A BMTC BUS, ORR',
+        'BELLANDUR — ONE DROP OF RAIN = GRIDLOCK',
+        'CUBBON PARK (RARE OUTDOOR SIGHTING)',
+        'MG ROAD, NAMMA METRO',
+        'STUCK AT THE TRINITY CIRCLE SIGNAL',
+        'JAYANAGAR 4TH BLOCK, HUNTING DOSE',
+    ],
+};
+
+// PLACEHOLDER — shown on the SUBJECT SURVEILLANCE screen when a relay can't be
+// reached (e.g. an upstream API is down or blocked). Framed as "LAST KNOWN" so
+// it never pretends to be live. Owner may edit these to match real numbers.
+const fallback = {
+    github: {
+        repos: 30,
+        followers: 20,
+        memberSince: '2020',
+        totalStars: 15,
+        topLanguage: 'PYTHON',
+        contributions: 500,
+    },
+    leetcode: {
+        solved: { easy: 130, medium: 110, hard: 25, total: 265 },
+        totals: { easy: 880, medium: 1850, hard: 830, all: 3560 },
+        ranking: 200000,
+    },
+    steam: [
+        { name: 'FALLOUT: NEW VEGAS', hours2w: 5.4, hoursTotal: 240 },
+        { name: 'DISCO ELYSIUM', hours2w: 2.1, hoursTotal: 52 },
+        { name: 'HOLLOW KNIGHT', hours2w: 1.8, hoursTotal: 76 },
+    ],
+    tracks: [
+        { name: 'Time', artist: 'Pink Floyd' },
+        { name: 'Redbone', artist: 'Childish Gambino' },
+        { name: 'Midnight City', artist: 'M83' },
+        { name: 'No Surprises', artist: 'Radiohead' },
+    ],
+};
 
 export {
     personal,
@@ -235,6 +305,8 @@ export {
     socials,
     asciiBanner,
     diagnostics,
+    surveillance,
+    fallback,
     commands,
     hackGame,
     monitor,

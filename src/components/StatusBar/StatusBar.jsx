@@ -128,9 +128,9 @@ const StatusBar = () => {
         : '[ESC] MENU';
 
     const logout = () => {
-        sessionStorage.removeItem('termlink-operator');
-        // full reload lands on the login stage of the boot sequence
-        window.location.assign('/');
+        // hand off to the app-level shutdown animation, which clears the
+        // session and reloads to the login stage when it finishes
+        window.dispatchEvent(new Event('termlink-logout'));
     };
 
     return (
