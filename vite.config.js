@@ -4,6 +4,11 @@ import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { createRequire } from 'node:module';
 
+// Vite loads dotenv for client code but not for the dev server's Node process.
+// Functions proxied by netlify-functions-dev read process.env, so we need to
+// explicitly load .env so STEAM_API_KEY etc. are visible.
+process.loadEnvFile(resolve(process.cwd(), '.env'));
+
 // During `vite dev` there is no Netlify runtime, so requests to
 // /.netlify/functions/<name> 404 — which is why the LeetCode card shows
 // "SIGNAL LOST" locally while the GitHub card (a direct browser fetch to

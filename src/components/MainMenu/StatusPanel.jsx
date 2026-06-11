@@ -65,7 +65,7 @@ const TickerLabel = styled.div`
     font-size: 0.85em;
 `;
 
-const EPOCH = new Date('2001-01-01T00:00:00Z').getTime();
+const EPOCH = new Date('2002-04-27T23:00:00Z').getTime();
 const pad = (n) => String(n).padStart(2, '0');
 
 const SIGNAL_MIN = 2;

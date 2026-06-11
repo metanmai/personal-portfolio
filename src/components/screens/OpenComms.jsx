@@ -112,7 +112,7 @@ const OpenComms = () => {
         message: useRef(null),
         submit: useRef(null),
     };
-    usePageMeta('OPEN COMMS CHANNEL', 'Contact Tanmai Nuthi.');
+    usePageMeta('OPEN COMMS CHANNEL', 'Contact Tanmai Niranjan.');
 
     const focusField = (name) => {
         const node = fieldRefs[name]?.current;

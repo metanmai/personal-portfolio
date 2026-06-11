@@ -87,7 +87,7 @@ Faithful Fallout mechanic: grid of garbage characters + candidate words, 4 attem
 ### System Monitor
 - GitHub stats: public REST API, client-side.
 - LeetCode stats: Netlify function proxying LeetCode GraphQL, cached ~1h.
-- Static flavor: "uptime since 2001", local time at user's location.
+- Static flavor: "uptime since 2002", local time at user's location.
 - Any fetch failure renders an in-fiction `SIGNAL LOST — RETRY` panel.
 
 ### Guestbook (Phase 3)

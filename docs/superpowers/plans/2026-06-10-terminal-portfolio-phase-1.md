@@ -88,9 +88,9 @@ git rm public/img/blue-blur.mp4
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TANMAI NUTHI — TERMLINK</title>
-    <meta name="description" content="Tanmai Nuthi — software engineer. Operate the terminal to browse projects, experience, and comms." />
-    <meta property="og:title" content="TANMAI NUTHI — TERMLINK" />
+    <title>TANMAI NIRANJAN — TERMLINK</title>
+    <meta name="description" content="Tanmai Niranjan — software engineer. Operate the terminal to browse projects, experience, and comms." />
+    <meta property="og:title" content="TANMAI NIRANJAN — TERMLINK" />
     <meta property="og:description" content="A Fallout-style terminal portfolio. Boot it up." />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="/img/og-terminal.png" />
@@ -509,10 +509,10 @@ Port the existing `projects`, `testimonials`, and `socials` data verbatim into t
 
 ```js
 const personal = {
-    name: 'TANMAI NUTHI',
+    name: 'TANMAI NIRANJAN',
     handle: 'tanmai.n',
     role: 'SOFTWARE ENGINEER',
-    established: 2001,
+    established: 2002,
     // PLACEHOLDER — owner must update bio to current role
     bio: 'Software engineer. Builder of systems and interfaces. This dossier is being updated — entries below may reference the college era.',
 };
@@ -797,7 +797,7 @@ import { useEffect } from 'react';
 
 const usePageMeta = (title, description) => {
     useEffect(() => {
-        document.title = `${title} — TANMAI NUTHI TERMLINK`;
+        document.title = `${title} — TANMAI NIRANJAN TERMLINK`;
         if (description) {
             const meta = document.querySelector('meta[name="description"]');
             if (meta) meta.setAttribute('content', description);
@@ -1571,7 +1571,7 @@ const renderBar = (level) => {
 
 const PersonnelFile = () => {
     const { output } = useTypewriter(personal.bio, 90);
-    usePageMeta('PERSONNEL FILE', 'About Tanmai Nuthi: experience and skills.');
+    usePageMeta('PERSONNEL FILE', 'About Tanmai Niranjan: experience and skills.');
 
     return (
         <ScreenFrame title="PERSONNEL FILE">
@@ -1670,7 +1670,7 @@ const Tech = styled.p`
 
 const ProjectArchives = () => {
     const [openId, setOpenId] = useState(null);
-    usePageMeta('PROJECT ARCHIVES', 'Projects by Tanmai Nuthi.');
+    usePageMeta('PROJECT ARCHIVES', 'Projects by Tanmai Niranjan.');
 
     return (
         <ScreenFrame title="PROJECT ARCHIVES">
@@ -1903,7 +1903,7 @@ const Links = styled.p`
 
 const OpenComms = () => {
     const [status, setStatus] = useState('idle');
-    usePageMeta('OPEN COMMS CHANNEL', 'Contact Tanmai Nuthi.');
+    usePageMeta('OPEN COMMS CHANNEL', 'Contact Tanmai Niranjan.');
 
     const handleSubmit = async (event) => {
         event.preventDefault();
