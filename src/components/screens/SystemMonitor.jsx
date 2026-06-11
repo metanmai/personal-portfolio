@@ -717,13 +717,57 @@ const FeedList = styled.ul`
     margin: 0.4rem 0 0;
 `;
 
-const FeedRow = styled.li`
+// Detailed, paginated feed row: cover + a stacked text block.
+const DetailRow = styled.li`
+    border-top: 1px solid var(--dim);
+
+    &:first-child {
+        border-top: none;
+    }
+`;
+
+// The whole row is the link (cover + text), not just the thumbnail.
+const RowLink = styled.a`
     display: flex;
-    justify-content: space-between;
     align-items: center;
     gap: 0.9rem;
-    padding: 0.3rem 0;
+    padding: 0.7rem 0.3rem;
+    text-decoration: none;
     color: var(--phosphor);
+
+    &:hover, &:focus-visible {
+        background: color-mix(in srgb, var(--phosphor) 12%, transparent);
+        outline: none;
+    }
+
+    &:hover img, &:focus-visible img {
+        filter: none;
+        mix-blend-mode: normal;
+    }
+`;
+
+const DetailText = styled.div`
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+`;
+
+const DetailName = styled.div`
+    color: var(--phosphor);
+    letter-spacing: 0.04em;
+`;
+
+const DetailSub = styled.div`
+    color: var(--phosphor);
+    opacity: 0.85;
+    font-size: 0.95em;
+`;
+
+const DetailMeta = styled.div`
+    color: var(--dim);
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
 `;
 
 // CRT-treated cover art: grayscale + multiply over a phosphor swatch so the
@@ -748,25 +792,13 @@ const Cover = styled.span`
     }
 `;
 
-const FeedPrimary = styled.span`
-    flex: 1 1 auto;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 
-    &::before {
-        content: '${(props) => props.$marker || '>'} ';
-        color: var(--dim);
-    }
-`;
-
-const FeedMeta = styled.span`
-    color: var(--dim);
-    flex: 0 0 auto;
-    letter-spacing: 0.04em;
-    font-size: 0.9em;
-`;
+// Always resolves to a link: the app's store page when we have an appid,
+// otherwise a Steam store search by name (so offline/fallback rows stay
+// clickable too, mirroring appleMusicSearch in the audio log).
+const steamStoreUrl = (game) => (game.appid
+    ? `https://store.steampowered.com/app/${game.appid}`
+    : `https://store.steampowered.com/search/?term=${encodeURIComponent(game.name || '')}`);
 
 const SubLine = styled.p`
     margin: 0 0 0.2rem;
@@ -789,30 +821,128 @@ const relativeTime = (uts) => {
     return `${diffDay} DAY${diffDay === 1 ? '' : 'S'} AGO`;
 };
 
-const GameLogPanel = () => {
-    const { status, data } = useRemoteData('/.netlify/functions/get-steam-games');
-    const { games } = recreation;
+// --- Top-list UI (period toggle + ranked rows) ----------------------------
 
-    const renderFeed = () => {
-        if (status === 'loading') return <StatusLine>QUERYING STEAM RELAY...</StatusLine>;
-        const liveList = (status === 'ready' && data && Array.isArray(data.games)) ? data.games : [];
-        if (status === 'ready' && liveList.length === 0) {
-            return <StatusLine>NO ACTIVITY LOGGED IN THE LAST 14 DAYS</StatusLine>;
+const appleMusicSearch = (term) => `https://music.apple.com/search?term=${encodeURIComponent(term)}`;
+
+const SubHead = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 1.3rem 0 0.5rem;
+    color: var(--dim);
+    letter-spacing: 0.06em;
+`;
+
+const Toggle = styled.div`
+    display: inline-flex;
+    border: 1px solid var(--dim);
+    flex: 0 0 auto;
+`;
+
+const ToggleBtn = styled.button`
+    background: ${({ $active }) => ($active ? 'var(--phosphor)' : 'transparent')};
+    color: ${({ $active }) => ($active ? 'var(--bg)' : 'var(--dim)')};
+    border: none;
+    border-left: 1px solid var(--dim);
+    font: inherit;
+    font-size: 0.8em;
+    letter-spacing: 0.08em;
+    padding: 0.15rem 0.55rem;
+    cursor: pointer;
+
+    &:first-child {
+        border-left: none;
+    }
+
+    &:hover, &:focus-visible {
+        color: ${({ $active }) => ($active ? 'var(--bg)' : 'var(--phosphor)')};
+        outline: none;
+    }
+`;
+
+const PERIODS = [['week', 'WK'], ['month', 'MO'], ['year', 'YR']];
+
+const PeriodToggle = ({ value, onChange }) => (
+    <Toggle role="group" aria-label="time range">
+        {PERIODS.map(([v, label]) => (
+            <ToggleBtn key={v} type="button" $active={v === value} aria-pressed={v === value} onClick={() => onChange(v)}>
+                {label}
+            </ToggleBtn>
+        ))}
+    </Toggle>
+);
+
+PeriodToggle.propTypes = {
+    value: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+};
+
+// Page switcher for the Audio Log (Recently Played / Top Artists / Top Albums).
+const Tabs = styled.div`
+    display: flex;
+    gap: 0.5rem;
+    margin: 0.9rem 0 0.2rem;
+    flex-wrap: wrap;
+`;
+
+const Tab = styled.button`
+    background: ${({ $active }) => ($active ? 'var(--phosphor)' : 'transparent')};
+    color: ${({ $active }) => ($active ? 'var(--bg)' : 'var(--phosphor)')};
+    border: 1px solid ${({ $active }) => ($active ? 'var(--phosphor)' : 'var(--dim)')};
+    font: inherit;
+    letter-spacing: 0.06em;
+    padding: 0.35rem 0.85rem;
+    cursor: pointer;
+
+    &:hover, &:focus-visible {
+        border-color: var(--phosphor);
+        outline: none;
+    }
+`;
+
+const PERIOD_LABEL = { week: 'LAST 7 DAYS', month: 'LAST MONTH', year: 'LAST 12 MONTHS' };
+
+const GameLogPanel = () => {
+    const { games } = recreation;
+    const [view, setView] = useState('recent'); // 'recent' | 'most'
+
+    const recentRes = useRemoteData('/.netlify/functions/get-steam-games?type=recent');
+    const mostRes = useRemoteData('/.netlify/functions/get-steam-games?type=most');
+
+    const renderList = (res, mode) => {
+        if (res.status === 'loading') return <StatusLine>QUERYING STEAM RELAY...</StatusLine>;
+        const live = (res.status === 'ready' && res.data && Array.isArray(res.data.games)) ? res.data.games : [];
+        if (res.status === 'ready' && live.length === 0) {
+            return <StatusLine>{mode === 'most' ? 'NO PLAYTIME ON RECORD' : 'NO ACTIVITY IN THE LAST 14 DAYS'}</StatusLine>;
         }
-        const offline = status !== 'ready';
-        const list = offline ? fallback.steam : liveList;
+        const offline = res.status === 'failed';
+        const list = offline ? fallback.steam : live;
         return (
             <>
                 {offline && <StatusLine>RELAY OFFLINE · LAST KNOWN ACTIVITY</StatusLine>}
                 <FeedList>
-                    {list.slice(0, 6).map((game, i) => (
-                        <FeedRow key={game.appid || `g-${i}`}>
-                            <Cover $w={76} $h={36}>
-                                {game.header ? <img src={game.header} alt="" loading="lazy" /> : null}
-                            </Cover>
-                            <FeedPrimary $marker=">">{game.name}</FeedPrimary>
-                            <FeedMeta>{game.hours2w} HRS / {game.hoursTotal} HRS TOTAL</FeedMeta>
-                        </FeedRow>
+                    {list.map((game, i) => (
+                        <DetailRow key={game.appid || `g-${i}`}>
+                            <RowLink
+                                href={steamStoreUrl(game)}
+                                target="_blank"
+                                rel="noreferrer"
+                                aria-label={`${game.name} on Steam`}
+                            >
+                                <Cover $w={120} $h={56}>
+                                    {game.header ? <img src={game.header} alt="" loading="lazy" /> : null}
+                                </Cover>
+                                <DetailText>
+                                    <DetailName>{String(i + 1).padStart(2, '0')} · {game.name}</DetailName>
+                                    {mode === 'recent' && game.hours2w != null ? (
+                                        <DetailMeta>{game.hours2w} HRS · LAST 2 WEEKS</DetailMeta>
+                                    ) : null}
+                                    <DetailMeta>{game.hoursTotal} HRS · TOTAL</DetailMeta>
+                                </DetailText>
+                            </RowLink>
+                        </DetailRow>
                     ))}
                 </FeedList>
             </>
@@ -823,38 +953,143 @@ const GameLogPanel = () => {
         <Panel className="full">
             <Title>{'// GAME LOG'}</Title>
             <SubLine><span>NOW PLAYING:</span> {games.nowPlaying}</SubLine>
-            <SubLine><span>FIELD ACTIVITY — LAST 14 DAYS:</span></SubLine>
-            {renderFeed()}
+            <Tabs role="tablist" aria-label="game log views">
+                <Tab type="button" $active={view === 'recent'} aria-pressed={view === 'recent'} onClick={() => setView('recent')}>
+                    RECENTLY PLAYED
+                </Tab>
+                <Tab type="button" $active={view === 'most'} aria-pressed={view === 'most'} onClick={() => setView('most')}>
+                    MOST PLAYED
+                </Tab>
+            </Tabs>
+            {view === 'recent' ? renderList(recentRes, 'recent') : renderList(mostRes, 'most')}
         </Panel>
     );
 };
 
-const AudioLogPanel = () => {
-    const { status, data } = useRemoteData('/.netlify/functions/get-recent-tracks');
-    const { music } = recreation;
+// De-dupe recently-played by artist+track (you replay songs), keeping order.
+const dedupeTracks = (list) => {
+    const seen = new Set();
+    const out = [];
+    list.forEach((t) => {
+        const k = `${(t.artist || '').toLowerCase()}::${(t.name || '').toLowerCase()}`;
+        if (seen.has(k)) return;
+        seen.add(k);
+        out.push(t);
+    });
+    return out;
+};
 
-    const renderFeed = () => {
-        if (status === 'loading') return <StatusLine>TUNING RECEIVER...</StatusLine>;
-        const liveTracks = (status === 'ready' && data && Array.isArray(data.tracks)) ? data.tracks : [];
-        if (status === 'ready' && liveTracks.length === 0) {
-            return <StatusLine>NO TRACKS LOGGED</StatusLine>;
-        }
-        const offline = status !== 'ready';
-        const tracks = offline ? fallback.tracks : liveTracks;
+const AudioLogPanel = () => {
+    const { music } = recreation;
+    const [view, setView] = useState('recent'); // 'recent' | 'artists' | 'albums'
+    const [artistPeriod, setArtistPeriod] = useState('week');
+    const [albumPeriod, setAlbumPeriod] = useState('week');
+
+    const recent = useRemoteData('/.netlify/functions/get-recent-tracks');
+    const artistsRes = useRemoteData(`/.netlify/functions/get-lastfm-tops?type=artists&period=${artistPeriod}`);
+    const albumsRes = useRemoteData(`/.netlify/functions/get-lastfm-tops?type=albums&period=${albumPeriod}`);
+
+    // Genres on top are sourced from the current top albums; fall back to the
+    // curated list while the relay is loading or down.
+    const albumGenres = (albumsRes.status === 'ready' && albumsRes.data && Array.isArray(albumsRes.data.genres))
+        ? albumsRes.data.genres
+        : [];
+    const genres = albumGenres.length ? albumGenres : music.genres;
+
+    // --- TOP ARTISTS ---
+    const renderArtists = () => {
+        if (artistsRes.status === 'loading') return <StatusLine>RANKING ARTISTS...</StatusLine>;
+        if (artistsRes.status === 'failed') return <StatusLine>RELAY OFFLINE — TOP ARTISTS UNAVAILABLE</StatusLine>;
+        const artists = (artistsRes.data && Array.isArray(artistsRes.data.artists)) ? artistsRes.data.artists : [];
+        if (artists.length === 0) return <StatusLine>NO ARTIST DATA</StatusLine>;
+        return (
+            <FeedList>
+                {artists.map((a, i) => (
+                    <DetailRow key={`${a.name}-${i}`}>
+                        <RowLink
+                            href={appleMusicSearch(a.name)}
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label={`${a.name} — open in Apple Music`}
+                        >
+                            <Cover $w={72} $h={72}>
+                                {a.image ? <img src={a.image} alt="" loading="lazy" /> : null}
+                            </Cover>
+                            <DetailText>
+                                <DetailName>{String(i + 1).padStart(2, '0')} · {a.name}</DetailName>
+                                <DetailMeta>{a.playcount} PLAYS</DetailMeta>
+                            </DetailText>
+                        </RowLink>
+                    </DetailRow>
+                ))}
+            </FeedList>
+        );
+    };
+
+    // --- TOP ALBUMS ---
+    const renderAlbums = () => {
+        if (albumsRes.status === 'loading') return <StatusLine>RANKING ALBUMS...</StatusLine>;
+        if (albumsRes.status === 'failed') return <StatusLine>RELAY OFFLINE — TOP ALBUMS UNAVAILABLE</StatusLine>;
+        const albums = (albumsRes.data && Array.isArray(albumsRes.data.albums)) ? albumsRes.data.albums : [];
+        if (albums.length === 0) return <StatusLine>NO ALBUM DATA</StatusLine>;
+        return (
+            <FeedList>
+                {albums.map((al, i) => (
+                    <DetailRow key={`${al.artist}-${al.name}-${i}`}>
+                        <RowLink
+                            href={appleMusicSearch(`${al.artist} ${al.name}`)}
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label={`${al.name} by ${al.artist} — open in Apple Music`}
+                        >
+                            <Cover $w={84} $h={84}>
+                                {al.art ? <img src={al.art} alt="" loading="lazy" /> : null}
+                            </Cover>
+                            <DetailText>
+                                <DetailName>{String(i + 1).padStart(2, '0')} · {al.name}</DetailName>
+                                <DetailSub>{al.artist}</DetailSub>
+                                <DetailMeta>{al.playcount} PLAYS</DetailMeta>
+                            </DetailText>
+                        </RowLink>
+                    </DetailRow>
+                ))}
+            </FeedList>
+        );
+    };
+
+    // --- RECENTLY PLAYED (deduped, capped at 10 to match the other tabs) ---
+    const liveTracks = (recent.status === 'ready' && recent.data && Array.isArray(recent.data.tracks)) ? recent.data.tracks : [];
+    const recentOffline = recent.status === 'failed';
+    const recentTracks = dedupeTracks(recentOffline ? fallback.tracks : liveTracks).slice(0, 10);
+
+    const renderRecent = () => {
+        if (recent.status === 'loading') return <StatusLine>TUNING RECEIVER...</StatusLine>;
+        if (recent.status === 'ready' && liveTracks.length === 0) return <StatusLine>NO TRACKS LOGGED</StatusLine>;
         return (
             <>
-                {offline && <StatusLine>RELAY OFFLINE · LAST KNOWN ROTATION</StatusLine>}
+                {recentOffline && <StatusLine>RELAY OFFLINE · LAST KNOWN ROTATION</StatusLine>}
                 <FeedList>
-                    {tracks.slice(0, 8).map((track, index) => (
-                        <FeedRow key={`${track.name}-${track.playedAt || 'live'}-${index}`}>
-                            <Cover $w={42} $h={42}>
-                                {track.art ? <img src={track.art} alt="" loading="lazy" /> : null}
-                            </Cover>
-                            <FeedPrimary $marker="▶">{track.name} — {track.artist}</FeedPrimary>
-                            <FeedMeta>
-                                {offline ? 'ARCHIVED' : (track.nowPlaying ? 'NOW PLAYING' : relativeTime(track.playedAt))}
-                            </FeedMeta>
-                        </FeedRow>
+                    {recentTracks.map((track, i) => (
+                        <DetailRow key={`${track.name}-${track.playedAt || 'live'}-${i}`}>
+                            <RowLink
+                                href={appleMusicSearch(`${track.artist} ${track.name}`)}
+                                target="_blank"
+                                rel="noreferrer"
+                                aria-label={`${track.name} by ${track.artist} — open in Apple Music`}
+                            >
+                                <Cover $w={88} $h={88}>
+                                    {track.art ? <img src={track.art} alt="" loading="lazy" /> : null}
+                                </Cover>
+                                <DetailText>
+                                    <DetailName>{track.name}</DetailName>
+                                    <DetailSub>{track.artist}</DetailSub>
+                                    {track.album ? <DetailMeta>{track.album}</DetailMeta> : null}
+                                    <DetailMeta>
+                                        {recentOffline ? 'ARCHIVED' : (track.nowPlaying ? 'NOW PLAYING' : relativeTime(track.playedAt))}
+                                    </DetailMeta>
+                                </DetailText>
+                            </RowLink>
+                        </DetailRow>
                     ))}
                 </FeedList>
             </>
@@ -864,9 +1099,41 @@ const AudioLogPanel = () => {
     return (
         <Panel className="full">
             <Title>{'// AUDIO LOG'}</Title>
-            <SubLine><span>GENRES:</span> {music.genres.join(' · ')}</SubLine>
-            <SubLine><span>ON ROTATION:</span></SubLine>
-            {renderFeed()}
+            <SubLine><span>GENRES:</span> {genres.join(' · ')}</SubLine>
+
+            <Tabs role="tablist" aria-label="audio log views">
+                <Tab type="button" $active={view === 'recent'} aria-pressed={view === 'recent'} onClick={() => setView('recent')}>
+                    RECENTLY PLAYED
+                </Tab>
+                <Tab type="button" $active={view === 'artists'} aria-pressed={view === 'artists'} onClick={() => setView('artists')}>
+                    TOP ARTISTS
+                </Tab>
+                <Tab type="button" $active={view === 'albums'} aria-pressed={view === 'albums'} onClick={() => setView('albums')}>
+                    TOP ALBUMS
+                </Tab>
+            </Tabs>
+
+            {view === 'recent' && renderRecent()}
+
+            {view === 'artists' && (
+                <>
+                    <SubHead>
+                        <span>{PERIOD_LABEL[artistPeriod]}</span>
+                        <PeriodToggle value={artistPeriod} onChange={setArtistPeriod} />
+                    </SubHead>
+                    {renderArtists()}
+                </>
+            )}
+
+            {view === 'albums' && (
+                <>
+                    <SubHead>
+                        <span>{PERIOD_LABEL[albumPeriod]}</span>
+                        <PeriodToggle value={albumPeriod} onChange={setAlbumPeriod} />
+                    </SubHead>
+                    {renderAlbums()}
+                </>
+            )}
         </Panel>
     );
 };

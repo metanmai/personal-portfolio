@@ -10,6 +10,7 @@ import CareerDossier from './components/screens/CareerDossier.jsx';
 import FieldOperations from './components/screens/FieldOperations.jsx';
 import OpenComms from './components/screens/OpenComms.jsx';
 import SystemMonitor from './components/screens/SystemMonitor.jsx';
+import { prefetchSurveillance } from './components/screens/surveillanceFeeds.js';
 import CommandPrompt from './components/CommandPrompt/CommandPrompt.jsx';
 import SoundLayer from './components/SoundLayer.jsx';
 import FileCorrupted from './components/screens/FileCorrupted.jsx';
@@ -63,6 +64,12 @@ RouteRedraw.propTypes = {
 const TerminalApp = () => {
     const [booted, setBooted] = useState(false);
     const [loggingOut, setLoggingOut] = useState(false);
+
+    // Warm the surveillance feeds while the boot animation plays, so the
+    // SUBJECT SURVEILLANCE page renders with data already cached.
+    useEffect(() => {
+        prefetchSurveillance();
+    }, []);
 
     const handleBootDone = () => {
         // every login lands on the main menu, even from deep links —

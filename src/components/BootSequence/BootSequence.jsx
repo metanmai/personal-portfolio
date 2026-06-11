@@ -40,7 +40,11 @@ const buildBar = (pct) => {
     const clamped = Math.max(0, Math.min(100, pct));
     const filled = Math.round((clamped / 100) * BAR_CELLS);
     const empty = BAR_CELLS - filled;
-    return `[${'▮'.repeat(filled)}${'░'.repeat(empty)}] ${String(clamped).padStart(3, ' ')}%`;
+    // Both cells use the "Block Elements" range (U+2588 / U+2591) so they share a
+    // single font fallback and render at one fixed advance width — otherwise the
+    // bar grows as cells fill in on machines that substitute the glyphs to fonts
+    // of differing widths.
+    return `[${'█'.repeat(filled)}${'░'.repeat(empty)}] ${String(clamped).padStart(3, ' ')}%`;
 };
 
 const caretBlink = keyframes`
@@ -237,6 +241,9 @@ const ErrorLine = styled(Line)`
 const Bar = styled(Line)`
     margin-top: 0.75rem;
     letter-spacing: 0.05em;
+    /* keep the bar a single, unwrapping line of fixed-width cells */
+    white-space: pre;
+    font-variant-numeric: tabular-nums;
 `;
 
 // "ACCESS GRANTED" flourish shown the instant the challenge is solved, just

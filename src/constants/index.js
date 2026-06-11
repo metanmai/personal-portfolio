@@ -49,8 +49,8 @@ const hackGame = {
 };
 
 const monitor = {
-  githubUser: "metanmai",
-  leetcodeUser: "metanmai",
+    githubUser: 'metanmai',
+    leetcodeUser: 'metanmai',
 };
 
 const experience = [
@@ -114,37 +114,17 @@ const journey = [
   },
 ];
 
+// Offline fallbacks for the SUBJECT SURVEILLANCE game/audio logs: `nowPlaying`
+// captions the Game Log and `music.genres` backs the Audio Log when the live
+// Last.fm genre aggregation is empty.
 const recreation = {
-  games: {
-    nowPlaying: "FALLOUT: NEW VEGAS",
-    allTimers: [
-      "FALLOUT: NEW VEGAS",
-      "DISCO ELYSIUM",
-      "HOLLOW KNIGHT",
-      "ELDEN RING",
-    ],
-  },
-  music: {
-    genres: ["PSYCHEDELIC ROCK", "ALTERNATIVE", "LO-FI", "SYNTHWAVE"],
-  },
-  photography: {
-    blurb: "SUBJECT DOCUMENTS SURROUNDINGS OBSESSIVELY. SPECIMENS BELOW.",
-    shots: [
-      {
-        src: "img/blocktopia.png",
-        caption: "BANGALORE SKYLINE FROM INDIRANAGAR — MONSOON, 2024",
-      },
-      {
-        src: "img/graph-functionalities.webp",
-        caption: "CUBBON PARK — RARE OUTDOOR SIGHTING, EARLY MORNING",
-      },
-    ],
-  },
-  tinkering: [
-    "BUILT SYNAPSE MCP: CROSS-SESSION AI CONTEXT MANAGEMENT TOOL.",
-    "REBUILT THIS TERMINAL FROM SCRATCH WITH A FALLOUT PIP-BOY AESTHETIC.",
-    "CONTRIBUTED TO OPEN-SOURCE TOOLS FOR AI-ASSISTED DEVELOPMENT WORKFLOWS.",
-  ],
+    games: {
+        nowPlaying: 'FALLOUT: NEW VEGAS',
+        allTimers: ['FALLOUT: NEW VEGAS', 'DISCO ELYSIUM', 'HOLLOW KNIGHT', 'ELDEN RING'],
+    },
+    music: {
+        genres: ['PSYCHEDELIC ROCK', 'ALTERNATIVE', 'LO-FI', 'SYNTHWAVE'],
+    },
 };
 
 const skills = [

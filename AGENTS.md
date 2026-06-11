@@ -132,6 +132,7 @@ on every visit by design — don't add sessionStorage gating to skip it.
 
 ## Known dead code (remove with `git rm`)
 
-`src/components/screens/RecreationWing.jsx` and
-`src/components/PhosphorImage/PhosphorImage.jsx` (only used by RecreationWing)
-are unreferenced; `functions/send-email.js` is superseded by Netlify Forms.
+`functions/get-artist-image.js` is unreferenced — its Deezer lookup was inlined
+into `get-lastfm-tops.js` (`deezerArtistImage`). The `nodemailer` dependency in
+`package.json` is also unused now that the contact form posts to Netlify Forms;
+remove it with `npm uninstall nodemailer`.

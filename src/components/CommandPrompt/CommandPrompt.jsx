@@ -220,7 +220,7 @@ const CommandPrompt = () => {
         return () => window.removeEventListener('keydown', onKey);
     }, [open]);
 
-    // Esc closes the prompt WITHOUT bubbling to EscToMenu (capture-phase, like PhosphorImage)
+    // Esc closes the prompt WITHOUT bubbling to EscToMenu (capture-phase + stopPropagation)
     useEffect(() => {
         if (!open) return undefined;
         const onKey = (event) => {

@@ -5,10 +5,13 @@ import { usePageMeta } from '../../hooks/usePageMeta.js';
 
 const SectionTitle = styled.h3`
     color: var(--dim);
-    margin: 2rem 0 0.8rem;
+    margin: 2.6rem 0 0.8rem;
     letter-spacing: 0.1em;
 
-    &:first-of-type {
+    /* Only zero the top margin for a heading that opens its container (the two
+       column headings). The FIELD COMMENDATIONS heading sits below the grid and
+       keeps its spacing so it isn't crammed against the resume line. */
+    &:first-child {
         margin-top: 0;
     }
 `;
@@ -45,12 +48,19 @@ const ResumeLine = styled.p`
     font-size: 0.9em;
 `;
 
-const SkillRow = styled.p`
-    display: flex;
-    gap: 1rem;
-    max-width: 360px;
-    justify-content: space-between;
-    font-size: 0.9em;
+const SkillList = styled.ul`
+    list-style: none;
+    margin: 0;
+    padding: 0;
+`;
+
+const SkillItem = styled.li`
+    padding: 0.2rem 0;
+
+    &::before {
+        content: '▸ ';
+        color: var(--dim);
+    }
 `;
 
 const TestimonialGrid = styled.div`
@@ -74,11 +84,6 @@ const TestimonialAttribution = styled.p`
     font-size: 0.9em;
 `;
 
-const renderBar = (level) => {
-    const filled = Math.round(level / 10);
-    return '▮'.repeat(filled) + '░'.repeat(10 - filled);
-};
-
 const CareerDossier = () => {
     usePageMeta('CAREER DOSSIER', 'Service record, loadout, and commendations.');
 
@@ -100,12 +105,11 @@ const CareerDossier = () => {
                 </Column>
                 <Column>
                     <SectionTitle>{'// CURRENT LOADOUT'}</SectionTitle>
-                    {skills.map((skill) => (
-                        <SkillRow key={skill.name}>
-                            <span>{skill.name}</span>
-                            <span aria-label={`${skill.level} percent`}>{renderBar(skill.level)} {skill.level}</span>
-                        </SkillRow>
-                    ))}
+                    <SkillList>
+                        {skills.map((skill) => (
+                            <SkillItem key={skill.name}>{skill.name}</SkillItem>
+                        ))}
+                    </SkillList>
                 </Column>
             </TopGrid>
 
