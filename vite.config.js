@@ -18,11 +18,11 @@ process.loadEnvFile(resolve(process.cwd(), '.env'));
 // NOTE: vite.config.js changes do NOT hot-reload — restart `npm run dev`
 // after editing this file for the plugin to take effect.
 //
-// The functions are authored as CommonJS (`exports.handler = ...`). We read and
-// evaluate them in a CJS wrapper rather than going through Vite's module
-// transform, so they load reliably regardless of the project's ESM type.
+// The functions are authored as CommonJS (`exports.handler = ...`). They use
+// `.cjs` extensions because the enclosing package.json has "type": "module" —
 const loadFunctionHandler = (name) => {
-    const file = resolve(process.cwd(), 'functions', `${name}.js`);
+    let file = resolve(process.cwd(), 'functions', `${name}.cjs`);
+    try { readFileSync(file, 'utf8'); } catch { file = resolve(process.cwd(), 'functions', `${name}.js`); }
     const code = readFileSync(file, 'utf8');
     const mod = { exports: {} };
     const req = createRequire(file);
