@@ -6,8 +6,8 @@ exports.handler = async (event) => {
     };
   }
 
-  const apiKey = "****************0027";
-  const username = "****************nmai";
+  const apiKey = process.env.LASTFM_API_KEY;
+  const username = process.env.LASTFM_USERNAME;
 
   if (!apiKey || !username) {
     return {

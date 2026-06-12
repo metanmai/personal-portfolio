@@ -6,7 +6,7 @@ exports.handler = async (event) => {
     };
   }
 
-  const username = undefined || 'metanmai';
+  const username = process.env.LEETCODE_USERNAME || 'metanmai';
 
   const query = 'query userProblemsSolved($username: String!) { allQuestionsCount { difficulty count } matchedUser(username: $username) { submitStatsGlobal { acSubmissionNum { difficulty count } } profile { ranking } } }';
 

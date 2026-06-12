@@ -6,8 +6,8 @@ exports.handler = async (event) => {
     };
   }
 
-  const apiKey = "****************84F2";
-  const steamId = "****************6249";
+  const apiKey = process.env.STEAM_API_KEY;
+  const steamId = process.env.STEAM_ID64;
 
   if (!apiKey || !steamId) {
     return {
