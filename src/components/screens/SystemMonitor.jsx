@@ -952,7 +952,6 @@ const GameLogPanel = () => {
     return (
         <Panel className="full">
             <Title>{'// GAME LOG'}</Title>
-            <SubLine><span>NOW PLAYING:</span> {games.nowPlaying}</SubLine>
             <Tabs role="tablist" aria-label="game log views">
                 <Tab type="button" $active={view === 'recent'} aria-pressed={view === 'recent'} onClick={() => setView('recent')}>
                     RECENTLY PLAYED
