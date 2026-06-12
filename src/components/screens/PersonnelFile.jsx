@@ -287,7 +287,7 @@ const PersonnelRecord = () => {
     return (
         <ScreenFrame title="PERSONNEL FILE">
             <SectionTitle>{'// IDENTIFICATION'}</SectionTitle>
-            <p>DESIGNATION: TEST SUBJECT #TN-{personal.established} · RECORDED ALIAS: {personal.name} · CLASSIFICATION: {personal.role} · STATUS: AT LARGE</p>
+            <p>CONTAINMENT FILE TN-{personal.established} · SUBJECT: {personal.name} · APPEARANCE ALTERED · CURRENT STATUS: ESCAPED</p>
             <Bio>{output}█</Bio>
 
             <JourneyGrid>
