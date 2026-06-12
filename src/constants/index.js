@@ -274,9 +274,9 @@ const fallback = {
     ranking: 200000,
   },
   steam: [
-    { name: "FALLOUT: NEW VEGAS", hours2w: 5.4, hoursTotal: 240 },
-    { name: "DISCO ELYSIUM", hours2w: 2.1, hoursTotal: 52 },
-    { name: "HOLLOW KNIGHT", hours2w: 1.8, hoursTotal: 76 },
+    { name: "ELDEN RING", hours2w: 0, hoursTotal: 114 },
+    { name: "PERSONA 3 RELOAD", hours2w: 0, hoursTotal: 71 },
+    { name: "BLACK MYTH: WUKONG", hours2w: 0, hoursTotal: 22 },
   ],
   tracks: [
     { name: "Time", artist: "Pink Floyd" },
