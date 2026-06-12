@@ -159,6 +159,11 @@ const PortraitFrame = styled.figure`
     aspect-ratio: 1 / 1;
     max-height: 38vh;
     overflow: hidden;
+
+    &:hover img {
+        filter: none;
+        mix-blend-mode: normal;
+    }
 `;
 
 const decrypt = keyframes`
