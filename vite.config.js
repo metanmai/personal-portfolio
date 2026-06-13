@@ -6,8 +6,9 @@ import { createRequire } from 'node:module';
 
 // Vite loads dotenv for client code but not for the dev server's Node process.
 // Functions proxied by netlify-functions-dev read process.env, so we need to
-// explicitly load .env so STEAM_API_KEY etc. are visible.
-process.loadEnvFile(resolve(process.cwd(), '.env'));
+// explicitly load .env so STEAM_API_KEY etc. are visible during local dev.
+// On Netlify, env vars come from the dashboard and .env doesn't exist.
+try { process.loadEnvFile(resolve(process.cwd(), '.env')); } catch { /* no .env in CI */ }
 
 // During `vite dev` there is no Netlify runtime, so requests to
 // /.netlify/functions/<name> 404 — which is why the LeetCode card shows
