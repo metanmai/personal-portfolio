@@ -100,7 +100,7 @@ const CareerDossier = () => {
                         </Entry>
                     ))}
                     <ResumeLine>
-                        &gt; FULL RECORD: <a href="/resume.pdf" target="_blank" rel="noreferrer">RESUME [PDF]</a>
+                        &gt; FULL RECORD: <a href="https://drive.google.com/file/d/1YEdFyUcd5Oo9BDnrRN9kJdFXfX8q7gqr/view?usp=sharing" target="_blank" rel="noreferrer">RESUME [PDF]</a>
                     </ResumeLine>
                 </Column>
                 <Column>
