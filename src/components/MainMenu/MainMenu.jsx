@@ -192,7 +192,7 @@ const MainMenu = () => {
                 <Banner aria-hidden="true">{asciiBanner.join('\n')}</Banner>
             </Title>
             <Tagline>
-                {personal.designation} · {personal.role} · STATUS: AT LARGE
+                {personal.designation} · {personal.role}
             </Tagline>
             <Layout>
                 <Menu>
